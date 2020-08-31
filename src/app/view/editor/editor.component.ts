@@ -6,7 +6,11 @@ import { Psd } from 'ag-psd';
 
 // Fontawesome
 import { faFileImage } from '@fortawesome/free-solid-svg-icons';
+import { faSignature } from '@fortawesome/free-solid-svg-icons';
 import { faEye } from '@fortawesome/free-solid-svg-icons';
+import { faEyeSlash } from '@fortawesome/free-solid-svg-icons';
+import { faAngleRight } from '@fortawesome/free-solid-svg-icons';
+import { faFolder } from '@fortawesome/free-solid-svg-icons';
 
 interface LayerInfo {
 	title: string;
@@ -25,7 +29,11 @@ export class EditorComponent implements OnInit {
 
 	// Fontawesome
 	faFileImage = faFileImage;
+	faSignature = faSignature;
 	faEye = faEye;
+	faEyeSlash = faEyeSlash;
+	faAngleRight = faAngleRight;
+	faFolder = faFolder;
 
 	fileName: string;
 

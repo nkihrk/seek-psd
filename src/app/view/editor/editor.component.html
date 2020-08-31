@@ -18,14 +18,22 @@
 			<canvas #mainCanvas class="psd-canvas"></canvas>
 		</div>
 		<div class="psd-info">
-			<h2>{{ fileName }}</h2>
+			<h2>
+				<fa-icon [icon]="faSignature" [fixedWidth]="true" size="sm"></fa-icon>
+				{{ fileName }}
+			</h2>
 
 			<div class="layer-panel">
 				<ul>
 					<ng-template #recursiveList let-list>
-						<li *ngFor="let item of list">
-							{{ item.title }}
-							<ul *ngIf="item.children.length > 0" style="margin-left: 20px">
+						<li *ngFor="let item of list; let i = index">
+							<input attr.id="{{ item.title + '_seek_psd_' + i }}" type="checkbox" hidden />
+							<label attr.for="{{ item.title + '_seek_psd_' + i }}" appPreventHoverPropagation>
+								<fa-icon *ngIf="item.children.length > 0" [icon]="faAngleRight" [fixedWidth]="true" size="sm"></fa-icon>
+								<fa-icon *ngIf="item.children.length > 0" [icon]="faFolder" [fixedWidth]="true" size="sm"></fa-icon>
+								{{ item.title }}
+							</label>
+							<ul *ngIf="item.children.length > 0" style="margin-left: 20px" class="sub-group-list">
 								<ng-container *ngTemplateOutlet="recursiveList; context: { $implicit: item.children }"></ng-container>
 							</ul>
 						</li>

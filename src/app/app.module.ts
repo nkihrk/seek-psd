@@ -6,9 +6,10 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { EditorComponent } from './view/editor/editor.component';
 import { EventDirective } from './directive/event.directive';
+import { PreventHoverPropagationDirective } from './directive/prevent-hover-propagation.directive';
 
 @NgModule({
-	declarations: [AppComponent, EditorComponent, EventDirective],
+	declarations: [AppComponent, EditorComponent, EventDirective, PreventHoverPropagationDirective],
 	imports: [BrowserModule, AppRoutingModule, FontAwesomeModule],
 	providers: [],
 	bootstrap: [AppComponent]
