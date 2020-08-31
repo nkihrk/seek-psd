@@ -29,7 +29,14 @@
 						<li *ngFor="let item of list; let i = index">
 							<input attr.id="{{ item.title + '_seek_psd_' + i }}" type="checkbox" hidden />
 							<label attr.for="{{ item.title + '_seek_psd_' + i }}" appPreventHoverPropagation>
-								<fa-icon *ngIf="item.children.length > 0" [icon]="faAngleRight" [fixedWidth]="true" size="sm"></fa-icon>
+								<div class="arrow-icon">
+									<fa-icon
+										*ngIf="item.children.length > 0"
+										[icon]="faAngleRight"
+										[fixedWidth]="true"
+										size="sm"
+									></fa-icon>
+								</div>
 								<fa-icon *ngIf="item.children.length > 0" [icon]="faFolder" [fixedWidth]="true" size="sm"></fa-icon>
 								{{ item.title }}
 							</label>
