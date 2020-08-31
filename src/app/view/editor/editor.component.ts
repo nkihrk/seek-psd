@@ -3,6 +3,7 @@ import { Observable, of } from 'rxjs';
 import { FileLoaderService } from '../../service/core/file-loader.service';
 import { MemoryService } from '../../service/core/memory.service';
 import { Psd } from 'ag-psd';
+import * as _ from 'lodash';
 
 // Fontawesome
 import { faFileImage } from '@fortawesome/free-solid-svg-icons';
@@ -14,7 +15,14 @@ import { faFolder } from '@fortawesome/free-solid-svg-icons';
 
 interface LayerInfo {
 	title: string;
+	uniqueId: string;
 	children: any[];
+}
+
+interface LayerData {
+	title: string;
+	visibility: boolean;
+	canvas: HTMLCanvasElement;
 }
 
 @Component({
@@ -37,7 +45,8 @@ export class EditorComponent implements OnInit {
 
 	fileName: string;
 
-	list: LayerInfo[] = [];
+	infoList: LayerInfo[] = [];
+	dataList: LayerData[] = [];
 
 	constructor(
 		private fileLoader: FileLoaderService,
@@ -55,12 +64,17 @@ export class EditorComponent implements OnInit {
 		this.memory.psdDataState.subscribe((data: { psd; fileName: string }) => {
 			console.log(data);
 			this.fileName = data.fileName;
-			this.list = this._extractPsdData(data.psd);
+			this.infoList = this._extractPsdData(data.psd);
 
 			setTimeout(() => {
 				this.changeDetectorRef.detectChanges();
 			}, 1500);
 		});
+	}
+
+	toggleVisibility($title: string): void {
+		const id: number = _.findIndex(this.dataList, ['title', $title]);
+		console.log(this.dataList[id]);
 	}
 
 	onFileDropped($fileList: File[]) {
@@ -74,6 +88,7 @@ export class EditorComponent implements OnInit {
 		for (let i = root.length - 1; i > 0; i--) {
 			const item: LayerInfo = {
 				title: root[i].name,
+				uniqueId: Math.random().toString(36).substr(2, 9),
 				children: []
 			};
 
@@ -85,16 +100,27 @@ export class EditorComponent implements OnInit {
 	}
 
 	private _getChildren($child: any, $item: LayerInfo): void {
-		if (!$child.children?.length) return;
-
-		for (let i = $child.children.length - 1; i > 0; i--) {
-			const item: LayerInfo = {
-				title: $child.children[i].name,
-				children: []
+		if (!$child.children?.length) {
+			const dataItem: LayerData = {
+				title: $child.name,
+				visibility: true,
+				canvas: $child.canvas
 			};
 
-			$item.children.push(item);
-			this._getChildren($child.children[i], item);
+			this.dataList.push(dataItem);
+
+			if ($child.name === 'キャラ') console.log($child);
+		} else {
+			for (let i = $child.children.length - 1; i > 0; i--) {
+				const item: LayerInfo = {
+					title: $child.children[i].name,
+					uniqueId: Math.random().toString(36).substr(2, 9),
+					children: []
+				};
+
+				$item.children.push(item);
+				this._getChildren($child.children[i], item);
+			}
 		}
 	}
 }

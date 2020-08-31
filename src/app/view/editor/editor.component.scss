@@ -13,6 +13,7 @@ $transition: 0.2s ease-in-out;
 footer {
 	display: flex;
 	justify-content: center;
+	margin-top: 50px;
 
 	.wrapper {
 		text-align: center;
@@ -26,7 +27,6 @@ footer {
 .flex-left-right {
 	display: flex;
 	justify-content: space-between;
-	margin-bottom: 50px;
 }
 
 .psd-viewer,
@@ -94,7 +94,7 @@ footer {
 
 		li {
 			label {
-				width: 100%;
+				width: calc(100% - 35px);
 				height: 100%;
 				padding: 5px;
 				border-radius: 5px;
@@ -108,13 +108,31 @@ footer {
 				}
 
 				.arrow-icon {
+					pointer-events: none;
 					display: inline-block;
 					transition: transform 0.2s ease;
 				}
 			}
 
+			.eye-icon {
+				display: flex;
+				justify-content: center;
+				align-items: center;
+				position: absolute;
+				top: 15px;
+				right: 0;
+				width: 30px;
+				height: 30px;
+				transform: translateY(-50%);
+
+				&:hover {
+					background-color: rgba(black, 0.1);
+					border-radius: 5px;
+				}
+			}
+
 			input[type='checkbox']:checked + label + ul {
-				max-height: 1000px;
+				max-height: 2000px;
 			}
 
 			input[type='checkbox']:checked + label > .arrow-icon {
