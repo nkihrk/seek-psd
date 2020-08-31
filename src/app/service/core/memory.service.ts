@@ -1,10 +1,15 @@
 import { Injectable } from '@angular/core';
+import { Subject } from 'rxjs';
+import { Psd } from 'ag-psd';
 
 @Injectable({
 	providedIn: 'root'
 })
 export class MemoryService {
 	constructor() {}
+
+	psdDataSubject: Subject<{ psd; fileName: string }> = new Subject();
+	psdDataState = this.psdDataSubject.asObservable();
 
 	renderer = {} as Renderer;
 

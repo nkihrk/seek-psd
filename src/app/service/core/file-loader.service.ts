@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Psd, readPsd } from 'ag-psd';
 import { MemoryService } from '../../service/core/memory.service';
+import { Observable } from 'rxjs';
 
 @Injectable({
 	providedIn: 'root'
@@ -61,7 +62,7 @@ export class FileLoaderService {
 
 	private _psdReader($arrayBuffer: ArrayBuffer, $fileName: string): void {
 		const psd: Psd = readPsd($arrayBuffer);
-		console.log(psd);
+		this.memory.psdDataSubject.next({ psd, fileName: $fileName });
 
 		const w: number = psd.width;
 		const h: number = psd.height;

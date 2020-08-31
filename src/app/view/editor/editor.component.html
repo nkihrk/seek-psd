@@ -1,5 +1,8 @@
 <div class="container">
-	<h1>SeekPSD</h1>
+	<h1>
+		<fa-icon [icon]="faEye" [fixedWidth]="true" size="sm"></fa-icon>
+		SeekPSD
+	</h1>
 
 	<div class="flex-left-right">
 		<div #psdViewer class="psd-viewer">
@@ -14,12 +17,22 @@
 
 			<canvas #mainCanvas class="psd-canvas"></canvas>
 		</div>
-		<div class="layer-panel">
-			<ul>
-				<li>test</li>
-				<li>test</li>
-				<li>test</li>
-			</ul>
+		<div class="psd-info">
+			<h2>{{ fileName }}</h2>
+
+			<div class="layer-panel">
+				<ul>
+					<ng-template #recursiveList let-list>
+						<li *ngFor="let item of list">
+							{{ item.title }}
+							<ul *ngIf="item.children.length > 0" style="margin-left: 20px">
+								<ng-container *ngTemplateOutlet="recursiveList; context: { $implicit: item.children }"></ng-container>
+							</ul>
+						</li>
+					</ng-template>
+					<ng-container *ngTemplateOutlet="recursiveList; context: { $implicit: list }"></ng-container>
+				</ul>
+			</div>
 		</div>
 	</div>
 </div>

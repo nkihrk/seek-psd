@@ -80,8 +80,14 @@ footer {
 	}
 }
 
-.layer-panel {
-	align-self: start;
+.psd-info {
 	width: 25%;
-	padding: 20px;
+
+	h2 {
+	}
+
+	.layer-panel {
+		width: 100%;
+		padding: 20px;
+	}
 }
