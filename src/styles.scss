@@ -1,1 +1,10 @@
 @import './reset';
+
+html {
+	background-color: #fefcfb;
+	overflow-y: scroll;
+
+	&::-webkit-scrollbar {
+		display: none;
+	}
+}

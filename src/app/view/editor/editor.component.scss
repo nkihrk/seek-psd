@@ -1,0 +1,63 @@
+$transition: 0.2s ease-in-out;
+
+.container {
+	width: 1200px;
+	margin: 0 auto;
+}
+
+.flex-left-right {
+	display: flex;
+	justify-content: space-between;
+	margin-bottom: 50px;
+}
+
+.psd-viewer,
+.layer-panel {
+	background-color: white;
+	border: solid 1px rgba(black, 0.1);
+	border-radius: 10px;
+}
+
+.psd-viewer {
+	position: relative;
+	width: 72%;
+	max-height: 300px;
+	padding: 30px;
+
+	transition: max-height 0.5s ease;
+
+	.drop-area {
+		position: absolute;
+		z-index: 10;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		text-align: center;
+		width: calc(100% - 60px);
+		height: calc(100% - 60px);
+		border-radius: 10px;
+		user-select: none;
+		background-color: #f2f6f9;
+
+		transition: opacity $transition;
+		transition-delay: 1s;
+		opacity: 0;
+
+		&.active {
+			opacity: 1;
+		}
+	}
+
+	.psd-canvas {
+		width: 100%;
+		height: 100%;
+		border-radius: 10px;
+		background-image: url('../../../assets/Transparency10.png');
+	}
+}
+
+.layer-panel {
+	align-self: start;
+	width: 25%;
+	padding: 20px;
+}

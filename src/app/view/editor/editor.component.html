@@ -1,0 +1,26 @@
+<div class="container">
+	<h1>SeekPSD</h1>
+
+	<div class="flex-left-right">
+		<div #psdViewer class="psd-viewer">
+			<div #dropArea appEvent (fileDropped)="onFileDropped($event)" class="drop-area active">
+				<div class="normal">
+					<h3>PSDファイルを閲覧する</h3>
+					<p>ここにファイルをドラッグ＆ドロップ</p>
+				</div>
+				<div class="hover"></div>
+			</div>
+
+			<canvas #mainCanvas class="psd-canvas"></canvas>
+		</div>
+		<div class="layer-panel">
+			<ul>
+				<li>test</li>
+				<li>test</li>
+				<li>test</li>
+			</ul>
+		</div>
+	</div>
+
+	<div class="psd-info"></div>
+</div>
