@@ -5,7 +5,8 @@
 		<div #psdViewer class="psd-viewer">
 			<div #dropArea appEvent (fileDropped)="onFileDropped($event)" class="drop-area active">
 				<div class="normal">
-					<h3>PSDファイルを閲覧する</h3>
+					<fa-icon [icon]="faFileImage" size="3x"></fa-icon>
+					<h3>PSDファイルを開く</h3>
 					<p>ここにファイルをドラッグ＆ドロップ</p>
 				</div>
 				<div class="hover"></div>
@@ -21,6 +22,14 @@
 			</ul>
 		</div>
 	</div>
-
-	<div class="psd-info"></div>
 </div>
+
+<footer>
+	<div class="wrapper">
+		<span>©NkiHrk</span>
+		<span>・</span>
+		<a href="https://github.com/nkihrk" target="_blank">GitHub</a>
+		<span>・</span>
+		<a href="">About SeekPSD</a>
+	</div>
+</footer>
