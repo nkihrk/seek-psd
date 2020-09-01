@@ -4,7 +4,10 @@ html {
 	background-color: #fefcfb;
 	overflow-y: scroll;
 	color: #333333;
-
+	overscroll-behavior-y: none;
+	-webkit-overflow-scrolling: touch;
+	/* Firefox 64 */
+	scrollbar-width: none;
 	&::-webkit-scrollbar {
 		display: none;
 	}

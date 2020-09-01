@@ -23,39 +23,41 @@
 				{{ fileName }}
 			</h2>
 
-			<div class="layer-panel">
-				<ul>
-					<ng-template #recursiveList let-infoList>
-						<li *ngFor="let item of infoList; let i = index" style="position: relative">
-							<div class="eye-icon" (click)="toggleVisibility(item.name, item.uniqueId)">
-								<fa-icon *ngIf="!item.hidden" [icon]="faEye" [fixedWidth]="true" size="sm"></fa-icon>
-								<fa-icon *ngIf="item.hidden" [icon]="faEyeSlash" [fixedWidth]="true" size="sm"></fa-icon>
-							</div>
-
-							<input attr.id="{{ item.name + '_seek_psd_' + item.uniqueId + '_' + i }}" type="checkbox" hidden />
-							<label
-								attr.for="{{ item.name + '_seek_psd_' + item.uniqueId + '_' + i }}"
-								appPreventHoverPropagation
-								class="ellipsis"
-							>
-								<div class="arrow-icon">
-									<fa-icon
-										*ngIf="item.children.length > 0"
-										[icon]="faAngleRight"
-										[fixedWidth]="true"
-										size="sm"
-									></fa-icon>
+			<div class="outer-layer-panel">
+				<div class="layer-panel">
+					<ul>
+						<ng-template #recursiveList let-infoList>
+							<li *ngFor="let item of infoList; let i = index" style="position: relative">
+								<div class="eye-icon" (click)="toggleVisibility(item.name, item.uniqueId)">
+									<fa-icon *ngIf="!item.hidden" [icon]="faEye" [fixedWidth]="true" size="sm"></fa-icon>
+									<fa-icon *ngIf="item.hidden" [icon]="faEyeSlash" [fixedWidth]="true" size="sm"></fa-icon>
 								</div>
-								<fa-icon *ngIf="item.children.length > 0" [icon]="faFolder" [fixedWidth]="true" size="sm"></fa-icon>
-								{{ item.name }}
-							</label>
-							<ul *ngIf="item.children.length > 0" class="ul-prefix sub-group-list">
-								<ng-container *ngTemplateOutlet="recursiveList; context: { $implicit: item.children }"></ng-container>
-							</ul>
-						</li>
-					</ng-template>
-					<ng-container *ngTemplateOutlet="recursiveList; context: { $implicit: infoList }"></ng-container>
-				</ul>
+
+								<input attr.id="{{ item.name + '_seek_psd_' + item.uniqueId + '_' + i }}" type="checkbox" hidden />
+								<label
+									attr.for="{{ item.name + '_seek_psd_' + item.uniqueId + '_' + i }}"
+									appPreventHoverPropagation
+									class="ellipsis"
+								>
+									<div class="arrow-icon">
+										<fa-icon
+											*ngIf="item.children.length > 0"
+											[icon]="faAngleRight"
+											[fixedWidth]="true"
+											size="sm"
+										></fa-icon>
+									</div>
+									<fa-icon *ngIf="item.children.length > 0" [icon]="faFolder" [fixedWidth]="true" size="sm"></fa-icon>
+									{{ item.name }}
+								</label>
+								<ul *ngIf="item.children.length > 0" class="ul-prefix sub-group-list">
+									<ng-container *ngTemplateOutlet="recursiveList; context: { $implicit: item.children }"></ng-container>
+								</ul>
+							</li>
+						</ng-template>
+						<ng-container *ngTemplateOutlet="recursiveList; context: { $implicit: infoList }"></ng-container>
+					</ul>
+				</div>
 			</div>
 		</div>
 	</div>
