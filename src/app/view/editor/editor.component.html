@@ -27,9 +27,9 @@
 				<ul>
 					<ng-template #recursiveList let-infoList>
 						<li *ngFor="let item of infoList; let i = index" style="position: relative">
-							<div class="eye-icon" (click)="toggleVisibility(item.name)">
-								<fa-icon *ngIf="item.visibility" [icon]="faEye" [fixedWidth]="true" size="sm"></fa-icon>
-								<fa-icon *ngIf="!item.visibility" [icon]="faEyeSlash" [fixedWidth]="true" size="sm"></fa-icon>
+							<div class="eye-icon" (click)="toggleVisibility(item.name, item.uniqueId)">
+								<fa-icon *ngIf="!item.hidden" [icon]="faEye" [fixedWidth]="true" size="sm"></fa-icon>
+								<fa-icon *ngIf="item.hidden" [icon]="faEyeSlash" [fixedWidth]="true" size="sm"></fa-icon>
 							</div>
 
 							<input attr.id="{{ item.name + '_seek_psd_' + item.uniqueId + '_' + i }}" type="checkbox" hidden />

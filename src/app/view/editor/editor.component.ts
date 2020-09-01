@@ -16,23 +16,9 @@ import { faFolder } from '@fortawesome/free-solid-svg-icons';
 interface LayerInfo {
 	name: string;
 	uniqueId: string;
-	visibility: boolean;
-	children: LayerInfo[];
-}
-
-interface LayerData {
-	name: string;
 	hidden: boolean;
-	blendMode: string;
-	clipping: boolean;
-	top: number;
-	bottom: number;
-	right: number;
-	left: number;
-	transparencyProtected: boolean;
-	opacity: number;
-	protected: { transparency: boolean; composite: boolean; position: boolean };
-	canvas: HTMLCanvasElement;
+	psd: any;
+	children: LayerInfo[];
 }
 
 @Component({
@@ -59,7 +45,6 @@ export class EditorComponent implements OnInit {
 	height: number;
 	scaleRatio: number;
 
-	dataList: LayerData[] = [];
 	infoList: LayerInfo[] = [];
 
 	constructor(
@@ -87,10 +72,10 @@ export class EditorComponent implements OnInit {
 				this.height = size.width * (data.psd.height / data.psd.width);
 				this.scaleRatio = size.width / data.psd.width;
 
-				this.dataList = [];
 				this.infoList = this._extractPsdData(data.psd);
 
 				// Render
+				//this._render();
 				this._reRender();
 
 				// Set width and height for renderer
@@ -107,12 +92,37 @@ export class EditorComponent implements OnInit {
 		);
 	}
 
-	toggleVisibility($name: string): void {
-		const id: number = _.findIndex(this.dataList, ['name', $name]);
-		this.dataList[id].hidden = !this.dataList[id].hidden;
+	toggleVisibility($name: string, $uniqueId: string): void {
+		const root: LayerInfo[] = this.infoList;
+		this.recursive(root, ($layer: LayerInfo) => {
+			if ($name === $layer.name && $uniqueId === $layer.uniqueId) {
+				$layer.hidden = !$layer.hidden;
 
-		this.changeDetectorRef.detectChanges();
-		this._reRender();
+				if ($layer.children.length > 0) {
+					const root: LayerInfo[] = $layer.children;
+					this.recursive(root, ($subLayer: LayerInfo) => {
+						$subLayer.hidden = $layer.hidden;
+					});
+				}
+
+				this.changeDetectorRef.detectChanges();
+				this._reRender();
+
+				// To get rid of loop
+				return 0;
+			}
+		});
+	}
+
+	private _render(): void {
+		const c: HTMLCanvasElement = this.memory.renderer.main;
+		c.width = this.width;
+		c.height = this.height;
+		const ctx: CanvasRenderingContext2D = c.getContext('2d');
+		const w: number = this.psd.width * this.scaleRatio;
+		const h: number = this.psd.height * this.scaleRatio;
+
+		ctx.drawImage(this.psd.canvas, 0, 0, w, h);
 	}
 
 	private _reRender(): void {
@@ -121,31 +131,46 @@ export class EditorComponent implements OnInit {
 		c.height = this.height;
 		const ctx: CanvasRenderingContext2D = c.getContext('2d');
 
-		for (let i = this.dataList.length - 1; i > -1; i--) {
-			if (this.dataList[i].hidden || !this.dataList[i].canvas) continue;
+		const root = this.infoList;
+		this.recursive(root, ($layer: LayerInfo) => {
+			const psd = $layer.psd;
+			if ($layer.hidden || !psd?.canvas) return;
 
-			const x: number = this.dataList[i].left * this.scaleRatio;
-			const y: number = this.dataList[i].top * this.scaleRatio;
-			const w: number = (this.dataList[i].right - this.dataList[i].left) * this.scaleRatio;
-			const h: number = (this.dataList[i].bottom - this.dataList[i].top) * this.scaleRatio;
+			const x: number = psd.left * this.scaleRatio;
+			const y: number = psd.top * this.scaleRatio;
+			const w: number = (psd.right - psd.left) * this.scaleRatio;
+			const h: number = (psd.bottom - psd.top) * this.scaleRatio;
 
 			ctx.save();
 			// Set opacity
-			ctx.globalAlpha = this.dataList[i].opacity;
+			ctx.globalAlpha = psd.opacity;
 
 			// Blend mode
-			if (this.dataList[i].blendMode === 'overlay') {
+			if (psd.blendMode === 'overlay') {
 				ctx.globalCompositeOperation = 'overlay';
-			} else if (this.dataList[i].blendMode === 'screen') {
+			} else if (psd.blendMode === 'screen') {
 				ctx.globalCompositeOperation = 'screen';
-			} else if (this.dataList[i].blendMode === 'multiply') {
+			} else if (psd.blendMode === 'multiply') {
 				ctx.globalCompositeOperation = 'multiply';
-			} else if (this.dataList[i].blendMode === 'linear dodge') {
-				ctx.globalCompositeOperation = 'color-dodge';
+			} else if (psd.blendMode === 'linear dodge') {
+				ctx.globalCompositeOperation = 'lighter';
+			} else if (psd.blendMode === 'soft light') {
+				ctx.globalCompositeOperation = 'soft-light';
 			}
 
-			ctx.drawImage(this.dataList[i].canvas, x, y, w, h);
+			ctx.drawImage(psd.canvas, x, y, w, h);
 			ctx.restore();
+		});
+	}
+
+	private recursive($root: any[], $callback: Function): void {
+		for (let i = $root.length - 1; i > -1; i--) {
+			const state: number = $callback($root[i]);
+
+			if (state === 0) return;
+
+			if (!$root[i].children?.length) continue;
+			this.recursive($root[i].children, $callback);
 		}
 	}
 
@@ -161,33 +186,33 @@ export class EditorComponent implements OnInit {
 			const item: LayerInfo = {
 				name: root[i].name,
 				uniqueId: Math.random().toString(36).substr(2, 9),
-				visibility: !root[i].hidden,
+				hidden: root[i].hidden,
+				psd: root[i],
 				children: []
 			};
 
 			list.push(item);
-			this._getChildren(root[i], item);
+			this._getChildren(root[i], item, root[i].hidden);
 		}
 
 		return list;
 	}
 
-	private _getChildren($child: any, $item: LayerInfo): void {
-		if (!$child.children?.length) {
-			this.dataList.push($child);
-			console.log($child.blendMode);
-		} else {
-			for (let i = $child.children.length - 1; i > -1; i--) {
-				const item: LayerInfo = {
-					name: $child.children[i].name,
-					uniqueId: Math.random().toString(36).substr(2, 9),
-					visibility: !$child.children[i].hidden,
-					children: []
-				};
+	private _getChildren($child: any, $item: LayerInfo, $isFolderHidden: boolean): void {
+		if (!$child.children?.length) return;
+		// Folder layer and image layer
+		for (let i = $child.children.length - 1; i > -1; i--) {
+			const item: LayerInfo = {
+				name: $child.children[i].name,
+				uniqueId: Math.random().toString(36).substr(2, 9),
+				hidden: $isFolderHidden ? true : $child.children[i].hidden,
+				psd: $child.children[i],
+				children: []
+			};
 
-				$item.children.push(item);
-				this._getChildren($child.children[i], item);
-			}
+			$item.children.push(item);
+
+			this._getChildren($child.children[i], item, item.hidden);
 		}
 	}
 }
