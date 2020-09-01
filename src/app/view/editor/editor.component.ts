@@ -75,8 +75,8 @@ export class EditorComponent implements OnInit {
 				this.infoList = this._extractPsdData(data.psd);
 
 				// Render
-				//this._render();
-				this._reRender();
+				this._render();
+				//this._reRender();
 
 				// Set width and height for renderer
 				setTimeout(() => {
