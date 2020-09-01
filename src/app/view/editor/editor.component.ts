@@ -14,24 +14,25 @@ import { faAngleRight } from '@fortawesome/free-solid-svg-icons';
 import { faFolder } from '@fortawesome/free-solid-svg-icons';
 
 interface LayerInfo {
-	title: string;
+	name: string;
 	uniqueId: string;
 	visibility: boolean;
 	children: LayerInfo[];
 }
 
 interface LayerData {
-	title: string;
-	visibility: boolean;
+	name: string;
+	hidden: boolean;
+	blendMode: string;
+	clipping: boolean;
+	top: number;
+	bottom: number;
+	right: number;
+	left: number;
+	transparencyProtected: boolean;
+	opacity: number;
+	protected: { transparency: boolean; composite: boolean; position: boolean };
 	canvas: HTMLCanvasElement;
-	size: {
-		width: number;
-		height: number;
-	};
-	offset: {
-		x: number;
-		y: number;
-	};
 }
 
 @Component({
@@ -80,14 +81,23 @@ export class EditorComponent implements OnInit {
 
 				this.psd = data.psd;
 				this.fileName = data.fileName;
-				this.width = data.size.width;
-				this.height = data.size.height;
-				this.scaleRatio = data.size.width / data.psd.width;
+
+				const size: DOMRect = this.memory.renderer.dropArea.getBoundingClientRect();
+				this.width = size.width;
+				this.height = size.width * (data.psd.height / data.psd.width);
+				this.scaleRatio = size.width / data.psd.width;
+
 				this.dataList = [];
 				this.infoList = this._extractPsdData(data.psd);
 
 				// Render
 				this._reRender();
+
+				// Set width and height for renderer
+				setTimeout(() => {
+					this.memory.renderer.psdViewer.style.maxHeight = this.height + 'px';
+					this.memory.renderer.dropArea.classList.remove('active');
+				}, 500);
 
 				// Update views
 				setTimeout(() => {
@@ -97,10 +107,9 @@ export class EditorComponent implements OnInit {
 		);
 	}
 
-	toggleVisibility($title: string): void {
-		const id: number = _.findIndex(this.dataList, ['title', $title]);
-		this.dataList[id].visibility = !this.dataList[id].visibility;
-		console.log(this.dataList[id]);
+	toggleVisibility($name: string): void {
+		const id: number = _.findIndex(this.dataList, ['name', $name]);
+		this.dataList[id].hidden = !this.dataList[id].hidden;
 
 		this.changeDetectorRef.detectChanges();
 		this._reRender();
@@ -113,11 +122,30 @@ export class EditorComponent implements OnInit {
 		const ctx: CanvasRenderingContext2D = c.getContext('2d');
 
 		for (let i = this.dataList.length - 1; i > -1; i--) {
-			const x: number = this.dataList[i].offset.x * this.scaleRatio;
-			const y: number = this.dataList[i].offset.y * this.scaleRatio;
-			const w: number = this.dataList[i].size.width * this.scaleRatio;
-			const h: number = this.dataList[i].size.height * this.scaleRatio;
-			if (this.dataList[i].visibility) ctx.drawImage(this.dataList[i].canvas, x, y, w, h);
+			if (this.dataList[i].hidden || !this.dataList[i].canvas) continue;
+
+			const x: number = this.dataList[i].left * this.scaleRatio;
+			const y: number = this.dataList[i].top * this.scaleRatio;
+			const w: number = (this.dataList[i].right - this.dataList[i].left) * this.scaleRatio;
+			const h: number = (this.dataList[i].bottom - this.dataList[i].top) * this.scaleRatio;
+
+			ctx.save();
+			// Set opacity
+			ctx.globalAlpha = this.dataList[i].opacity;
+
+			// Blend mode
+			if (this.dataList[i].blendMode === 'overlay') {
+				ctx.globalCompositeOperation = 'overlay';
+			} else if (this.dataList[i].blendMode === 'screen') {
+				ctx.globalCompositeOperation = 'screen';
+			} else if (this.dataList[i].blendMode === 'multiply') {
+				ctx.globalCompositeOperation = 'multiply';
+			} else if (this.dataList[i].blendMode === 'linear dodge') {
+				ctx.globalCompositeOperation = 'color-dodge';
+			}
+
+			ctx.drawImage(this.dataList[i].canvas, x, y, w, h);
+			ctx.restore();
 		}
 	}
 
@@ -131,7 +159,7 @@ export class EditorComponent implements OnInit {
 
 		for (let i = root.length - 1; i > -1; i--) {
 			const item: LayerInfo = {
-				title: root[i].name,
+				name: root[i].name,
 				uniqueId: Math.random().toString(36).substr(2, 9),
 				visibility: !root[i].hidden,
 				children: []
@@ -146,25 +174,12 @@ export class EditorComponent implements OnInit {
 
 	private _getChildren($child: any, $item: LayerInfo): void {
 		if (!$child.children?.length) {
-			const dataItem: LayerData = {
-				title: $child.name,
-				visibility: !$child.hidden,
-				canvas: $child.canvas,
-				size: {
-					width: $child.right - $child.left,
-					height: $child.bottom - $child.top
-				},
-				offset: {
-					x: $child.left,
-					y: $child.top
-				}
-			};
-
-			this.dataList.push(dataItem);
+			this.dataList.push($child);
+			console.log($child.blendMode);
 		} else {
 			for (let i = $child.children.length - 1; i > -1; i--) {
 				const item: LayerInfo = {
-					title: $child.children[i].name,
+					name: $child.children[i].name,
 					uniqueId: Math.random().toString(36).substr(2, 9),
 					visibility: !$child.children[i].hidden,
 					children: []

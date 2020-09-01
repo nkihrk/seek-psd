@@ -63,17 +63,6 @@ export class FileLoaderService {
 	private _psdReader($arrayBuffer: ArrayBuffer, $fileName: string): void {
 		const psd: Psd = readPsd($arrayBuffer);
 
-		const w: number = psd.width;
-		const h: number = psd.height;
-		const ratio: number = h / w;
-		const fixedW: number = this.memory.renderer.dropArea.getBoundingClientRect().width;
-		const fixedH: number = ratio * fixedW;
-
-		this.memory.psdDataSubject.next({ psd, fileName: $fileName, size: { width: fixedW, height: fixedH } });
-
-		setTimeout(() => {
-			this.memory.renderer.psdViewer.style.maxHeight = fixedH + 'px';
-			this.memory.renderer.dropArea.classList.remove('active');
-		}, 500);
+		this.memory.psdDataSubject.next({ psd, fileName: $fileName });
 	}
 }
