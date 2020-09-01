@@ -16,13 +16,22 @@ import { faFolder } from '@fortawesome/free-solid-svg-icons';
 interface LayerInfo {
 	title: string;
 	uniqueId: string;
-	children: any[];
+	visibility: boolean;
+	children: LayerInfo[];
 }
 
 interface LayerData {
 	title: string;
 	visibility: boolean;
 	canvas: HTMLCanvasElement;
+	size: {
+		width: number;
+		height: number;
+	};
+	offset: {
+		x: number;
+		y: number;
+	};
 }
 
 @Component({
@@ -43,10 +52,14 @@ export class EditorComponent implements OnInit {
 	faAngleRight = faAngleRight;
 	faFolder = faFolder;
 
+	psd: Psd;
 	fileName: string;
+	width: number;
+	height: number;
+	scaleRatio: number;
 
-	infoList: LayerInfo[] = [];
 	dataList: LayerData[] = [];
+	infoList: LayerInfo[] = [];
 
 	constructor(
 		private fileLoader: FileLoaderService,
@@ -61,20 +74,51 @@ export class EditorComponent implements OnInit {
 			this.mainCanvasRef.nativeElement
 		);
 
-		this.memory.psdDataState.subscribe((data: { psd; fileName: string }) => {
-			console.log(data);
-			this.fileName = data.fileName;
-			this.infoList = this._extractPsdData(data.psd);
+		this.memory.psdDataState.subscribe(
+			(data: { psd: Psd; fileName: string; size: { width: number; height: number } }) => {
+				console.log(data);
 
-			setTimeout(() => {
-				this.changeDetectorRef.detectChanges();
-			}, 1500);
-		});
+				this.psd = data.psd;
+				this.fileName = data.fileName;
+				this.width = data.size.width;
+				this.height = data.size.height;
+				this.scaleRatio = data.size.width / data.psd.width;
+				this.dataList = [];
+				this.infoList = this._extractPsdData(data.psd);
+
+				// Render
+				this._reRender();
+
+				// Update views
+				setTimeout(() => {
+					this.changeDetectorRef.detectChanges();
+				}, 1500);
+			}
+		);
 	}
 
 	toggleVisibility($title: string): void {
 		const id: number = _.findIndex(this.dataList, ['title', $title]);
+		this.dataList[id].visibility = !this.dataList[id].visibility;
 		console.log(this.dataList[id]);
+
+		this.changeDetectorRef.detectChanges();
+		this._reRender();
+	}
+
+	private _reRender(): void {
+		const c: HTMLCanvasElement = this.memory.renderer.main;
+		c.width = this.width;
+		c.height = this.height;
+		const ctx: CanvasRenderingContext2D = c.getContext('2d');
+
+		for (let i = this.dataList.length - 1; i > -1; i--) {
+			const x: number = this.dataList[i].offset.x * this.scaleRatio;
+			const y: number = this.dataList[i].offset.y * this.scaleRatio;
+			const w: number = this.dataList[i].size.width * this.scaleRatio;
+			const h: number = this.dataList[i].size.height * this.scaleRatio;
+			if (this.dataList[i].visibility) ctx.drawImage(this.dataList[i].canvas, x, y, w, h);
+		}
 	}
 
 	onFileDropped($fileList: File[]) {
@@ -85,10 +129,11 @@ export class EditorComponent implements OnInit {
 		const root = $psd.children;
 		const list: LayerInfo[] = [];
 
-		for (let i = root.length - 1; i > 0; i--) {
+		for (let i = root.length - 1; i > -1; i--) {
 			const item: LayerInfo = {
 				title: root[i].name,
 				uniqueId: Math.random().toString(36).substr(2, 9),
+				visibility: !root[i].hidden,
 				children: []
 			};
 
@@ -103,18 +148,25 @@ export class EditorComponent implements OnInit {
 		if (!$child.children?.length) {
 			const dataItem: LayerData = {
 				title: $child.name,
-				visibility: true,
-				canvas: $child.canvas
+				visibility: !$child.hidden,
+				canvas: $child.canvas,
+				size: {
+					width: $child.right - $child.left,
+					height: $child.bottom - $child.top
+				},
+				offset: {
+					x: $child.left,
+					y: $child.top
+				}
 			};
 
 			this.dataList.push(dataItem);
-
-			if ($child.name === 'キャラ') console.log($child);
 		} else {
-			for (let i = $child.children.length - 1; i > 0; i--) {
+			for (let i = $child.children.length - 1; i > -1; i--) {
 				const item: LayerInfo = {
 					title: $child.children[i].name,
 					uniqueId: Math.random().toString(36).substr(2, 9),
+					visibility: !$child.children[i].hidden,
 					children: []
 				};
 

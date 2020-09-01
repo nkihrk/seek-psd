@@ -28,11 +28,16 @@
 					<ng-template #recursiveList let-infoList>
 						<li *ngFor="let item of infoList; let i = index" style="position: relative">
 							<div class="eye-icon" (click)="toggleVisibility(item.title)">
-								<fa-icon [icon]="faEye" [fixedWidth]="true" size="sm"></fa-icon>
+								<fa-icon *ngIf="item.visibility" [icon]="faEye" [fixedWidth]="true" size="sm"></fa-icon>
+								<fa-icon *ngIf="!item.visibility" [icon]="faEyeSlash" [fixedWidth]="true" size="sm"></fa-icon>
 							</div>
 
 							<input attr.id="{{ item.title + '_seek_psd_' + item.uniqueId + '_' + i }}" type="checkbox" hidden />
-							<label attr.for="{{ item.title + '_seek_psd_' + item.uniqueId + '_' + i }}" appPreventHoverPropagation>
+							<label
+								attr.for="{{ item.title + '_seek_psd_' + item.uniqueId + '_' + i }}"
+								appPreventHoverPropagation
+								class="ellipsis"
+							>
 								<div class="arrow-icon">
 									<fa-icon
 										*ngIf="item.children.length > 0"
@@ -44,7 +49,7 @@
 								<fa-icon *ngIf="item.children.length > 0" [icon]="faFolder" [fixedWidth]="true" size="sm"></fa-icon>
 								{{ item.title }}
 							</label>
-							<ul *ngIf="item.children.length > 0" style="margin-left: 20px" class="sub-group-list">
+							<ul *ngIf="item.children.length > 0" class="ul-prefix sub-group-list">
 								<ng-container *ngTemplateOutlet="recursiveList; context: { $implicit: item.children }"></ng-container>
 							</ul>
 						</li>

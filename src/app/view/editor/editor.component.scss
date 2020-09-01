@@ -66,6 +66,8 @@ footer {
 		}
 
 		.normal {
+			pointer-events: none;
+
 			h3 {
 				margin-top: 10px;
 			}
@@ -92,6 +94,12 @@ footer {
 		padding: 20px;
 		user-select: none;
 
+		.ul-prefix {
+			margin-left: 12px;
+			padding-left: 10px;
+			border-left: solid 1px rgba(black, 0.1);
+		}
+
 		li {
 			label {
 				width: calc(100% - 35px);
@@ -103,12 +111,13 @@ footer {
 					background-color: rgba(black, 0.1);
 				}
 
-				fa-icon {
+				fa-icon,
+				.arrow-icon,
+				span {
 					pointer-events: none;
 				}
 
 				.arrow-icon {
-					pointer-events: none;
 					display: inline-block;
 					transition: transform 0.2s ease;
 				}
@@ -132,7 +141,7 @@ footer {
 			}
 
 			input[type='checkbox']:checked + label + ul {
-				max-height: 2000px;
+				max-height: 10000px;
 			}
 
 			input[type='checkbox']:checked + label > .arrow-icon {
@@ -147,4 +156,10 @@ footer {
 			}
 		}
 	}
+}
+
+.ellipsis {
+	overflow: hidden;
+	white-space: nowrap;
+	text-overflow: ellipsis;
 }

@@ -8,7 +8,7 @@ import { Psd } from 'ag-psd';
 export class MemoryService {
 	constructor() {}
 
-	psdDataSubject: Subject<{ psd; fileName: string }> = new Subject();
+	psdDataSubject: Subject<{ psd: Psd; fileName: string; size: { width: number; height: number } }> = new Subject();
 	psdDataState = this.psdDataSubject.asObservable();
 
 	renderer = {} as Renderer;
