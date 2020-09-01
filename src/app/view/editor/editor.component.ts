@@ -16,7 +16,10 @@ import { faFolder } from '@fortawesome/free-solid-svg-icons';
 interface LayerInfo {
 	name: string;
 	uniqueId: string;
-	hidden: boolean;
+	hidden: {
+		current: boolean;
+		prev: boolean;
+	};
 	psd: any;
 	children: LayerInfo[];
 }
@@ -75,8 +78,8 @@ export class EditorComponent implements OnInit {
 				this.infoList = this._extractPsdData(data.psd);
 
 				// Render
-				this._render();
-				//this._reRender();
+				//this._render();
+				this._reRender();
 
 				// Set width and height for renderer
 				setTimeout(() => {
@@ -96,14 +99,23 @@ export class EditorComponent implements OnInit {
 		const root: LayerInfo[] = this.infoList;
 		this.recursive(root, ($layer: LayerInfo) => {
 			if ($name === $layer.name && $uniqueId === $layer.uniqueId) {
-				$layer.hidden = !$layer.hidden;
-
+				// Folder layer
 				if ($layer.children.length > 0) {
-					const root: LayerInfo[] = $layer.children;
-					this.recursive(root, ($subLayer: LayerInfo) => {
-						$subLayer.hidden = $layer.hidden;
-					});
+					if ($layer.hidden.current) {
+						const root: LayerInfo[] = $layer.children;
+						this.recursive(root, ($subLayer: LayerInfo) => {
+							$subLayer.hidden.current = $subLayer.hidden.prev;
+						});
+					} else {
+						const root: LayerInfo[] = $layer.children;
+						this.recursive(root, ($subLayer: LayerInfo) => {
+							$subLayer.hidden.prev = $subLayer.hidden.current;
+							$subLayer.hidden.current = !$layer.hidden.current;
+						});
+					}
 				}
+
+				$layer.hidden.current = !$layer.hidden.current;
 
 				this.changeDetectorRef.detectChanges();
 				this._reRender();
@@ -134,7 +146,7 @@ export class EditorComponent implements OnInit {
 		const root = this.infoList;
 		this.recursive(root, ($layer: LayerInfo) => {
 			const psd = $layer.psd;
-			if ($layer.hidden || !psd?.canvas) return;
+			if ($layer.hidden.current || !psd?.canvas) return;
 
 			const x: number = psd.left * this.scaleRatio;
 			const y: number = psd.top * this.scaleRatio;
@@ -186,7 +198,10 @@ export class EditorComponent implements OnInit {
 			const item: LayerInfo = {
 				name: root[i].name,
 				uniqueId: Math.random().toString(36).substr(2, 9),
-				hidden: root[i].hidden,
+				hidden: {
+					current: root[i].hidden,
+					prev: root[i].hidden
+				},
 				psd: root[i],
 				children: []
 			};
@@ -200,19 +215,22 @@ export class EditorComponent implements OnInit {
 
 	private _getChildren($child: any, $item: LayerInfo, $isFolderHidden: boolean): void {
 		if (!$child.children?.length) return;
-		// Folder layer and image layer
+
 		for (let i = $child.children.length - 1; i > -1; i--) {
 			const item: LayerInfo = {
 				name: $child.children[i].name,
 				uniqueId: Math.random().toString(36).substr(2, 9),
-				hidden: $isFolderHidden ? true : $child.children[i].hidden,
+				hidden: {
+					current: $isFolderHidden ? true : $child.children[i].hidden,
+					prev: $isFolderHidden ? true : $child.children[i].hidden
+				},
 				psd: $child.children[i],
 				children: []
 			};
 
 			$item.children.push(item);
 
-			this._getChildren($child.children[i], item, item.hidden);
+			this._getChildren($child.children[i], item, item.hidden.current);
 		}
 	}
 }
