@@ -2,7 +2,7 @@ import { Component, OnInit, ViewChild, ElementRef, ChangeDetectorRef } from '@an
 import { Observable, of } from 'rxjs';
 import { FileLoaderService } from '../../service/core/file-loader.service';
 import { MemoryService } from '../../service/core/memory.service';
-import { Psd } from 'ag-psd';
+import { Psd, Layer } from 'ag-psd';
 import * as _ from 'lodash';
 import { LayerInfo } from '../../model/layer-info.model';
 import { GpuService } from '../../service/core/gpu.service';
@@ -87,7 +87,7 @@ export class EditorComponent implements OnInit {
 	}
 
 	private _extractPsdData($psd: Psd): LayerInfo[] {
-		const root = $psd.children;
+		const root: Layer[] = $psd.children;
 		const list: LayerInfo[] = [];
 
 		for (let i = root.length - 1; i > -1; i--) {
@@ -109,7 +109,7 @@ export class EditorComponent implements OnInit {
 		return list;
 	}
 
-	private _getChildren($child: any, $item: LayerInfo, $isFolderHidden: boolean): void {
+	private _getChildren($child: Layer, $item: LayerInfo, $isFolderHidden: boolean): void {
 		if (!$child.children?.length) return;
 
 		for (let i = $child.children.length - 1; i > -1; i--) {

@@ -1,3 +1,5 @@
+import { Layer } from 'ag-psd';
+
 export interface LayerInfo {
 	name: string;
 	uniqueId: string;
@@ -5,6 +7,6 @@ export interface LayerInfo {
 		current: boolean;
 		prev: boolean;
 	};
-	psd: any;
+	psd: Layer;
 	children: LayerInfo[];
 }
