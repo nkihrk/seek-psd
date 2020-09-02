@@ -40,17 +40,21 @@ export class GpuService {
 			ctx.globalAlpha = psd.opacity;
 
 			// Blend mode
+			let blendMode = '';
 			if (psd.blendMode === 'overlay') {
-				ctx.globalCompositeOperation = 'overlay';
+				blendMode = 'overlay';
 			} else if (psd.blendMode === 'screen') {
-				ctx.globalCompositeOperation = 'screen';
+				blendMode = 'screen';
 			} else if (psd.blendMode === 'multiply') {
-				ctx.globalCompositeOperation = 'multiply';
+				blendMode = 'multiply';
 			} else if (psd.blendMode === 'linear dodge') {
-				ctx.globalCompositeOperation = 'lighter';
+				blendMode = 'lighter';
 			} else if (psd.blendMode === 'soft light') {
-				ctx.globalCompositeOperation = 'soft-light';
+				blendMode = 'soft-light';
+			} else {
+				blendMode = 'source-over';
 			}
+			ctx.globalCompositeOperation = blendMode;
 
 			ctx.drawImage(psd.canvas, x, y, w, h);
 			ctx.restore();
