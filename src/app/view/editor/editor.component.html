@@ -20,14 +20,14 @@
 		<div class="psd-info">
 			<h2>
 				<fa-icon [icon]="faSignature" [fixedWidth]="true" size="sm"></fa-icon>
-				{{ fileName }}
+				{{ memory.fileName$ | async }}
 			</h2>
 
 			<div class="outer-layer-panel">
 				<div class="layer-panel">
 					<ul>
-						<ng-template #recursiveList let-infoList>
-							<li *ngFor="let item of infoList; let i = index" style="position: relative">
+						<ng-template #recursiveList let-list>
+							<li *ngFor="let item of list; let i = index" style="position: relative">
 								<div class="eye-icon" (click)="toggleVisibility(item.name, item.uniqueId)">
 									<fa-icon *ngIf="!item.hidden.current" [icon]="faEye" [fixedWidth]="true" size="sm"></fa-icon>
 									<fa-icon *ngIf="item.hidden.current" [icon]="faEyeSlash" [fixedWidth]="true" size="sm"></fa-icon>
@@ -55,7 +55,9 @@
 								</ul>
 							</li>
 						</ng-template>
-						<ng-container *ngTemplateOutlet="recursiveList; context: { $implicit: infoList }"></ng-container>
+						<div *ngIf="memory.layerInfos$ | async; $implicit as list">
+							<ng-container *ngTemplateOutlet="recursiveList; context: { $implicit: list }"></ng-container>
+						</div>
 					</ul>
 				</div>
 			</div>

@@ -63,6 +63,6 @@ export class FileLoaderService {
 	private _psdReader($arrayBuffer: ArrayBuffer, $fileName: string): void {
 		const psd: Psd = readPsd($arrayBuffer);
 
-		this.memory.psdDataSubject.next({ psd, fileName: $fileName });
+		this.memory.psdData$.next({ psd, fileName: $fileName });
 	}
 }

@@ -4,6 +4,8 @@ import { FileLoaderService } from '../../service/core/file-loader.service';
 import { MemoryService } from '../../service/core/memory.service';
 import { Psd } from 'ag-psd';
 import * as _ from 'lodash';
+import { LayerInfo } from '../../model/layer-info.model';
+import { GpuService } from '../../service/core/gpu.service';
 
 // Fontawesome
 import { faFileImage } from '@fortawesome/free-solid-svg-icons';
@@ -12,17 +14,6 @@ import { faEye } from '@fortawesome/free-solid-svg-icons';
 import { faEyeSlash } from '@fortawesome/free-solid-svg-icons';
 import { faAngleRight } from '@fortawesome/free-solid-svg-icons';
 import { faFolder } from '@fortawesome/free-solid-svg-icons';
-
-interface LayerInfo {
-	name: string;
-	uniqueId: string;
-	hidden: {
-		current: boolean;
-		prev: boolean;
-	};
-	psd: any;
-	children: LayerInfo[];
-}
 
 @Component({
 	selector: 'app-editor',
@@ -42,18 +33,11 @@ export class EditorComponent implements OnInit {
 	faAngleRight = faAngleRight;
 	faFolder = faFolder;
 
-	psd: Psd;
-	fileName: string;
-	width: number;
-	height: number;
-	scaleRatio: number;
-
-	infoList: LayerInfo[] = [];
-
 	constructor(
 		private fileLoader: FileLoaderService,
-		private memory: MemoryService,
-		private changeDetectorRef: ChangeDetectorRef
+		public memory: MemoryService,
+		private changeDetectorRef: ChangeDetectorRef,
+		private gpu: GpuService
 	) {}
 
 	ngOnInit(): void {
@@ -63,127 +47,39 @@ export class EditorComponent implements OnInit {
 			this.mainCanvasRef.nativeElement
 		);
 
-		this.memory.psdDataState.subscribe(
-			(data: { psd: Psd; fileName: string; size: { width: number; height: number } }) => {
-				console.log(data);
+		this.memory.psdData$.subscribe((data: { psd: Psd; fileName: string }) => {
+			console.log(data);
 
-				this.psd = data.psd;
-				this.fileName = data.fileName;
+			const rendererSize: DOMRect = this.dropAreaRef.nativeElement.getBoundingClientRect();
+			const width = rendererSize.width;
+			const height = rendererSize.width * (data.psd.height / data.psd.width);
+			const scaleRatio = rendererSize.width / data.psd.width;
 
-				const size: DOMRect = this.memory.renderer.dropArea.getBoundingClientRect();
-				this.width = size.width;
-				this.height = size.width * (data.psd.height / data.psd.width);
-				this.scaleRatio = size.width / data.psd.width;
+			this.memory.updateRenderer(data.fileName, { width, height, scaleRatio }, data.psd);
+			this.memory.updateLayerInfos(this._extractPsdData(data.psd));
+			this.memory.updateFileName(data.fileName);
 
-				this.infoList = this._extractPsdData(data.psd);
+			// Render
+			//this.gpu.render();
+			this.gpu.reRender();
 
-				// Render
-				//this._render();
-				this._reRender();
+			// Set width and height for renderer
+			setTimeout(() => {
+				this.memory.renderer.element.psdViewer.style.maxHeight = height + 'px';
+				this.memory.renderer.element.dropArea.classList.remove('active');
+			}, 500);
 
-				// Set width and height for renderer
-				setTimeout(() => {
-					this.memory.renderer.psdViewer.style.maxHeight = this.height + 'px';
-					this.memory.renderer.dropArea.classList.remove('active');
-				}, 500);
-
-				// Update views
-				setTimeout(() => {
-					this.changeDetectorRef.detectChanges();
-				}, 1500);
-			}
-		);
+			// Update views
+			setTimeout(() => {
+				this.changeDetectorRef.detectChanges();
+			}, 1500);
+		});
 	}
 
 	toggleVisibility($name: string, $uniqueId: string): void {
-		const root: LayerInfo[] = this.infoList;
-		this.recursive(root, ($layer: LayerInfo) => {
-			if ($name === $layer.name && $uniqueId === $layer.uniqueId) {
-				// Folder layer
-				if ($layer.children.length > 0) {
-					if ($layer.hidden.current) {
-						const root: LayerInfo[] = $layer.children;
-						this.recursive(root, ($subLayer: LayerInfo) => {
-							$subLayer.hidden.current = $subLayer.hidden.prev;
-						});
-					} else {
-						const root: LayerInfo[] = $layer.children;
-						this.recursive(root, ($subLayer: LayerInfo) => {
-							$subLayer.hidden.prev = $subLayer.hidden.current;
-							$subLayer.hidden.current = !$layer.hidden.current;
-						});
-					}
-				}
-
-				$layer.hidden.current = !$layer.hidden.current;
-
-				this.changeDetectorRef.detectChanges();
-				this._reRender();
-
-				// To get rid of loop
-				return 0;
-			}
-		});
-	}
-
-	private _render(): void {
-		const c: HTMLCanvasElement = this.memory.renderer.main;
-		c.width = this.width;
-		c.height = this.height;
-		const ctx: CanvasRenderingContext2D = c.getContext('2d');
-		const w: number = this.psd.width * this.scaleRatio;
-		const h: number = this.psd.height * this.scaleRatio;
-
-		ctx.drawImage(this.psd.canvas, 0, 0, w, h);
-	}
-
-	private _reRender(): void {
-		const c: HTMLCanvasElement = this.memory.renderer.main;
-		c.width = this.width;
-		c.height = this.height;
-		const ctx: CanvasRenderingContext2D = c.getContext('2d');
-
-		const root = this.infoList;
-		this.recursive(root, ($layer: LayerInfo) => {
-			const psd = $layer.psd;
-			if ($layer.hidden.current || !psd?.canvas) return;
-
-			const x: number = psd.left * this.scaleRatio;
-			const y: number = psd.top * this.scaleRatio;
-			const w: number = (psd.right - psd.left) * this.scaleRatio;
-			const h: number = (psd.bottom - psd.top) * this.scaleRatio;
-
-			ctx.save();
-			// Set opacity
-			ctx.globalAlpha = psd.opacity;
-
-			// Blend mode
-			if (psd.blendMode === 'overlay') {
-				ctx.globalCompositeOperation = 'overlay';
-			} else if (psd.blendMode === 'screen') {
-				ctx.globalCompositeOperation = 'screen';
-			} else if (psd.blendMode === 'multiply') {
-				ctx.globalCompositeOperation = 'multiply';
-			} else if (psd.blendMode === 'linear dodge') {
-				ctx.globalCompositeOperation = 'lighter';
-			} else if (psd.blendMode === 'soft light') {
-				ctx.globalCompositeOperation = 'soft-light';
-			}
-
-			ctx.drawImage(psd.canvas, x, y, w, h);
-			ctx.restore();
-		});
-	}
-
-	private recursive($root: any[], $callback: Function): void {
-		for (let i = $root.length - 1; i > -1; i--) {
-			const state: number = $callback($root[i]);
-
-			if (state === 0) return;
-
-			if (!$root[i].children?.length) continue;
-			this.recursive($root[i].children, $callback);
-		}
+		this.gpu.toggleVisibility($name, $uniqueId);
+		this.changeDetectorRef.detectChanges();
+		this.gpu.reRender();
 	}
 
 	onFileDropped($fileList: File[]) {
