@@ -14,6 +14,7 @@ import { faEye } from '@fortawesome/free-solid-svg-icons';
 import { faEyeSlash } from '@fortawesome/free-solid-svg-icons';
 import { faAngleRight } from '@fortawesome/free-solid-svg-icons';
 import { faFolder } from '@fortawesome/free-solid-svg-icons';
+import { faDownload } from '@fortawesome/free-solid-svg-icons';
 
 @Component({
 	selector: 'app-editor',
@@ -32,6 +33,9 @@ export class EditorComponent implements OnInit {
 	faEyeSlash = faEyeSlash;
 	faAngleRight = faAngleRight;
 	faFolder = faFolder;
+	faDownload = faDownload;
+
+	isLoading = false;
 
 	constructor(
 		private fileLoader: FileLoaderService,
@@ -49,6 +53,7 @@ export class EditorComponent implements OnInit {
 
 		this.memory.psdData$.subscribe((data: { psd: Psd; fileName: string }) => {
 			console.log(data);
+			if (this.memory.layerInfos$.getValue().length > 0) return;
 
 			const rendererSize: DOMRect = this.dropAreaRef.nativeElement.getBoundingClientRect();
 			const width = rendererSize.width;
@@ -71,6 +76,8 @@ export class EditorComponent implements OnInit {
 
 			// Update views
 			setTimeout(() => {
+				// Unset loading
+				this.isLoading = false;
 				this.changeDetectorRef.detectChanges();
 			}, 1500);
 		});
@@ -83,6 +90,10 @@ export class EditorComponent implements OnInit {
 	}
 
 	onFileDropped($fileList: File[]) {
+		// Set loading
+		this.isLoading = true;
+		this.changeDetectorRef.detectChanges();
+
 		this.fileLoader.onFileDropped($fileList);
 	}
 

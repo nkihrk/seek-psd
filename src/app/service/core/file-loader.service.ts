@@ -10,9 +10,29 @@ export class FileLoaderService {
 	constructor(private memory: MemoryService) {}
 
 	onFileDropped($fileList: File[]): void {
+		if (this.memory.layerInfos$.getValue().length > 0) return;
+
 		for (let i = 0; i < $fileList.length; i++) {
 			this.checkFiles($fileList[i]);
 		}
+	}
+
+	loadFile(): void {
+		const input: HTMLInputElement = document.createElement('input');
+		input.type = 'file';
+		input.onchange = ($e: any) => {
+			const files: FileList = $e.target.files;
+			const fileList: any[] = [];
+			for (const i in files) {
+				if (files.hasOwnProperty(i)) {
+					fileList.push(files[i]);
+				}
+			}
+
+			this.onFileDropped(fileList);
+		};
+
+		input.click();
 	}
 
 	private checkFiles($file: File): void {

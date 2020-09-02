@@ -6,18 +6,24 @@ import { Directive, HostListener, Output, EventEmitter } from '@angular/core';
 export class EventDirective {
 	@Output() fileDropped = new EventEmitter<File[]>();
 
+	private hoverElement: HTMLDivElement;
+
 	constructor() {}
 
 	// Dragover listener
 	@HostListener('dragover', ['$event']) onDragOver($e) {
 		$e.preventDefault();
 		$e.stopPropagation();
+
+		$e.target.children[1].classList.add('active');
 	}
 
 	// Dragleave listener
 	@HostListener('dragleave', ['$event']) onDragLeave($e) {
 		$e.preventDefault();
 		$e.stopPropagation();
+
+		$e.target.children[1].classList.remove('active');
 	}
 
 	// Drop listener

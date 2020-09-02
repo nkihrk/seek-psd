@@ -12,7 +12,17 @@
 					<h3>PSDファイルを開く</h3>
 					<p>ここにファイルをドラッグ＆ドロップ</p>
 				</div>
-				<div class="hover"></div>
+				<div class="hover">
+					<fa-icon *ngIf="!isLoading" [icon]="faDownload" size="3x"></fa-icon>
+					<div *ngIf="isLoading" class="loader">
+						<div class="bar1"></div>
+						<div class="bar2"></div>
+						<div class="bar3"></div>
+						<div class="bar4"></div>
+						<div class="bar5"></div>
+						<div class="bar6"></div>
+					</div>
+				</div>
 			</div>
 
 			<canvas #mainCanvas class="psd-canvas"></canvas>
