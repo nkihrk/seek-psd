@@ -3,7 +3,6 @@
 .container {
 	width: $totalWidth;
 	margin: 0 auto;
-	font-weight: bold;
 
 	h1 {
 		margin: 20px 0;
@@ -26,6 +25,7 @@ footer {
 
 .flex-left-right {
 	display: flex;
+	flex-wrap: wrap;
 	justify-content: space-between;
 }
 
@@ -73,6 +73,7 @@ footer {
 
 		.normal {
 			pointer-events: none;
+			font-weight: bold;
 
 			h3 {
 				margin-top: 10px;
@@ -108,10 +109,14 @@ footer {
 }
 
 .psd-info {
+	position: sticky;
+	top: 0;
 	width: 25%;
+	font-weight: bold;
+	align-self: flex-start;
 
 	h2 {
-		margin-bottom: 10px;
+		margin: 10px 0;
 	}
 
 	.outer-layer-panel {
@@ -222,7 +227,7 @@ footer {
 ///////////////////////////////////////////////////
 
 .tool-bar {
-	position: absolute;
+	position: fixed;
 	z-index: 100;
 	top: 50%;
 	left: 40px;
@@ -290,12 +295,12 @@ footer {
 		transition: background-color 0.1s ease-in-out;
 
 		&:hover {
-			background-color: $thin-gray;
+			background-color: $thin-black;
 		}
 
 		&:active,
 		&.active {
-			background-color: $gray;
+			background-color: $thin-black;
 		}
 	}
 }

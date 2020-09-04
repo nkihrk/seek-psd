@@ -1,4 +1,4 @@
-<div class="tool-bar">
+<nav class="tool-bar">
 	<ul>
 		<li class="icon-prefix name-info-wrapper">
 			<fa-icon [icon]="faEyeDropper" [fixedWidth]="true" size="lg"></fa-icon>
@@ -13,13 +13,15 @@
 			<div class="name-info-column">テスト</div>
 		</li>
 	</ul>
-</div>
+</nav>
 
 <div class="container">
-	<h1>
-		<fa-icon [icon]="faEye" [fixedWidth]="true" size="sm"></fa-icon>
-		SeekPSD
-	</h1>
+	<header>
+		<h1>
+			<fa-icon [icon]="faEye" [fixedWidth]="true" size="sm"></fa-icon>
+			SeekPSD
+		</h1>
+	</header>
 
 	<div class="flex-left-right">
 		<div #psdViewer class="psd-viewer">
@@ -44,6 +46,7 @@
 
 			<canvas #mainCanvas class="psd-canvas"></canvas>
 		</div>
+
 		<div class="psd-info">
 			<h2>
 				<fa-icon [icon]="faSignature" [fixedWidth]="true" size="sm"></fa-icon>
@@ -51,7 +54,7 @@
 			</h2>
 
 			<div class="outer-layer-panel">
-				<div class="layer-panel">
+				<nav class="layer-panel">
 					<ul>
 						<ng-template #recursiveList let-list>
 							<li *ngFor="let item of list; let i = index" style="position: relative">
@@ -86,7 +89,7 @@
 							<ng-container *ngTemplateOutlet="recursiveList; context: { $implicit: list }"></ng-container>
 						</div>
 					</ul>
-				</div>
+				</nav>
 			</div>
 		</div>
 	</div>
