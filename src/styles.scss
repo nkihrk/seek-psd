@@ -1,9 +1,10 @@
 @import './reset';
+@import './variables';
 
 html {
-	background-color: #fefcfb;
+	background-color: $bg-color;
 	overflow-y: scroll;
-	color: #333333;
+	color: $black;
 	overscroll-behavior-y: none;
 	-webkit-overflow-scrolling: touch;
 	/* Firefox 64 */

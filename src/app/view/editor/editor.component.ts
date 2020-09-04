@@ -15,6 +15,7 @@ import { faEyeSlash } from '@fortawesome/free-solid-svg-icons';
 import { faAngleRight } from '@fortawesome/free-solid-svg-icons';
 import { faFolder } from '@fortawesome/free-solid-svg-icons';
 import { faDownload } from '@fortawesome/free-solid-svg-icons';
+import { faEyeDropper } from '@fortawesome/free-solid-svg-icons';
 
 @Component({
 	selector: 'app-editor',
@@ -34,6 +35,7 @@ export class EditorComponent implements OnInit {
 	faAngleRight = faAngleRight;
 	faFolder = faFolder;
 	faDownload = faDownload;
+	faEyeDropper = faEyeDropper;
 
 	isLoading = false;
 
@@ -76,8 +78,6 @@ export class EditorComponent implements OnInit {
 
 			// Update views
 			setTimeout(() => {
-				// Unset loading
-				this.isLoading = false;
 				this.changeDetectorRef.detectChanges();
 			}, 1500);
 		});
