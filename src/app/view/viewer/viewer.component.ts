@@ -18,11 +18,11 @@ import { faDownload } from '@fortawesome/free-solid-svg-icons';
 import { faEyeDropper } from '@fortawesome/free-solid-svg-icons';
 
 @Component({
-	selector: 'app-editor',
-	templateUrl: './editor.component.html',
-	styleUrls: ['./editor.component.scss']
+	selector: 'app-viewer',
+	templateUrl: './viewer.component.html',
+	styleUrls: ['./viewer.component.scss']
 })
-export class EditorComponent implements OnInit {
+export class ViewerComponent implements OnInit {
 	@ViewChild('psdViewer', { static: true }) psdViewerRef: ElementRef<HTMLDivElement>;
 	@ViewChild('dropArea', { static: true }) dropAreaRef: ElementRef<HTMLDivElement>;
 	@ViewChild('mainCanvas', { static: true }) mainCanvasRef: ElementRef<HTMLCanvasElement>;

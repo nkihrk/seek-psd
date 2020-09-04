@@ -1,11 +1,11 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 
-import { EditorComponent } from './view/editor/editor.component';
+import { ViewerComponent } from './view/viewer/viewer.component';
 
 const routes: Routes = [
-	{ path: '', redirectTo: '/editor', pathMatch: 'full' },
-	{ path: 'editor', component: EditorComponent }
+	{ path: '', redirectTo: '/viewer', pathMatch: 'full' },
+	{ path: 'viewer', component: ViewerComponent }
 ];
 
 @NgModule({
