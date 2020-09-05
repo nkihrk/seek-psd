@@ -8,6 +8,8 @@ import { LayerInfo } from '../../model/layer-info.model';
 import { GpuService } from '../../service/core/gpu.service';
 import { FuncService } from '../../service/core/func.service';
 import { Pointer } from '../../model/pointer.model';
+import { FlagService } from '../../service/core/flag.service';
+import { CpuService } from '../../service/core/cpu.service';
 
 // Fontawesome
 import { faFileImage } from '@fortawesome/free-solid-svg-icons';
@@ -57,7 +59,9 @@ export class ViewerComponent implements OnInit, OnDestroy {
 		public memory: MemoryService,
 		private changeDetectorRef: ChangeDetectorRef,
 		private gpu: GpuService,
-		private func: FuncService
+		private func: FuncService,
+		private flag: FlagService,
+		private cpu: CpuService
 	) {}
 
 	ngOnInit(): void {
@@ -76,6 +80,7 @@ export class ViewerComponent implements OnInit, OnDestroy {
 			const rendererSize: DOMRect = this.dropAreaRef.nativeElement.getBoundingClientRect();
 			const width = rendererSize.width;
 			const height = rendererSize.width * (data.psd.height / data.psd.width);
+			console.log(height);
 			const scaleRatio = rendererSize.width / data.psd.width;
 
 			this.memory.updateRenderer(data.fileName, { width, height, scaleRatio }, data.psd);
@@ -88,7 +93,8 @@ export class ViewerComponent implements OnInit, OnDestroy {
 
 			// Set width and height for renderer
 			setTimeout(() => {
-				this.memory.renderer.element.psdViewer.style.maxHeight = height + 'px';
+				// 60px is due to the renderer set to padding: 30px;
+				this.memory.renderer.element.psdViewer.style.maxHeight = height + 60 + 'px';
 				this.memory.renderer.element.dropArea.classList.remove('active');
 			}, 500);
 
@@ -112,7 +118,8 @@ export class ViewerComponent implements OnInit, OnDestroy {
 	}
 
 	onPointerEvent($pointerData: Pointer): void {
-		console.log($pointerData);
+		this.flag.update($pointerData);
+		this.cpu.update($pointerData);
 	}
 
 	toggleVisibility($name: string, $uniqueId: string): void {
@@ -122,6 +129,11 @@ export class ViewerComponent implements OnInit, OnDestroy {
 	}
 
 	execFunc($name: string): void {
+		// Initialize ui canvas
+		const c: HTMLCanvasElement = this.memory.renderer.element.ui;
+		c.width = 1;
+		c.height = 1;
+
 		if (this.memory.reservedByFunc$.getValue().current.name === $name) {
 			// Initialize state and return
 			this.memory.updateReservedByFunc({

@@ -2,6 +2,8 @@ import { Injectable, ChangeDetectorRef } from '@angular/core';
 import { Subject, Observable, BehaviorSubject } from 'rxjs';
 import { Psd } from 'ag-psd';
 import { LayerInfo } from '../../model/layer-info.model';
+import { Flgs } from '../../model/flgs.model';
+import { PointerOffset } from '../../model/pointer-offset.model';
 
 @Injectable({
 	providedIn: 'root'
@@ -28,6 +30,43 @@ export class MemoryService {
 
 	// Renderer
 	renderer = { element: {} as Element, size: {} as Size } as Renderer;
+
+	// Flags
+	flgs: Flgs = {
+		downFlg: false,
+		// - Similarly to mousedown events
+		leftDownFlg: false,
+		middleDownFlg: false,
+		rightDownFlg: false,
+		// - Similarly to mouseup events
+		leftUpFlg: false,
+		middleUpFlg: false,
+		rightUpFlg: false,
+		// - Similarly to mousedown + mousemove events
+		leftDownMoveFlg: false,
+		middleDownMoveFlg: false,
+		rightDownMoveFlg: false
+	};
+
+	// Pointer offsets
+	pointerOffset: PointerOffset = {
+		current: {
+			x: -Infinity,
+			y: -Infinity
+		},
+		prev: {
+			x: -Infinity,
+			y: -Infinity
+		},
+		raw: {
+			x: -Infinity,
+			y: -Infinity
+		},
+		tmp: {
+			x: -Infinity,
+			y: -Infinity
+		}
+	};
 
 	///////////////////////////////////////////////////////////////////////////
 	//
