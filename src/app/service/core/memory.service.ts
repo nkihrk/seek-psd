@@ -9,12 +9,31 @@ import { LayerInfo } from '../../model/layer-info.model';
 export class MemoryService {
 	constructor() {}
 
-	// Streaming
+	// Data stream
 	psdData$: Subject<{ psd: Psd; fileName: string }> = new Subject();
 	layerInfos$: BehaviorSubject<LayerInfo[]> = new BehaviorSubject([]);
 	fileName$: BehaviorSubject<string> = new BehaviorSubject('');
+	reservedByFunc$: BehaviorSubject<ReservedByFunc> = new BehaviorSubject({
+		current: {
+			name: '',
+			type: '',
+			group: ''
+		},
+		prev: {
+			name: '',
+			type: '',
+			group: ''
+		}
+	});
 
+	// Renderer
 	renderer = { element: {} as Element, size: {} as Size } as Renderer;
+
+	///////////////////////////////////////////////////////////////////////////
+	//
+	//	Public methods
+	//
+	///////////////////////////////////////////////////////////////////////////
 
 	initRenderer($psdViewer: HTMLDivElement, $dropArea: HTMLDivElement, $main: HTMLCanvasElement): void {
 		this.renderer.element.psdViewer = $psdViewer;
@@ -41,6 +60,25 @@ export class MemoryService {
 		this.updateLayerInfos([]);
 		this.updateFileName('');
 	}
+
+	updateReservedByFunc($reserved: Reserved): void {
+		const current: Reserved = this.reservedByFunc$.getValue().current;
+		this.reservedByFunc$.next({
+			current: $reserved,
+			prev: current
+		});
+	}
+}
+
+interface ReservedByFunc {
+	current: Reserved;
+	prev: Reserved;
+}
+
+interface Reserved {
+	name: string;
+	type: string;
+	group: string;
 }
 
 interface Renderer {

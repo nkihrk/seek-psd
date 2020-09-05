@@ -6,6 +6,7 @@ import { Psd, Layer } from 'ag-psd';
 import * as _ from 'lodash';
 import { LayerInfo } from '../../model/layer-info.model';
 import { GpuService } from '../../service/core/gpu.service';
+import { FuncService } from '../../service/core/func.service';
 
 // Fontawesome
 import { faFileImage } from '@fortawesome/free-solid-svg-icons';
@@ -49,7 +50,8 @@ export class ViewerComponent implements OnInit, OnDestroy {
 		private fileLoader: FileLoaderService,
 		public memory: MemoryService,
 		private changeDetectorRef: ChangeDetectorRef,
-		private gpu: GpuService
+		private gpu: GpuService,
+		private func: FuncService
 	) {}
 
 	ngOnInit(): void {
@@ -93,12 +95,12 @@ export class ViewerComponent implements OnInit, OnDestroy {
 		this.memory.psdData$.unsubscribe();
 	}
 
-	refreshPSD(): void {
-		this.memory.refreshData();
+	onFileDropped($fileList: File[]) {
+		// Set loading
+		this.isLoading = true;
+		this.changeDetectorRef.detectChanges();
 
-		this.memory.renderer.element.psdViewer.style.maxHeight = '300px';
-		this.memory.renderer.element.dropArea.classList.add('active');
-		this.isLoading = false;
+		this.fileLoader.onFileDropped($fileList);
 	}
 
 	toggleVisibility($name: string, $uniqueId: string): void {
@@ -107,13 +109,55 @@ export class ViewerComponent implements OnInit, OnDestroy {
 		this.gpu.reRender();
 	}
 
-	onFileDropped($fileList: File[]) {
-		// Set loading
-		this.isLoading = true;
-		this.changeDetectorRef.detectChanges();
+	execFunc($name: string): void {
+		if (this.memory.reservedByFunc$.getValue().current.name === $name) {
+			// Initialize state and return
+			this.memory.updateReservedByFunc({
+				name: '',
+				type: '',
+				group: ''
+			});
+			return;
+		}
 
-		this.fileLoader.onFileDropped($fileList);
+		switch ($name) {
+			case 'color-picker':
+				this.func.colorPicker();
+				break;
+
+			case 'crop':
+				this.func.crop();
+				break;
+
+			case 'zoom':
+				this.func.zoom();
+				break;
+
+			case 'garbage':
+				this._garbage();
+				break;
+
+			default:
+				break;
+		}
 	}
+
+	private _garbage(): void {
+		this.memory.refreshData();
+
+		this.memory.renderer.element.dropArea.classList.add('active');
+		this.isLoading = false;
+
+		setTimeout(() => {
+			this.memory.renderer.element.psdViewer.style.maxHeight = '300px';
+		}, 400);
+	}
+
+	///////////////////////////////////////////////////////////////////////////
+	//
+	//	Processing PSD data
+	//
+	///////////////////////////////////////////////////////////////////////////
 
 	private _extractPsdData($psd: Psd): LayerInfo[] {
 		const root: Layer[] = $psd.children;

@@ -1,21 +1,33 @@
 <nav class="tool-bar">
 	<ul>
-		<li class="icon-prefix name-info-wrapper">
+		<li
+			(click)="execFunc('color-picker')"
+			[ngClass]="{ active: (memory.reservedByFunc$ | async)?.current.name === 'color-picker' }"
+			class="icon-prefix name-info-wrapper"
+		>
 			<fa-icon [icon]="faEyeDropper" [fixedWidth]="true" size="lg"></fa-icon>
 			<div class="name-info-column">スポイト</div>
 		</li>
-		<li class="icon-prefix name-info-wrapper">
+		<li
+			(click)="execFunc('crop')"
+			[ngClass]="{ active: (memory.reservedByFunc$ | async)?.current.name === 'crop' }"
+			class="icon-prefix name-info-wrapper"
+		>
 			<fa-icon [icon]="faCropAlt" [fixedWidth]="true" size="lg"></fa-icon>
-			<div class="name-info-column">トリミング</div>
+			<div class="name-info-column">クロッピング</div>
 		</li>
-		<li class="icon-prefix name-info-wrapper">
+		<li
+			(click)="execFunc('zoom')"
+			[ngClass]="{ active: (memory.reservedByFunc$ | async)?.current.name === 'zoom' }"
+			class="icon-prefix name-info-wrapper"
+		>
 			<fa-icon [icon]="faSearch" [fixedWidth]="true" size="lg" style="transform: scale(-1, 1)"></fa-icon>
 			<div class="name-info-column">拡大・縮小</div>
 		</li>
 	</ul>
 </nav>
 
-<div (click)="refreshPSD()" class="refresh-psd">
+<div (click)="execFunc('garbage')" class="garbage">
 	<div class="icon-prefix name-info-wrapper">
 		<fa-icon [icon]="faTrashAlt" [fixedWidth]="true" size="lg" style="transform: scale(-1, 1)"></fa-icon>
 		<div class="name-info-column">ゴミ箱</div>
@@ -54,7 +66,7 @@
 			<canvas #mainCanvas class="psd-canvas"></canvas>
 		</div>
 
-		<div class="psd-info">
+		<div class="layer-info">
 			<h2>
 				<fa-icon [icon]="faSignature" [fixedWidth]="true" size="sm"></fa-icon>
 				{{ memory.fileName$ | async }}

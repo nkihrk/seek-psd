@@ -1,0 +1,45 @@
+import { Injectable } from '@angular/core';
+import { ColorPickerService } from '../module/color-picker.service';
+import { CropService } from '../module/crop.service';
+import { ZoomService } from '../module/zoom.service';
+
+@Injectable({
+	providedIn: 'root'
+})
+export class FuncService {
+	constructor(
+		private colorPickerFunc: ColorPickerService,
+		private cropFunc: CropService,
+		private zoomFunc: ZoomService
+	) {}
+
+	///////////////////////////////////////////////////////////////////////////
+	//
+	//	Color picker
+	//
+	///////////////////////////////////////////////////////////////////////////
+
+	colorPicker(): void {
+		this.colorPickerFunc.activate();
+	}
+
+	///////////////////////////////////////////////////////////////////////////
+	//
+	//	Crop
+	//
+	///////////////////////////////////////////////////////////////////////////
+
+	crop(): void {
+		this.cropFunc.activate();
+	}
+
+	///////////////////////////////////////////////////////////////////////////
+	//
+	//	zoom
+	//
+	///////////////////////////////////////////////////////////////////////////
+
+	zoom(): void {
+		this.zoomFunc.activate();
+	}
+}
