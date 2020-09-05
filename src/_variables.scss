@@ -1,5 +1,21 @@
 ///////////////////////////////////////////////////
 //
+//	Color
+//
+///////////////////////////////////////////////////
+
+$red: #e56470;
+
+$thin-black: rgba(#333333, 0.1);
+$black: #333333;
+
+$thin-gray: #f2f6f9;
+$gray: #dee2e6;
+
+$bg-color: #fefcfb;
+
+///////////////////////////////////////////////////
+//
 //	Variable
 //
 ///////////////////////////////////////////////////
@@ -7,18 +23,4 @@
 $transition: 0.2s ease-in-out;
 $totalWidth: 1200px;
 $scrollbar-size: 6px;
-$box-shadow: 8px 8px 6px -6px rgba(black, 0.1);
-
-///////////////////////////////////////////////////
-//
-//	Color
-//
-///////////////////////////////////////////////////
-
-$thin-black: rgba(black, 0.1);
-$black: #333333;
-
-$thin-gray: #f2f6f9;
-$gray: #dee2e6;
-
-$bg-color: #fefcfb;
+$box-shadow: 8px 8px 6px -6px $thin-black;

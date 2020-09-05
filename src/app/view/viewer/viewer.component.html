@@ -2,18 +2,25 @@
 	<ul>
 		<li class="icon-prefix name-info-wrapper">
 			<fa-icon [icon]="faEyeDropper" [fixedWidth]="true" size="lg"></fa-icon>
-			<div class="name-info-column">テスト</div>
+			<div class="name-info-column">スポイト</div>
 		</li>
 		<li class="icon-prefix name-info-wrapper">
-			<fa-icon [icon]="faEye" [fixedWidth]="true" size="lg"></fa-icon>
-			<div class="name-info-column">テスト</div>
+			<fa-icon [icon]="faCropAlt" [fixedWidth]="true" size="lg"></fa-icon>
+			<div class="name-info-column">トリミング</div>
 		</li>
 		<li class="icon-prefix name-info-wrapper">
-			<fa-icon [icon]="faDownload" [fixedWidth]="true" size="lg"></fa-icon>
-			<div class="name-info-column">テスト</div>
+			<fa-icon [icon]="faSearch" [fixedWidth]="true" size="lg" style="transform: scale(-1, 1)"></fa-icon>
+			<div class="name-info-column">拡大・縮小</div>
 		</li>
 	</ul>
 </nav>
+
+<div (click)="refreshPSD()" class="refresh-psd">
+	<div class="icon-prefix name-info-wrapper">
+		<fa-icon [icon]="faTrashAlt" [fixedWidth]="true" size="lg" style="transform: scale(-1, 1)"></fa-icon>
+		<div class="name-info-column">ゴミ箱</div>
+	</div>
+</div>
 
 <div class="container">
 	<header>

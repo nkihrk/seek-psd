@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, ElementRef, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChild, ElementRef, ChangeDetectorRef } from '@angular/core';
 import { Observable, of } from 'rxjs';
 import { FileLoaderService } from '../../service/core/file-loader.service';
 import { MemoryService } from '../../service/core/memory.service';
@@ -16,13 +16,16 @@ import { faAngleRight } from '@fortawesome/free-solid-svg-icons';
 import { faFolder } from '@fortawesome/free-solid-svg-icons';
 import { faDownload } from '@fortawesome/free-solid-svg-icons';
 import { faEyeDropper } from '@fortawesome/free-solid-svg-icons';
+import { faCropAlt } from '@fortawesome/free-solid-svg-icons';
+import { faSearch } from '@fortawesome/free-solid-svg-icons';
+import { faTrashAlt } from '@fortawesome/free-solid-svg-icons';
 
 @Component({
 	selector: 'app-viewer',
 	templateUrl: './viewer.component.html',
 	styleUrls: ['./viewer.component.scss']
 })
-export class ViewerComponent implements OnInit {
+export class ViewerComponent implements OnInit, OnDestroy {
 	@ViewChild('psdViewer', { static: true }) psdViewerRef: ElementRef<HTMLDivElement>;
 	@ViewChild('dropArea', { static: true }) dropAreaRef: ElementRef<HTMLDivElement>;
 	@ViewChild('mainCanvas', { static: true }) mainCanvasRef: ElementRef<HTMLCanvasElement>;
@@ -36,6 +39,9 @@ export class ViewerComponent implements OnInit {
 	faFolder = faFolder;
 	faDownload = faDownload;
 	faEyeDropper = faEyeDropper;
+	faCropAlt = faCropAlt;
+	faSearch = faSearch;
+	faTrashAlt = faTrashAlt;
 
 	isLoading = false;
 
@@ -81,6 +87,18 @@ export class ViewerComponent implements OnInit {
 				this.changeDetectorRef.detectChanges();
 			}, 1500);
 		});
+	}
+
+	ngOnDestroy(): void {
+		this.memory.psdData$.unsubscribe();
+	}
+
+	refreshPSD(): void {
+		this.memory.refreshData();
+
+		this.memory.renderer.element.psdViewer.style.maxHeight = '300px';
+		this.memory.renderer.element.dropArea.classList.add('active');
+		this.isLoading = false;
 	}
 
 	toggleVisibility($name: string, $uniqueId: string): void {

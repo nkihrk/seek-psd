@@ -1,7 +1,7 @@
 @import '../../../variables';
 
 .container {
-	width: $totalWidth;
+	max-width: $totalWidth;
 	margin: 0 auto;
 
 	h1 {
@@ -38,6 +38,12 @@ footer {
 	box-shadow: $box-shadow;
 }
 
+///////////////////////////////////////////////////
+//
+//	PSD viewer
+//
+///////////////////////////////////////////////////
+
 .psd-viewer {
 	position: relative;
 	width: 72%;
@@ -68,6 +74,7 @@ footer {
 		}
 
 		&.active {
+			transition-delay: initial;
 			opacity: 1;
 		}
 
@@ -107,6 +114,12 @@ footer {
 		background-image: url('../../../assets/Transparency10.png');
 	}
 }
+
+///////////////////////////////////////////////////
+//
+//	Layer info
+//
+///////////////////////////////////////////////////
 
 .psd-info {
 	position: sticky;
@@ -214,10 +227,89 @@ footer {
 	}
 }
 
+///////////////////////////////////////////////////
+//
+//	Ellipsis
+//
+///////////////////////////////////////////////////
+
 .ellipsis {
 	overflow: hidden;
 	white-space: nowrap;
 	text-overflow: ellipsis;
+}
+
+///////////////////////////////////////////////////
+//
+//	Name info
+//
+///////////////////////////////////////////////////
+
+.name-info-wrapper {
+	position: relative;
+
+	&:hover {
+		.name-info-column {
+			transition-delay: 500ms;
+			opacity: 1;
+		}
+	}
+
+	.name-info-column {
+		display: flex;
+		align-content: center;
+		justify-content: center;
+		position: absolute;
+		z-index: 100;
+		top: 50%;
+		left: 140%;
+		transform: translateY(-50%);
+		font-size: 0.8rem;
+		font-weight: bold;
+		padding: 5px 10px;
+		border-radius: 3px;
+		white-space: nowrap;
+		opacity: 0;
+
+		color: white;
+		background-color: $black;
+		border: none;
+
+		user-select: none;
+		pointer-events: none;
+		transition: opacity $transition;
+
+		&:before {
+			content: '';
+			position: absolute;
+			top: 50%;
+			left: -12px;
+			transform: translateY(-50%);
+			border: 6px solid transparent;
+			border-right: 6px solid #333333;
+		}
+	}
+}
+
+.icon-prefix {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	width: 45px;
+	height: 45px;
+	margin: 5px;
+	border-radius: 10px;
+
+	transition: background-color 0.1s ease-in-out;
+
+	&:hover {
+		background-color: $thin-black;
+	}
+
+	&:active,
+	&.active {
+		background-color: $thin-black;
+	}
 }
 
 ///////////////////////////////////////////////////
@@ -232,77 +324,27 @@ footer {
 	top: 50%;
 	left: 40px;
 	transform: translateY(-50%);
-	background-color: white;
+	//background-color: white;
 	border: solid 1px $thin-black;
 	border-radius: 10px;
 	box-shadow: $box-shadow;
+}
 
-	.name-info-wrapper {
-		position: relative;
+///////////////////////////////////////////////////
+//
+//	Refresh psd
+//
+///////////////////////////////////////////////////
 
-		&:hover {
-			.name-info-column {
-				transition-delay: 500ms;
-				opacity: 1;
-			}
-		}
-
-		.name-info-column {
-			display: flex;
-			align-content: center;
-			justify-content: center;
-			position: absolute;
-			z-index: 100;
-			top: 50%;
-			left: 140%;
-			transform: translateY(-50%);
-			font-size: 0.8rem;
-			font-weight: bold;
-			padding: 5px 10px;
-			border-radius: 3px;
-			white-space: nowrap;
-			opacity: 0;
-
-			color: white;
-			background-color: $black;
-			border: none;
-
-			user-select: none;
-			pointer-events: none;
-			transition: opacity $transition;
-
-			&:before {
-				content: '';
-				position: absolute;
-				top: 50%;
-				left: -12px;
-				transform: translateY(-50%);
-				border: 6px solid transparent;
-				border-right: 6px solid #333333;
-			}
-		}
-	}
-
-	.icon-prefix {
-		display: flex;
-		justify-content: center;
-		align-items: center;
-		width: 45px;
-		height: 45px;
-		margin: 5px;
-		border-radius: 10px;
-
-		transition: background-color 0.1s ease-in-out;
-
-		&:hover {
-			background-color: $thin-black;
-		}
-
-		&:active,
-		&.active {
-			background-color: $thin-black;
-		}
-	}
+.refresh-psd {
+	position: fixed;
+	z-index: 100;
+	bottom: 40px;
+	left: 40px;
+	border: solid 1px $thin-black;
+	border-radius: 10px;
+	box-shadow: $box-shadow;
+	color: $red;
 }
 
 ///////////////////////////////////////////////////

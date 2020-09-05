@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, ChangeDetectorRef } from '@angular/core';
 import { Subject, Observable, BehaviorSubject } from 'rxjs';
 import { Psd } from 'ag-psd';
 import { LayerInfo } from '../../model/layer-info.model';
@@ -34,6 +34,12 @@ export class MemoryService {
 
 	updateFileName($name: string): void {
 		this.fileName$.next($name);
+	}
+
+	refreshData(): void {
+		this.updateRenderer('', null, null);
+		this.updateLayerInfos([]);
+		this.updateFileName('');
 	}
 }
 

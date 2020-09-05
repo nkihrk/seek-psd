@@ -16,6 +16,7 @@ export class EventDirective {
 		$e.stopPropagation();
 
 		$e.target.children[1].classList.add('active');
+		this.hoverElement = $e.target.children[1];
 	}
 
 	// Dragleave listener
@@ -26,6 +27,11 @@ export class EventDirective {
 		$e.target.children[1].classList.remove('active');
 	}
 
+	@HostListener('document:pointerup', ['$event']) onPointerUp($e) {
+		if (!this.hoverElement?.classList.contains('active')) return;
+		this.hoverElement.classList.remove('active');
+		this.hoverElement = null;
+	}
 	// Drop listener
 	@HostListener('drop', ['$event']) async onDrop($e: DragEvent) {
 		$e.preventDefault();
