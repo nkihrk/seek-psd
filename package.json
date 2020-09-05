@@ -25,6 +25,7 @@
 		"@fortawesome/free-regular-svg-icons": "^5.13.1",
 		"@fortawesome/free-solid-svg-icons": "^5.13.1",
 		"ag-psd": "^11.1.2",
+		"angular-notifier": "^6.0.1",
 		"lodash": "^4.17.20",
 		"rxjs": "~6.5.5",
 		"tslib": "^2.0.0",

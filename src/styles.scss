@@ -5,6 +5,7 @@ html {
 	background-color: $bg-color;
 	overflow-y: scroll;
 	color: $black;
+	font-weight: bold;
 	overscroll-behavior-y: none;
 	-webkit-overflow-scrolling: touch;
 	/* Firefox 64 */

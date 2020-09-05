@@ -9,10 +9,20 @@
 	}
 }
 
+header {
+	a,
+	a:hover,
+	a:active,
+	a:visited {
+		color: $black;
+	}
+}
+
 footer {
 	display: flex;
 	justify-content: center;
 	margin-top: 50px;
+	font-weight: initial;
 
 	.wrapper {
 		text-align: center;
@@ -299,6 +309,7 @@ footer {
 	height: 45px;
 	margin: 5px;
 	border-radius: 10px;
+	user-select: none;
 
 	transition: background-color 0.1s ease-in-out;
 
