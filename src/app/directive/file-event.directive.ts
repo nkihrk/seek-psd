@@ -1,9 +1,9 @@
 import { Directive, HostListener, Output, EventEmitter } from '@angular/core';
 
 @Directive({
-	selector: '[appEvent]'
+	selector: '[appFileEvent]'
 })
-export class EventDirective {
+export class FileEventDirective {
 	@Output() fileDropped = new EventEmitter<File[]>();
 
 	private hoverElement: HTMLDivElement;

@@ -7,6 +7,7 @@ import * as _ from 'lodash';
 import { LayerInfo } from '../../model/layer-info.model';
 import { GpuService } from '../../service/core/gpu.service';
 import { FuncService } from '../../service/core/func.service';
+import { Pointer } from '../../model/pointer.model';
 
 // Fontawesome
 import { faFileImage } from '@fortawesome/free-solid-svg-icons';
@@ -27,9 +28,14 @@ import { faTrashAlt } from '@fortawesome/free-solid-svg-icons';
 	styleUrls: ['./viewer.component.scss']
 })
 export class ViewerComponent implements OnInit, OnDestroy {
+	// div
 	@ViewChild('psdViewer', { static: true }) psdViewerRef: ElementRef<HTMLDivElement>;
 	@ViewChild('dropArea', { static: true }) dropAreaRef: ElementRef<HTMLDivElement>;
+	@ViewChild('uiCanvasWrapper', { static: true }) uiCanvasWrapperRef: ElementRef<HTMLDivElement>;
+
+	// canvas
 	@ViewChild('mainCanvas', { static: true }) mainCanvasRef: ElementRef<HTMLCanvasElement>;
+	@ViewChild('uiCanvas', { static: true }) uiCanvasRef: ElementRef<HTMLCanvasElement>;
 
 	// Fontawesome
 	faFileImage = faFileImage;
@@ -58,7 +64,9 @@ export class ViewerComponent implements OnInit, OnDestroy {
 		this.memory.initRenderer(
 			this.psdViewerRef.nativeElement,
 			this.dropAreaRef.nativeElement,
-			this.mainCanvasRef.nativeElement
+			this.uiCanvasWrapperRef.nativeElement,
+			this.mainCanvasRef.nativeElement,
+			this.uiCanvasRef.nativeElement
 		);
 
 		this.memory.psdData$.subscribe((data: { psd: Psd; fileName: string }) => {
@@ -101,6 +109,10 @@ export class ViewerComponent implements OnInit, OnDestroy {
 		this.changeDetectorRef.detectChanges();
 
 		this.fileLoader.onFileDropped($fileList);
+	}
+
+	onPointerEvent($pointerData: Pointer): void {
+		console.log($pointerData);
 	}
 
 	toggleVisibility($name: string, $uniqueId: string): void {

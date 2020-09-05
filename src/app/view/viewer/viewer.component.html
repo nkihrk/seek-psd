@@ -46,7 +46,7 @@
 
 	<div class="flex-left-right">
 		<div #psdViewer class="psd-viewer">
-			<div #dropArea appEvent (fileDropped)="onFileDropped($event)" class="drop-area active">
+			<div #dropArea appFileEvent (fileDropped)="onFileDropped($event)" class="drop-area active">
 				<div class="normal">
 					<fa-icon [icon]="faFileImage" size="3x"></fa-icon>
 					<h3>PSDファイルを開く</h3>
@@ -125,3 +125,7 @@
 		<a href="https://github.com/nkihrk/seek-psd" target="_blank">About SeekPSD</a>
 	</div>
 </footer>
+
+<div #uiCanvasWrapper appPointerEvent (pointerData)="onPointerEvent($event)" class="color-picker-wrapper">
+	<canvas #uiCanvas></canvas>
+</div>

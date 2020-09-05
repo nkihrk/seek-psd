@@ -15,6 +15,8 @@ export class ColorPickerService {
 			group: ''
 		});
 
-		this.notifier.notify('success', 'Copy to clipboard : #333333');
+		this.notifier.notify('success', 'クリップボードにコピー : #333333');
 	}
+
+	render(): void {}
 }

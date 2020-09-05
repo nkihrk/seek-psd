@@ -50,6 +50,18 @@ footer {
 
 ///////////////////////////////////////////////////
 //
+//	Ellipsis
+//
+///////////////////////////////////////////////////
+
+.ellipsis {
+	overflow: hidden;
+	white-space: nowrap;
+	text-overflow: ellipsis;
+}
+
+///////////////////////////////////////////////////
+//
 //	PSD viewer
 //
 ///////////////////////////////////////////////////
@@ -239,14 +251,53 @@ footer {
 
 ///////////////////////////////////////////////////
 //
-//	Ellipsis
+//	UI canvas
 //
 ///////////////////////////////////////////////////
 
-.ellipsis {
-	overflow: hidden;
-	white-space: nowrap;
-	text-overflow: ellipsis;
+.color-picker-wrapper {
+	position: fixed;
+	z-index: 200;
+	top: 0;
+	left: 0;
+	width: 100vw;
+	height: 100vh;
+	pointer-events: none;
+}
+
+///////////////////////////////////////////////////
+//
+//	Tool bar
+//
+///////////////////////////////////////////////////
+
+.tool-bar {
+	position: fixed;
+	z-index: 100;
+	top: 50%;
+	left: 40px;
+	transform: translateY(-50%);
+	//background-color: white;
+	border: solid 1px $thin-black;
+	border-radius: 10px;
+	box-shadow: $box-shadow;
+}
+
+///////////////////////////////////////////////////
+//
+//	Garbage
+//
+///////////////////////////////////////////////////
+
+.garbage {
+	position: fixed;
+	z-index: 100;
+	bottom: 40px;
+	left: 40px;
+	border: solid 1px $thin-black;
+	border-radius: 10px;
+	box-shadow: $box-shadow;
+	color: $red;
 }
 
 ///////////////////////////////////////////////////
@@ -321,41 +372,6 @@ footer {
 	&.active {
 		background-color: $thin-black;
 	}
-}
-
-///////////////////////////////////////////////////
-//
-//	Tool bar
-//
-///////////////////////////////////////////////////
-
-.tool-bar {
-	position: fixed;
-	z-index: 100;
-	top: 50%;
-	left: 40px;
-	transform: translateY(-50%);
-	//background-color: white;
-	border: solid 1px $thin-black;
-	border-radius: 10px;
-	box-shadow: $box-shadow;
-}
-
-///////////////////////////////////////////////////
-//
-//	Garbage
-//
-///////////////////////////////////////////////////
-
-.garbage {
-	position: fixed;
-	z-index: 100;
-	bottom: 40px;
-	left: 40px;
-	border: solid 1px $thin-black;
-	border-radius: 10px;
-	box-shadow: $box-shadow;
-	color: $red;
 }
 
 ///////////////////////////////////////////////////

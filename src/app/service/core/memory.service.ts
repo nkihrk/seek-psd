@@ -35,10 +35,18 @@ export class MemoryService {
 	//
 	///////////////////////////////////////////////////////////////////////////
 
-	initRenderer($psdViewer: HTMLDivElement, $dropArea: HTMLDivElement, $main: HTMLCanvasElement): void {
+	initRenderer(
+		$psdViewer: HTMLDivElement,
+		$dropArea: HTMLDivElement,
+		$uiCanvasWrapper: HTMLDivElement,
+		$main: HTMLCanvasElement,
+		$ui: HTMLCanvasElement
+	): void {
 		this.renderer.element.psdViewer = $psdViewer;
 		this.renderer.element.dropArea = $dropArea;
+		this.renderer.element.uiCanvasWrapper = $uiCanvasWrapper;
 		this.renderer.element.main = $main;
+		this.renderer.element.ui = $ui;
 	}
 
 	updateRenderer($fileName: string, $size: { width: number; height: number; scaleRatio: number }, $psd: Psd): void {
@@ -89,9 +97,13 @@ interface Renderer {
 }
 
 interface Element {
+	// div
 	psdViewer: HTMLDivElement;
 	dropArea: HTMLDivElement;
+	uiCanvasWrapper: HTMLDivElement;
+	// canvas
 	main: HTMLCanvasElement;
+	ui: HTMLCanvasElement;
 }
 
 interface Size {

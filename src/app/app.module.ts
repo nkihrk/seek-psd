@@ -6,11 +6,18 @@ import { NotifierModule } from 'angular-notifier';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { ViewerComponent } from './view/viewer/viewer.component';
-import { EventDirective } from './directive/event.directive';
 import { PreventHoverPropagationDirective } from './directive/prevent-hover-propagation.directive';
+import { FileEventDirective } from './directive/file-event.directive';
+import { PointerEventDirective } from './directive/pointer-event.directive';
 
 @NgModule({
-	declarations: [AppComponent, ViewerComponent, EventDirective, PreventHoverPropagationDirective],
+	declarations: [
+		AppComponent,
+		ViewerComponent,
+		PreventHoverPropagationDirective,
+		FileEventDirective,
+		PointerEventDirective
+	],
 	imports: [
 		BrowserModule,
 		AppRoutingModule,
