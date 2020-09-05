@@ -47,7 +47,7 @@ export class ColorPickerService {
 		hex = hex === '0' ? '000000' : hex;
 		this.prevPixel = hex;
 		// Update color state
-		this.notifier.notify('success', `Copy to clipboard : #${hex}`);
+		this.notifier.notify('success', `クリップボードにコピー : #${hex}`);
 		// Copy hex to clipboard
 		this.copyTextToClipboard(hex);
 	}
