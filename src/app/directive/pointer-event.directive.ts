@@ -45,35 +45,14 @@ export class PointerEventDirective {
 		this._onMove($e);
 	}
 
-	// Touchstart listener
-	@HostListener('document:touchstart', ['$event']) onTouchStart($e): void {
-		this._onDown($e);
-	}
-
-	// Touchend listener
-	@HostListener('document:touchend', ['$event']) onTouchEnd($e): void {
-		this._onUp($e);
-	}
-
-	// Touchmove listener
-	@HostListener('document:touchmove', ['$event']) onTouchMove($e): void {
-		this._onMove($e);
-	}
-
 	// Down event
 	_onDown($e: any): void {
 		let clientX: number;
 		let clientY: number;
 
-		if ($e.type === 'touchstart') {
-			clientX = $e.touches[0].clientX;
-			clientY = $e.touches[0].clientY;
-			this.btn = 0;
-		} else {
-			clientX = $e.clientX;
-			clientY = $e.clientY;
-			this.btn = $e.button;
-		}
+		clientX = $e.clientX;
+		clientY = $e.clientY;
+		this.btn = $e.button;
 
 		// Initialize flags
 		this._resetAllFlgs();
@@ -86,13 +65,8 @@ export class PointerEventDirective {
 		let clientX: number;
 		let clientY: number;
 
-		if ($e.type === 'touchend') {
-			clientX = $e.changedTouches[0].clientX;
-			clientY = $e.changedTouches[0].clientY;
-		} else {
-			clientX = $e.clientX;
-			clientY = $e.clientY;
-		}
+		clientX = $e.clientX;
+		clientY = $e.clientY;
 
 		// Initialize flags
 		this._resetAllFlgs();
@@ -104,13 +78,8 @@ export class PointerEventDirective {
 		let clientX: number;
 		let clientY: number;
 
-		if ($e.type === 'touchmove') {
-			clientX = $e.touches[0].clientX;
-			clientY = $e.touches[0].clientY;
-		} else {
-			clientX = $e.clientX;
-			clientY = $e.clientY;
-		}
+		clientX = $e.clientX;
+		clientY = $e.clientY;
 
 		this.moveFlg = true;
 		this._emitData(clientX, clientY);

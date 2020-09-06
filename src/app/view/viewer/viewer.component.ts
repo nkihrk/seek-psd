@@ -123,6 +123,12 @@ export class ViewerComponent implements OnInit, OnDestroy {
 		this.cpu.update($pointerData);
 	}
 
+	loadFile(): void {
+		if (this.memory.renderer.isLoaded) return;
+
+		this.fileLoader.loadFile();
+	}
+
 	toggleVisibility($name: string, $uniqueId: string): void {
 		this.gpu.toggleVisibility($name, $uniqueId);
 		this.changeDetectorRef.detectChanges();

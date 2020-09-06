@@ -46,7 +46,7 @@
 
 	<div class="flex-left-right">
 		<div #psdViewer class="psd-viewer">
-			<div #dropArea appFileEvent (fileDropped)="onFileDropped($event)" class="drop-area active">
+			<div #dropArea (click)="loadFile()" appFileEvent (fileDropped)="onFileDropped($event)" class="drop-area active">
 				<div class="normal">
 					<fa-icon [icon]="faFileImage" size="3x"></fa-icon>
 					<h3>PSDファイルを開く</h3>
