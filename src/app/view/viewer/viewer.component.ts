@@ -1,5 +1,8 @@
 import { Component, OnInit, OnDestroy, ViewChild, ElementRef, ChangeDetectorRef } from '@angular/core';
 import { Observable, of } from 'rxjs';
+import iNoBounce from 'inobounce';
+
+// Service
 import { FileLoaderService } from '../../service/core/file-loader.service';
 import { MemoryService } from '../../service/core/memory.service';
 import { Psd, Layer } from 'ag-psd';
@@ -73,6 +76,9 @@ export class ViewerComponent implements OnInit, OnDestroy {
 			this.uiCanvasRef.nativeElement
 		);
 
+		// Prevent bounce scroll of iOS
+		iNoBounce.enable();
+
 		this.memory.psdData$.subscribe((data: { psd: Psd; fileName: string }) => {
 			console.log(data);
 			if (this.memory.layerInfos$.getValue().length > 0) return;
@@ -80,7 +86,6 @@ export class ViewerComponent implements OnInit, OnDestroy {
 			const rendererSize: DOMRect = this.dropAreaRef.nativeElement.getBoundingClientRect();
 			const width = rendererSize.width;
 			const height = rendererSize.width * (data.psd.height / data.psd.width);
-			console.log(height);
 			const scaleRatio = rendererSize.width / data.psd.width;
 
 			this.memory.updateRenderer(data.fileName, { width, height, scaleRatio }, data.psd, true);

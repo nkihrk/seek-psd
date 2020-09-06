@@ -13,16 +13,7 @@ export class PointerEventService {
 
 	down(): void {}
 
-	leftDown($name: string): void {
-		switch ($name) {
-			case 'color-picker':
-				this.colorPicker.getColor();
-				break;
-
-			default:
-				break;
-		}
-	}
+	leftDown($name: string): void {}
 
 	rightDown(): void {}
 
@@ -39,7 +30,16 @@ export class PointerEventService {
 		}
 	}
 
-	leftUp(): void {}
+	leftUp($name: string): void {
+		switch ($name) {
+			case 'color-picker':
+				this.colorPicker.getColor();
+				break;
+
+			default:
+				break;
+		}
+	}
 
 	rightUp(): void {}
 

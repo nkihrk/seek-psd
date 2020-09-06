@@ -32,9 +32,10 @@ export class RegisterService {
 
 	onPointerUp(): void {
 		const flgs: Flgs = this.memory.flgs;
+		const name: string = this.memory.reservedByFunc$.getValue().current.name;
 
 		if (flgs.leftUpFlg) {
-			this.pointerEvent.leftUp();
+			this.pointerEvent.leftUp(name);
 		} else if (flgs.rightUpFlg) {
 			this.pointerEvent.rightUp();
 		} else if (flgs.middleUpFlg) {
