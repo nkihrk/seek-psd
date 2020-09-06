@@ -169,6 +169,18 @@ export class ViewerComponent implements OnInit, OnDestroy {
 	private _garbage(): void {
 		this.memory.refreshData();
 
+		// Initialize main canvas
+		const c: HTMLCanvasElement = this.memory.renderer.element.main;
+		c.width = 1;
+		c.height = 1;
+
+		// Initialize reservedByFuncs
+		this.memory.updateReservedByFunc({
+			name: '',
+			type: '',
+			group: ''
+		});
+
 		this.memory.renderer.element.dropArea.classList.add('active');
 		this.isLoading = false;
 

@@ -35,13 +35,15 @@ export class ColorPickerService {
 		const pointerOffset: PointerOffset['raw'] = this.memory.pointerOffset.raw;
 		const rendererOffset: DOMRect = this.memory.renderer.element.main.getBoundingClientRect();
 
-		const resultX: number = pointerOffset.x - rendererOffset.x;
-		const resultY: number = pointerOffset.y - rendererOffset.y;
+		const diffW: number = pointerOffset.x - rendererOffset.x;
+		const diffH: number = pointerOffset.y - rendererOffset.y;
+		const rendererW: number = rendererOffset.width;
+		const rendererH: number = rendererOffset.height;
 
-		if (resultX < 0 || resultY < 0) return;
+		if (diffW < 0 || diffH < 0 || rendererW < diffW || rendererH < diffH) return;
 
 		const ctx: CanvasRenderingContext2D = this.memory.renderer.element.main.getContext('2d');
-		const rgb: Uint8ClampedArray = ctx.getImageData(resultX, resultY, 1, 1).data;
+		const rgb: Uint8ClampedArray = ctx.getImageData(diffW, diffH, 1, 1).data;
 
 		let hex: string = this.rgbToHex(rgb[0], rgb[1], rgb[2]);
 		hex = hex === '0' ? '000000' : hex;
