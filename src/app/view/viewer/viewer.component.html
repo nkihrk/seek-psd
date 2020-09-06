@@ -53,8 +53,10 @@
 					<p>ここにファイルをドラッグ＆ドロップ</p>
 				</div>
 				<div class="hover">
-					<fa-icon *ngIf="!isLoading" [icon]="faDownload" size="3x"></fa-icon>
-					<div *ngIf="isLoading" class="loader">
+					<fa-icon [icon]="faDownload" size="3x"></fa-icon>
+				</div>
+				<div *ngIf="isLoading" class="hover active">
+					<div class="loader">
 						<div class="bar1"></div>
 						<div class="bar2"></div>
 						<div class="bar3"></div>

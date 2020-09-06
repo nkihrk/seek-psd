@@ -17,22 +17,24 @@ export class FileLoaderService {
 		}
 	}
 
-	loadFile(): void {
-		const input: HTMLInputElement = document.createElement('input');
-		input.type = 'file';
-		input.onchange = ($e: any) => {
-			const files: FileList = $e.target.files;
-			const fileList: any[] = [];
-			for (const i in files) {
-				if (files.hasOwnProperty(i)) {
-					fileList.push(files[i]);
+	getFile(): Promise<File[]> {
+		return new Promise((resolve: any) => {
+			const input: HTMLInputElement = document.createElement('input');
+			input.type = 'file';
+			input.onchange = ($e: any) => {
+				const files: FileList = $e.target.files;
+				const fileList: any[] = [];
+				for (const i in files) {
+					if (files.hasOwnProperty(i)) {
+						fileList.push(files[i]);
+					}
 				}
-			}
 
-			this.onFileDropped(fileList);
-		};
+				resolve(fileList);
+			};
 
-		input.click();
+			input.click();
+		});
 	}
 
 	private checkFiles($file: File): void {

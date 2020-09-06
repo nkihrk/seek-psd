@@ -123,10 +123,11 @@ export class ViewerComponent implements OnInit, OnDestroy {
 		this.cpu.update($pointerData);
 	}
 
-	loadFile(): void {
+	async loadFile(): Promise<File[]> {
 		if (this.memory.renderer.isLoaded) return;
 
-		this.fileLoader.loadFile();
+		const fileList: File[] = await this.fileLoader.getFile();
+		this.onFileDropped(fileList);
 	}
 
 	toggleVisibility($name: string, $uniqueId: string): void {
@@ -176,11 +177,6 @@ export class ViewerComponent implements OnInit, OnDestroy {
 	private _garbage(): void {
 		this.memory.refreshData();
 
-		// Initialize main canvas
-		const c: HTMLCanvasElement = this.memory.renderer.element.main;
-		c.width = 1;
-		c.height = 1;
-
 		// Initialize reservedByFuncs
 		this.memory.updateReservedByFunc({
 			name: '',
@@ -194,6 +190,13 @@ export class ViewerComponent implements OnInit, OnDestroy {
 		setTimeout(() => {
 			this.memory.renderer.element.psdViewer.style.maxHeight = '300px';
 		}, 400);
+
+		setTimeout(() => {
+			// Initialize main canvas
+			const c: HTMLCanvasElement = this.memory.renderer.element.main;
+			c.width = 1;
+			c.height = 1;
+		}, 1000);
 	}
 
 	///////////////////////////////////////////////////////////////////////////
