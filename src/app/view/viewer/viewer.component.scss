@@ -3,6 +3,7 @@
 .container {
 	max-width: $totalWidth;
 	margin: 0 auto;
+	padding: 0 30px;
 
 	h1 {
 		margin: 20px 0;
@@ -275,7 +276,7 @@ footer {
 	position: fixed;
 	z-index: 100;
 	top: 50%;
-	left: 40px;
+	left: 20px;
 	transform: translateY(-50%);
 	//background-color: white;
 	border: solid 1px $thin-black;
@@ -293,7 +294,7 @@ footer {
 	position: fixed;
 	z-index: 100;
 	bottom: 40px;
-	left: 40px;
+	left: 20px;
 	border: solid 1px $thin-black;
 	border-radius: 10px;
 	box-shadow: $box-shadow;
@@ -376,7 +377,7 @@ footer {
 
 ///////////////////////////////////////////////////
 //
-//	Loading spinner
+//	loading spinner
 //
 ///////////////////////////////////////////////////
 
@@ -452,5 +453,34 @@ footer {
 	20% {
 		transform: scaleY(1);
 		-webkit-transform: scaleY(1);
+	}
+}
+
+///////////////////////////////////////////////////
+//
+//	media query
+//
+///////////////////////////////////////////////////
+
+@media screen and (max-width: 830px) {
+	.container {
+		.flex-left-right {
+			.psd-viewer,
+			.layer-info {
+				width: 100%;
+			}
+
+			.layer-info {
+				h2 {
+					text-align: center;
+				}
+			}
+		}
+	}
+
+	footer {
+		.wrapper {
+			width: 100%;
+		}
 	}
 }

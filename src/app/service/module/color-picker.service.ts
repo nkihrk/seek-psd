@@ -32,6 +32,8 @@ export class ColorPickerService {
 	}
 
 	getColor(): void {
+		if (!this.memory.renderer.isLoaded) return;
+
 		const pointerOffset: PointerOffset['raw'] = this.memory.pointerOffset.raw;
 		const rendererOffset: DOMRect = this.memory.renderer.element.main.getBoundingClientRect();
 

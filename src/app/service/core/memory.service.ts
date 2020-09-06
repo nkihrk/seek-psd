@@ -86,12 +86,19 @@ export class MemoryService {
 		this.renderer.element.uiCanvasWrapper = $uiCanvasWrapper;
 		this.renderer.element.main = $main;
 		this.renderer.element.ui = $ui;
+		this.renderer.isLoaded = false;
 	}
 
-	updateRenderer($fileName: string, $size: { width: number; height: number; scaleRatio: number }, $psd: Psd): void {
+	updateRenderer(
+		$fileName: string,
+		$size: { width: number; height: number; scaleRatio: number },
+		$psd: Psd,
+		$isLoaded: boolean
+	): void {
 		this.renderer.fileName = $fileName;
 		this.renderer.size = $size;
 		this.renderer.psd = $psd;
+		this.renderer.isLoaded = $isLoaded;
 	}
 
 	updateLayerInfos($layerInfos: LayerInfo[]): void {
@@ -103,7 +110,7 @@ export class MemoryService {
 	}
 
 	refreshData(): void {
-		this.updateRenderer('', null, null);
+		this.updateRenderer('', null, null, false);
 		this.updateLayerInfos([]);
 		this.updateFileName('');
 	}
@@ -133,6 +140,7 @@ interface Renderer {
 	fileName: string;
 	size: Size;
 	psd: Psd;
+	isLoaded: boolean;
 }
 
 interface Element {

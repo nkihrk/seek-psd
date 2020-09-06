@@ -83,7 +83,7 @@ export class ViewerComponent implements OnInit, OnDestroy {
 			console.log(height);
 			const scaleRatio = rendererSize.width / data.psd.width;
 
-			this.memory.updateRenderer(data.fileName, { width, height, scaleRatio }, data.psd);
+			this.memory.updateRenderer(data.fileName, { width, height, scaleRatio }, data.psd, true);
 			this.memory.updateLayerInfos(this._extractPsdData(data.psd));
 			this.memory.updateFileName(data.fileName);
 
