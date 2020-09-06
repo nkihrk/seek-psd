@@ -35,11 +35,12 @@ export class ViewerComponent implements OnInit, OnDestroy {
 	// div
 	@ViewChild('psdViewer', { static: true }) psdViewerRef: ElementRef<HTMLDivElement>;
 	@ViewChild('dropArea', { static: true }) dropAreaRef: ElementRef<HTMLDivElement>;
-	@ViewChild('uiCanvasWrapper', { static: true }) uiCanvasWrapperRef: ElementRef<HTMLDivElement>;
+	@ViewChild('screenCanvasWrapper', { static: true }) screenCanvasWrapperRef: ElementRef<HTMLDivElement>;
 
 	// canvas
 	@ViewChild('mainCanvas', { static: true }) mainCanvasRef: ElementRef<HTMLCanvasElement>;
-	@ViewChild('uiCanvas', { static: true }) uiCanvasRef: ElementRef<HTMLCanvasElement>;
+	@ViewChild('screenCanvas', { static: true }) screenCanvasRef: ElementRef<HTMLCanvasElement>;
+	@ViewChild('overlayCanvas', { static: true }) overlayCanvasRef: ElementRef<HTMLCanvasElement>;
 
 	// Fontawesome
 	faFileImage = faFileImage;
@@ -70,9 +71,10 @@ export class ViewerComponent implements OnInit, OnDestroy {
 		this.memory.initRenderer(
 			this.psdViewerRef.nativeElement,
 			this.dropAreaRef.nativeElement,
-			this.uiCanvasWrapperRef.nativeElement,
+			this.screenCanvasWrapperRef.nativeElement,
 			this.mainCanvasRef.nativeElement,
-			this.uiCanvasRef.nativeElement
+			this.screenCanvasRef.nativeElement,
+			this.overlayCanvasRef.nativeElement
 		);
 
 		this.memory.psdData$.subscribe((data: { psd: Psd; fileName: string }) => {
@@ -84,9 +86,10 @@ export class ViewerComponent implements OnInit, OnDestroy {
 			const height = rendererSize.width * (data.psd.height / data.psd.width);
 			const scaleRatio = rendererSize.width / data.psd.width;
 
-			this.memory.updateRenderer(data.fileName, { width, height, scaleRatio }, data.psd, true);
+			this.memory.updateRenderer({ width, height, scaleRatio }, data.psd);
 			this.memory.updateLayerInfos(this._extractPsdData(data.psd));
 			this.memory.updateFileName(data.fileName);
+			this.memory.updateLoadedState(true);
 
 			// Render
 			//this.gpu.render();
@@ -124,7 +127,7 @@ export class ViewerComponent implements OnInit, OnDestroy {
 	}
 
 	async loadFile(): Promise<File[]> {
-		if (this.memory.renderer.isLoaded) return;
+		if (this.memory.isLoaded$.getValue()) return;
 
 		const fileList: File[] = await this.fileLoader.getFile();
 		this.onFileDropped(fileList);
@@ -138,7 +141,7 @@ export class ViewerComponent implements OnInit, OnDestroy {
 
 	execFunc($name: string): void {
 		// Initialize ui canvas
-		const c: HTMLCanvasElement = this.memory.renderer.element.ui;
+		const c: HTMLCanvasElement = this.memory.renderer.element.screen;
 		c.width = 1;
 		c.height = 1;
 

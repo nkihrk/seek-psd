@@ -15,6 +15,7 @@ export class MemoryService {
 	psdData$: Subject<{ psd: Psd; fileName: string }> = new Subject();
 	layerInfos$: BehaviorSubject<LayerInfo[]> = new BehaviorSubject([]);
 	fileName$: BehaviorSubject<string> = new BehaviorSubject('');
+	isLoaded$: BehaviorSubject<boolean> = new BehaviorSubject(false);
 	reservedByFunc$: BehaviorSubject<ReservedByFunc> = new BehaviorSubject({
 		current: {
 			name: '',
@@ -77,28 +78,22 @@ export class MemoryService {
 	initRenderer(
 		$psdViewer: HTMLDivElement,
 		$dropArea: HTMLDivElement,
-		$uiCanvasWrapper: HTMLDivElement,
+		$screenCanvasWrapper: HTMLDivElement,
 		$main: HTMLCanvasElement,
-		$ui: HTMLCanvasElement
+		$screen: HTMLCanvasElement,
+		$overlay: HTMLCanvasElement
 	): void {
 		this.renderer.element.psdViewer = $psdViewer;
 		this.renderer.element.dropArea = $dropArea;
-		this.renderer.element.uiCanvasWrapper = $uiCanvasWrapper;
+		this.renderer.element.screenCanvasWrapper = $screenCanvasWrapper;
 		this.renderer.element.main = $main;
-		this.renderer.element.ui = $ui;
-		this.renderer.isLoaded = false;
+		this.renderer.element.screen = $screen;
+		this.renderer.element.overlay = $overlay;
 	}
 
-	updateRenderer(
-		$fileName: string,
-		$size: { width: number; height: number; scaleRatio: number },
-		$psd: Psd,
-		$isLoaded: boolean
-	): void {
-		this.renderer.fileName = $fileName;
+	updateRenderer($size: { width: number; height: number; scaleRatio: number }, $psd: Psd): void {
 		this.renderer.size = $size;
 		this.renderer.psd = $psd;
-		this.renderer.isLoaded = $isLoaded;
 	}
 
 	updateLayerInfos($layerInfos: LayerInfo[]): void {
@@ -109,10 +104,15 @@ export class MemoryService {
 		this.fileName$.next($name);
 	}
 
+	updateLoadedState($flg: boolean): void {
+		this.isLoaded$.next($flg);
+	}
+
 	refreshData(): void {
-		this.updateRenderer('', null, null, false);
+		this.updateRenderer(null, null);
 		this.updateLayerInfos([]);
 		this.updateFileName('');
+		this.updateLoadedState(false);
 	}
 
 	updateReservedByFunc($reserved: Reserved): void {
@@ -137,20 +137,19 @@ interface Reserved {
 
 interface Renderer {
 	element: Element;
-	fileName: string;
 	size: Size;
 	psd: Psd;
-	isLoaded: boolean;
 }
 
 interface Element {
 	// div
 	psdViewer: HTMLDivElement;
 	dropArea: HTMLDivElement;
-	uiCanvasWrapper: HTMLDivElement;
+	screenCanvasWrapper: HTMLDivElement;
 	// canvas
 	main: HTMLCanvasElement;
-	ui: HTMLCanvasElement;
+	screen: HTMLCanvasElement;
+	overlay: HTMLCanvasElement;
 }
 
 interface Size {

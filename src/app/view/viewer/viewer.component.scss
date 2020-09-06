@@ -1,5 +1,44 @@
 @import '../../../variables';
 
+///////////////////////////////////////////////////
+//
+//	Common
+//
+///////////////////////////////////////////////////
+
+.ellipsis {
+	overflow: hidden;
+	white-space: nowrap;
+	text-overflow: ellipsis;
+}
+
+.nwse-resize {
+	cursor: nwse-resize;
+}
+
+.nesw-resize {
+	cursor: nesw-resize;
+}
+
+.ns-resize {
+	cursor: ns-resize;
+}
+
+.ew-resize {
+	cursor: ew-resize;
+}
+
+.disable {
+	pointer-events: none;
+	color: $gray;
+}
+
+///////////////////////////////////////////////////
+//
+// Common structure
+//
+///////////////////////////////////////////////////
+
 .container {
 	max-width: $totalWidth;
 	margin: 0 auto;
@@ -51,18 +90,6 @@ footer {
 
 ///////////////////////////////////////////////////
 //
-//	Ellipsis
-//
-///////////////////////////////////////////////////
-
-.ellipsis {
-	overflow: hidden;
-	white-space: nowrap;
-	text-overflow: ellipsis;
-}
-
-///////////////////////////////////////////////////
-//
 //	PSD viewer
 //
 ///////////////////////////////////////////////////
@@ -82,7 +109,7 @@ footer {
 		align-items: center;
 		justify-content: center;
 		text-align: center;
-		width: calc(100% - 60px);
+		width: calc(100% - 60px); // 60px is for the parent's padding
 		height: calc(100% - 60px);
 		border-radius: 10px;
 		user-select: none;
@@ -112,6 +139,7 @@ footer {
 
 		.hover {
 			position: absolute;
+			z-index: 100;
 			display: flex;
 			justify-content: center;
 			align-items: center;
@@ -135,6 +163,15 @@ footer {
 		height: 100%;
 		border-radius: 10px;
 		background-image: url('../../../assets/Transparency10.png');
+	}
+
+	.overlay-canvas {
+		position: absolute;
+		top: 30px;
+		left: 30px;
+		width: calc(100% - 60px);
+		height: calc(100% - 60px);
+		border-radius: 10px;
 	}
 }
 

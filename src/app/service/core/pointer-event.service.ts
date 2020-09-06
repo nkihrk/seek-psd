@@ -4,16 +4,26 @@ import { Pointer } from '../../model/pointer.model';
 
 // Modules
 import { ColorPickerService } from '../module/color-picker.service';
+import { CropService } from '../module/crop.service';
 
 @Injectable({
 	providedIn: 'root'
 })
 export class PointerEventService {
-	constructor(private memory: MemoryService, private colorPicker: ColorPickerService) {}
+	constructor(private memory: MemoryService, private colorPicker: ColorPickerService, private crop: CropService) {}
 
 	down(): void {}
 
-	leftDown($name: string): void {}
+	leftDown($name: string): void {
+		switch ($name) {
+			case 'crop':
+				this.crop.registerOnMouseDown();
+				break;
+
+			default:
+				break;
+		}
+	}
 
 	rightDown(): void {}
 
@@ -36,6 +46,10 @@ export class PointerEventService {
 				this.colorPicker.getColor();
 				break;
 
+			case 'crop':
+				this.crop.registerOnMouseLeftUp();
+				break;
+
 			default:
 				break;
 		}
@@ -49,6 +63,10 @@ export class PointerEventService {
 		switch ($name) {
 			case 'color-picker':
 				this.colorPicker.render();
+				break;
+
+			case 'crop':
+				this.crop.registerOnMouseLeftDownMove($newOffsetX, $newOffsetY, $event);
 				break;
 
 			default:

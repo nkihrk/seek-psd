@@ -32,7 +32,7 @@ export class ColorPickerService {
 	}
 
 	getColor(): void {
-		if (!this.memory.renderer.isLoaded) return;
+		if (!this.memory.isLoaded$.getValue()) return;
 
 		const pointerOffset: PointerOffset['raw'] = this.memory.pointerOffset.raw;
 		const rendererOffset: DOMRect = this.memory.renderer.element.main.getBoundingClientRect();
@@ -76,9 +76,9 @@ export class ColorPickerService {
 	}
 
 	render(): void {
-		const c: HTMLCanvasElement = this.memory.renderer.element.ui;
-		c.width = this.memory.renderer.element.uiCanvasWrapper.clientWidth;
-		c.height = this.memory.renderer.element.uiCanvasWrapper.clientHeight;
+		const c: HTMLCanvasElement = this.memory.renderer.element.screen;
+		c.width = this.memory.renderer.element.screenCanvasWrapper.clientWidth;
+		c.height = this.memory.renderer.element.screenCanvasWrapper.clientHeight;
 		const ctx: CanvasRenderingContext2D = c.getContext('2d');
 
 		const size: number = this.defaultSize;
@@ -90,8 +90,8 @@ export class ColorPickerService {
 		const rendererOffset: DOMRect = this.memory.renderer.element.main.getBoundingClientRect();
 
 		// Calculate appropriate position of lupe
-		const clientWidth: number = this.memory.renderer.element.uiCanvasWrapper.clientWidth;
-		const clientHeight: number = this.memory.renderer.element.uiCanvasWrapper.clientHeight;
+		const clientWidth: number = this.memory.renderer.element.screenCanvasWrapper.clientWidth;
+		const clientHeight: number = this.memory.renderer.element.screenCanvasWrapper.clientHeight;
 		const isLargerX: boolean = pointerOffset.x + offset + 0.5 + size > clientWidth;
 		const isLargerY: boolean = pointerOffset.y + offset + 0.5 + size > clientHeight;
 		const isSmallerX: boolean = pointerOffset.x - offset - 0.5 - size < 0;

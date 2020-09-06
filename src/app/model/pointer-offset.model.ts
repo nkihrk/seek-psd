@@ -1,12 +1,6 @@
-export interface PointerOffset {
-	current: {
-		x: number;
-		y: number;
-	};
-	prev: {
-		x: number;
-		y: number;
-	};
+import { Offset } from './offset.model';
+
+export interface PointerOffset extends Offset {
 	raw: {
 		x: number;
 		y: number;
