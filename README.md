@@ -3,7 +3,7 @@
 <p align="middle">
 SeekPSD is a viewer app for PSD.
 <br>
-This project focusses on people practicing illustration who is trying to understand layered PSDs created by 神絵師(Kami-eshi)
+This project focusses on people practicing illustration who's trying to understand layered PSDs created by 神絵師(Kami-eshi)
 <br>
 <a href="https://nkihrk.github.io/seek-psd/" target="_blank"><b>DEMO</b></a>
 </p>
