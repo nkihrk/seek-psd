@@ -141,9 +141,12 @@ export class ViewerComponent implements OnInit, OnDestroy {
 
 	execFunc($name: string): void {
 		// Initialize ui canvas
-		const c: HTMLCanvasElement = this.memory.renderer.element.screen;
-		c.width = 1;
-		c.height = 1;
+		const screen: HTMLCanvasElement = this.memory.renderer.element.screen;
+		screen.width = 1;
+		screen.height = 1;
+		const overlay: HTMLCanvasElement = this.memory.renderer.element.overlay;
+		overlay.width = 1;
+		overlay.height = 1;
 
 		if (this.memory.reservedByFunc$.getValue().current.name === $name) {
 			// Initialize state and return
