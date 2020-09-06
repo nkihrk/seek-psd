@@ -1,6 +1,5 @@
 import { Component, OnInit, OnDestroy, ViewChild, ElementRef, ChangeDetectorRef } from '@angular/core';
 import { Observable, of } from 'rxjs';
-import iNoBounce from 'inobounce';
 
 // Service
 import { FileLoaderService } from '../../service/core/file-loader.service';
@@ -75,9 +74,6 @@ export class ViewerComponent implements OnInit, OnDestroy {
 			this.mainCanvasRef.nativeElement,
 			this.uiCanvasRef.nativeElement
 		);
-
-		// Prevent bounce scroll of iOS
-		iNoBounce.enable();
 
 		this.memory.psdData$.subscribe((data: { psd: Psd; fileName: string }) => {
 			console.log(data);
