@@ -221,7 +221,7 @@ export class ViewerComponent implements OnInit, OnDestroy {
 				uniqueId: Math.random().toString(36).substr(2, 9),
 				hidden: {
 					current: root[i].hidden,
-					prev: root[i].hidden
+					prev: !root[i].hidden
 				},
 				psd: root[i],
 				children: []
@@ -243,7 +243,7 @@ export class ViewerComponent implements OnInit, OnDestroy {
 				uniqueId: Math.random().toString(36).substr(2, 9),
 				hidden: {
 					current: $isFolderHidden ? true : $child.children[i].hidden,
-					prev: $isFolderHidden ? true : $child.children[i].hidden
+					prev: $isFolderHidden ? false : !$child.children[i].hidden
 				},
 				psd: $child.children[i],
 				children: []
