@@ -105,7 +105,6 @@ footer {
 	background-color: white;
 	border: solid 1px $thin-black;
 	border-radius: 10px;
-	overflow: hidden;
 	box-shadow: $box-shadow;
 }
 
@@ -317,37 +316,70 @@ footer {
 .crop-panel {
 	position: absolute;
 	z-index: 10;
-	left: 50%;
-	top: 40px;
-	padding: 0 5px;
-	transform: translateX(-50%);
+	padding: 2px 6px;
+	transform: translateX(-50%) translateY(-50%);
 	border: solid 1px $thin-black;
 	border-radius: 5px;
 	box-shadow: $box-shadow;
 	background-color: rgba(white, 1);
 
-	span {
-		font-weight: bold;
-	}
+	form {
+		display: flex;
+		flex-wrap: nowrap;
+		align-items: center;
 
-	input {
-		color: $black;
-	}
-
-	input[type='text'] {
-		width: 60px;
-		border: none;
-		margin: 5px 5px;
-		padding: 2px 10px;
-		border-radius: 5px;
-		background-color: $thin-black;
-
-		&:focus {
-			outline: none;
+		span {
+			font-weight: bold;
 		}
-	}
 
-	input[type='button'] {
+		input {
+			margin: 5px;
+			padding: 2px 10px;
+			font-weight: bold;
+			border-radius: 3px;
+			border: none;
+
+			&:focus {
+				outline: none;
+			}
+		}
+
+		input[type='text'] {
+			width: 60px;
+			background-color: $gray;
+			color: rgba($black, 0.8);
+			border: solid 1.5px $gray;
+
+			&:focus {
+				border: solid 1.5px rgba($black, 0.1);
+			}
+		}
+
+		input[type='button'] {
+			background-color: $red;
+			color: rgba(white, 0.9);
+			font-size: 0.85rem;
+			border: solid 1.5px $red;
+		}
+
+		.lock-icon {
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			width: 28px;
+			border-radius: 3px;
+			margin: 0 5px;
+
+			&:hover {
+				background-color: $gray;
+			}
+
+			&::before {
+				content: '';
+				display: block;
+				padding-top: 100%;
+			}
+		}
 	}
 }
 

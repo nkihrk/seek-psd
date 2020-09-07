@@ -79,14 +79,34 @@
 			<canvas #mainCanvas class="psd-canvas"></canvas>
 			<canvas #overlayCanvas class="overlay-canvas"></canvas>
 
-			<div class="crop-panel">
+			<div
+				*ngIf="(memory.reservedByFunc$ | async)?.current.name === 'crop'"
+				[style.top]="(memory.crop$ | async)?.offset.current.y - (memory.crop$ | async)?.size.height / 2 - 10 + 'px'"
+				[style.left]="(memory.crop$ | async)?.offset.current.x + 30 + 'px'"
+				class="crop-panel"
+			>
 				<form #formCheck="ngForm" [formGroup]="cropConf" class="form-check">
 					<input type="text" [formControl]="cropConf.controls['width']" />
 					<span>×</span>
 					<input type="text" [formControl]="cropConf.controls['height']" />
+					<div class="lock-icon">
+						<fa-icon [icon]="faUnlock" [fixedWidth]="true" size="sm"></fa-icon>
+					</div>
 					<input type="button" value="切り取り" (click)="crop()" />
 				</form>
 			</div>
+
+			<!-- <div [style.top]="100 + 'px'" [style.left]="500 + 'px'" class="crop-panel">
+				<form #formCheck="ngForm" [formGroup]="cropConf" class="form-check">
+					<input type="text" [formControl]="cropConf.controls['width']" />
+					<span>×</span>
+					<input type="text" [formControl]="cropConf.controls['height']" />
+					<div class="lock-icon">
+						<fa-icon [icon]="faUnlock" [fixedWidth]="true" size="sm"></fa-icon>
+					</div>
+					<input type="button" value="切り取り" (click)="crop()" />
+				</form>
+			</div> -->
 		</div>
 
 		<div class="layer-info">

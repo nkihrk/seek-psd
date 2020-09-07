@@ -11,6 +11,7 @@ import { LayerInfo } from '../../model/layer-info.model';
 import { GpuService } from '../../service/core/gpu.service';
 import { FuncService } from '../../service/core/func.service';
 import { Pointer } from '../../model/pointer.model';
+import { Crop } from '../../model/crop.model';
 import { FlagService } from '../../service/core/flag.service';
 import { CpuService } from '../../service/core/cpu.service';
 
@@ -26,6 +27,8 @@ import { faEyeDropper } from '@fortawesome/free-solid-svg-icons';
 import { faCropAlt } from '@fortawesome/free-solid-svg-icons';
 import { faSearch } from '@fortawesome/free-solid-svg-icons';
 import { faTrashAlt } from '@fortawesome/free-solid-svg-icons';
+import { faLock } from '@fortawesome/free-solid-svg-icons';
+import { faUnlock } from '@fortawesome/free-solid-svg-icons';
 
 @Component({
 	selector: 'app-viewer',
@@ -57,6 +60,8 @@ export class ViewerComponent implements OnInit, OnDestroy {
 	faCropAlt = faCropAlt;
 	faSearch = faSearch;
 	faTrashAlt = faTrashAlt;
+	faLock = faLock;
+	faUnlock = faUnlock;
 
 	isLoading = false;
 
@@ -87,7 +92,7 @@ export class ViewerComponent implements OnInit, OnDestroy {
 
 		this.memory.psdData$.subscribe((data: { psd: Psd; fileName: string }) => {
 			console.log(data);
-			if (this.memory.layerInfos$.getValue().length > 0) return;
+			if (this.memory.isLoaded$.getValue()) return;
 
 			const rendererSize: DOMRect = this.dropAreaRef.nativeElement.getBoundingClientRect();
 			const width = rendererSize.width;
@@ -98,6 +103,24 @@ export class ViewerComponent implements OnInit, OnDestroy {
 			this.memory.updateLayerInfos(this._extractPsdData(data.psd));
 			this.memory.updateFileName(data.fileName);
 			this.memory.updateLoadedState(true);
+
+			const crop: Crop = {
+				offset: {
+					current: {
+						x: width / 2,
+						y: height / 2
+					},
+					prev: {
+						x: width / 2,
+						y: height / 2
+					}
+				},
+				size: {
+					width,
+					height
+				}
+			};
+			this.memory.updateCrop(crop);
 
 			// Render
 			//this.gpu.render();

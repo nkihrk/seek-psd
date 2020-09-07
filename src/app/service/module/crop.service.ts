@@ -32,6 +32,18 @@ export class CropService {
 
 	constructor(private memory: MemoryService) {
 		this.memory.crop$.subscribe(($crop: Crop) => {
+			if (!this.memory.isLoaded$.getValue()) return;
+
+			// Update local variables anytime updateCrop() is called, and return
+			// This may occur when PSD is first loaded
+			if (this.memory.reservedByFunc$.getValue().current.name !== 'crop') {
+				this.offset = $crop.offset;
+				this.size = $crop.size;
+				return;
+			}
+
+			// Validate offset and size
+			this._validateOffset();
 			this.render($crop);
 		});
 	}
@@ -46,11 +58,7 @@ export class CropService {
 		// Validate offset and size
 		this._validateOffset();
 
-		const crop: Crop = {
-			offset: this.offset,
-			size: this.size
-		};
-		this.render(crop);
+		this.render(this.memory.crop$.getValue());
 	}
 
 	registerOnMouseDown(): void {
@@ -358,11 +366,11 @@ export class CropService {
 		const y: number = this.offset.current.y;
 
 		// x
-		if (x - minX < 0) this.offset.current.x = minX;
-		if (canvasWidth < x + minX) this.offset.current.x = canvasWidth - minX;
+		if (x - minX <= 0) this.offset.current.x = minX;
+		if (canvasWidth <= x + minX) this.offset.current.x = canvasWidth - minX;
 		// y
-		if (y - minY < 0) this.offset.current.y = minY;
-		if (canvasHeight < y + minY) this.offset.current.y = canvasHeight - minY;
+		if (y - minY <= 0) this.offset.current.y = minY;
+		if (canvasHeight <= y + minY) this.offset.current.y = canvasHeight - minY;
 	}
 
 	///////////////////////////////////////////////////////////////////////////
@@ -372,7 +380,6 @@ export class CropService {
 	///////////////////////////////////////////////////////////////////////////
 
 	render($crop: Crop): void {
-		if (!this.memory.isLoaded$.getValue()) return;
 		const c: HTMLCanvasElement = this.memory.renderer.element.overlay;
 		c.width = this.memory.renderer.element.main.clientWidth;
 		c.height = this.memory.renderer.element.main.clientHeight;
