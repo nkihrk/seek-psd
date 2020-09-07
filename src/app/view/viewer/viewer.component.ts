@@ -1,5 +1,6 @@
 import { Component, OnInit, OnDestroy, ViewChild, ElementRef, ChangeDetectorRef } from '@angular/core';
 import { Observable, of } from 'rxjs';
+import { FormGroup, FormControl, Validators } from '@angular/forms';
 
 // Service
 import { FileLoaderService } from '../../service/core/file-loader.service';
@@ -42,6 +43,8 @@ export class ViewerComponent implements OnInit, OnDestroy {
 	@ViewChild('screenCanvas', { static: true }) screenCanvasRef: ElementRef<HTMLCanvasElement>;
 	@ViewChild('overlayCanvas', { static: true }) overlayCanvasRef: ElementRef<HTMLCanvasElement>;
 
+	cropConf: FormGroup;
+
 	// Fontawesome
 	faFileImage = faFileImage;
 	faSignature = faSignature;
@@ -76,6 +79,11 @@ export class ViewerComponent implements OnInit, OnDestroy {
 			this.screenCanvasRef.nativeElement,
 			this.overlayCanvasRef.nativeElement
 		);
+
+		this.cropConf = new FormGroup({
+			width: new FormControl('', []),
+			height: new FormControl('', [])
+		});
 
 		this.memory.psdData$.subscribe((data: { psd: Psd; fileName: string }) => {
 			console.log(data);
@@ -203,6 +211,16 @@ export class ViewerComponent implements OnInit, OnDestroy {
 			c.width = 1;
 			c.height = 1;
 		}, 1000);
+	}
+
+	///////////////////////////////////////////////////////////////////////////
+	//
+	//	Crop
+	//
+	///////////////////////////////////////////////////////////////////////////
+
+	crop(): void {
+		console.log(this.cropConf.controls['width'].value, this.cropConf.controls['height'].value);
 	}
 
 	///////////////////////////////////////////////////////////////////////////

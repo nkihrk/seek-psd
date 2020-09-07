@@ -2,6 +2,7 @@ import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { NotifierModule } from 'angular-notifier';
+import { ReactiveFormsModule } from '@angular/forms';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -22,6 +23,7 @@ import { PointerEventDirective } from './directive/pointer-event.directive';
 		BrowserModule,
 		AppRoutingModule,
 		FontAwesomeModule,
+		ReactiveFormsModule,
 		NotifierModule.withConfig({
 			position: {
 				horizontal: {

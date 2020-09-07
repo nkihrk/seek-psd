@@ -78,6 +78,15 @@
 
 			<canvas #mainCanvas class="psd-canvas"></canvas>
 			<canvas #overlayCanvas class="overlay-canvas"></canvas>
+
+			<div class="crop-panel">
+				<form #formCheck="ngForm" [formGroup]="cropConf" class="form-check">
+					<input type="text" [formControl]="cropConf.controls['width']" />
+					<span>×</span>
+					<input type="text" [formControl]="cropConf.controls['height']" />
+					<input type="button" value="切り取り" (click)="crop()" />
+				</form>
+			</div>
 		</div>
 
 		<div class="layer-info">

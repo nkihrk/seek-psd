@@ -4,6 +4,7 @@ import { Psd } from 'ag-psd';
 import { LayerInfo } from '../../model/layer-info.model';
 import { Flgs } from '../../model/flgs.model';
 import { PointerOffset } from '../../model/pointer-offset.model';
+import { Crop } from '../../model/crop.model';
 
 @Injectable({
 	providedIn: 'root'
@@ -26,6 +27,22 @@ export class MemoryService {
 			name: '',
 			type: '',
 			group: ''
+		}
+	});
+	crop$: BehaviorSubject<Crop> = new BehaviorSubject({
+		offset: {
+			current: {
+				x: 0,
+				y: 0
+			},
+			prev: {
+				x: 0,
+				y: 0
+			}
+		},
+		size: {
+			width: 500,
+			height: 500
 		}
 	});
 
@@ -121,6 +138,10 @@ export class MemoryService {
 			current: $reserved,
 			prev: current
 		});
+	}
+
+	updateCrop($crop: Crop): void {
+		this.crop$.next($crop);
 	}
 }
 

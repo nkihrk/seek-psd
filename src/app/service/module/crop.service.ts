@@ -2,12 +2,13 @@ import { Injectable } from '@angular/core';
 import { MemoryService } from '../core/memory.service';
 import { Offset } from '../../model/offset.model';
 import { Pointer } from '../../model/pointer.model';
+import { Crop } from '../../model/crop.model';
 
 @Injectable({
 	providedIn: 'root'
 })
 export class CropService {
-	private cropOffset: Offset = {
+	private offset = {
 		current: {
 			x: 0,
 			y: 0
@@ -29,7 +30,11 @@ export class CropService {
 	private cornerSize = 20;
 	private barSize = 30;
 
-	constructor(private memory: MemoryService) {}
+	constructor(private memory: MemoryService) {
+		this.memory.crop$.subscribe(($crop: Crop) => {
+			this.render($crop);
+		});
+	}
 
 	activate(): void {
 		this.memory.updateReservedByFunc({
@@ -38,252 +43,20 @@ export class CropService {
 			group: ''
 		});
 
-		this.render();
+		// Validate offset and size
+		this._validateOffset();
+
+		const crop: Crop = {
+			offset: this.offset,
+			size: this.size
+		};
+		this.render(crop);
 	}
 
 	registerOnMouseDown(): void {
 		// To sync crop offsets with dataList
-		this.cropOffset.prev.x = this.cropOffset.current.x;
-		this.cropOffset.prev.y = this.cropOffset.current.y;
-	}
-
-	registerOnMouseLeftUp(): void {
-		this.resetStates();
-	}
-
-	private resetStates(): void {
-		const target: HTMLDivElement = this.memory.renderer.element.psdViewer;
-		target.classList.remove('nwse-resize');
-		target.classList.remove('nesw-resize');
-		target.classList.remove('ns-resize');
-		target.classList.remove('ew-resize');
-
-		this.cursorState.isSwitched = false;
-		this.cursorState.areaName = '';
-	}
-
-	registerOnMouseLeftDownMove($newOffsetX: number, $newOffsetY: number, $event: Pointer): void {
-		if (this.cursorState.isSwitched) {
-			// Calcurate size of cropping area
-			this._calcCropArea();
-		} else {
-			// Calcurate offsets of cropping area
-			this.updatePointerOffset($newOffsetX, $newOffsetY);
-		}
-
-		this.render();
-	}
-
-	private updatePointerOffset($newOffsetX: number, $newOffsetY: number): void {
-		this.cropOffset.current.x = this.cropOffset.prev.x + $newOffsetX;
-		this.cropOffset.current.y = this.cropOffset.prev.y + $newOffsetY;
-	}
-
-	private _calcCropArea(): void {
-		this._calcSize();
-		this._calcOffsets();
-	}
-
-	private _calcSize(): void {
-		const switchName: string = this.cursorState.areaName;
-		const canvasWidth: number = this.memory.renderer.element.main.clientWidth;
-		const canvasHeight: number = this.memory.renderer.element.main.clientHeight;
-		const diffX: number = this.memory.pointerOffset.current.x - this.cropOffset.current.x;
-		const diffY: number = this.memory.pointerOffset.current.y - this.cropOffset.current.y;
-
-		let halfW: number = this.size.width / 2;
-		let halfH: number = this.size.height / 2;
-
-		switch (switchName) {
-			case 'leftUp':
-				halfW -= diffX;
-				halfH -= diffY;
-				break;
-
-			case 'rightDown':
-				halfW += diffX;
-				halfH += diffY;
-				break;
-
-			case 'leftDown':
-				halfW -= diffX;
-				halfH += diffY;
-				break;
-
-			case 'rightUp':
-				halfW += diffX;
-				halfH -= diffY;
-				break;
-
-			case 'middleUp':
-				halfH -= diffY;
-				break;
-
-			case 'middleDown':
-				halfH += diffY;
-				break;
-
-			case 'middleRight':
-				halfW += diffX;
-				break;
-
-			case 'middleLeft':
-				halfW -= diffX;
-				break;
-
-			default:
-				break;
-		}
-
-		const min: number = this.cornerSize + this.barSize / 2;
-		const maxW: number = canvasWidth;
-		const maxH: number = canvasHeight;
-		const isLargerW: boolean = halfW > min;
-		const isLargerH: boolean = halfH > min;
-		const isSmallerW: boolean = halfW < maxW;
-		const isSmallerH: boolean = halfH < maxH;
-
-		if (halfW !== this.size.width / 2) {
-			this.size.width = isLargerW ? (isSmallerW ? halfW : maxW) : min;
-		}
-		if (halfH !== this.size.height / 2) {
-			this.size.height = isLargerH ? (isSmallerH ? halfH : maxH) : min;
-		}
-	}
-
-	private _calcOffsets(): void {
-		const canvasWidth: number = this.memory.renderer.element.main.clientWidth;
-		const canvasHeight: number = this.memory.renderer.element.main.clientHeight;
-		const minX: number = this.size.width / 2;
-		const minY: number = this.size.height / 2;
-		const maxX: number = canvasWidth;
-		const maxY: number = canvasHeight;
-		let fixedX: number = this.cropOffset.current.x;
-		let fixedY: number = this.cropOffset.current.y;
-		fixedX = fixedX >= minX ? fixedX : minX;
-		fixedY = fixedY >= minY ? fixedY : minY;
-		fixedX = fixedX >= maxX - minX ? maxX - minX : fixedX;
-		fixedY = fixedY >= maxY - minY ? maxY - minY : fixedY;
-
-		this.cropOffset.current.x = fixedX;
-		this.cropOffset.current.y = fixedY;
-	}
-
-	render(): void {
-		const c: HTMLCanvasElement = this.memory.renderer.element.overlay;
-		c.width = this.memory.renderer.element.main.clientWidth;
-		c.height = this.memory.renderer.element.main.clientHeight;
-		const ctx: CanvasRenderingContext2D = c.getContext('2d');
-		const canvasWidth: number = this.memory.renderer.element.main.clientWidth;
-		const canvasHeight: number = this.memory.renderer.element.main.clientHeight;
-
-		const minX: number = this.size.width / 2;
-		const minY: number = this.size.height / 2;
-		const maxX: number = canvasWidth;
-		const maxY: number = canvasHeight;
-		const x: number = this.cropOffset.current.x;
-		const y: number = this.cropOffset.current.y;
-
-		// x
-		if (x - minX < 0) this.cropOffset.current.x = minX;
-		if (canvasWidth < x + minX) this.cropOffset.current.x = canvasWidth - minX;
-		// y
-		if (y - minY < 0) this.cropOffset.current.y = minY;
-		if (canvasHeight < y + minY) this.cropOffset.current.y = canvasHeight - minY;
-
-		let fixedX: number = this.cropOffset.current.x;
-		let fixedY: number = this.cropOffset.current.y;
-
-		this._createBackground(ctx);
-		this._createArea(ctx, fixedX, fixedY);
-	}
-
-	private _createBackground($ctx: CanvasRenderingContext2D): void {
-		const canvasWidth: number = this.memory.renderer.element.main.clientWidth;
-		const canvasHeight: number = this.memory.renderer.element.main.clientHeight;
-
-		// Background
-		$ctx.save();
-		$ctx.imageSmoothingEnabled = false;
-		$ctx.translate(canvasWidth / 2, canvasHeight / 2);
-		$ctx.beginPath();
-		$ctx.moveTo(-canvasWidth / 2, -canvasHeight / 2);
-		$ctx.lineTo(-canvasWidth / 2, canvasHeight / 2);
-		$ctx.lineTo(canvasWidth / 2, canvasHeight / 2);
-		$ctx.lineTo(canvasWidth / 2, -canvasHeight / 2);
-		$ctx.globalAlpha = 0.5;
-		$ctx.closePath();
-		$ctx.fill();
-		$ctx.globalAlpha = 1.0;
-		$ctx.restore();
-	}
-
-	private _createArea($ctx: CanvasRenderingContext2D, $fixedX: number, $fixedY: number): void {
-		const areaWidth: number = this.size.width;
-		const areaHeight: number = this.size.height;
-
-		$ctx.save();
-		$ctx.imageSmoothingEnabled = false;
-		$ctx.translate($fixedX, $fixedY);
-		$ctx.beginPath();
-		$ctx.moveTo(-areaWidth / 2, -areaHeight / 2);
-		$ctx.lineTo(-areaWidth / 2, areaHeight / 2);
-		$ctx.lineTo(areaWidth / 2, areaHeight / 2);
-		$ctx.lineTo(areaWidth / 2, -areaHeight / 2);
-		$ctx.closePath();
-		$ctx.globalCompositeOperation = 'destination-out';
-		$ctx.fill();
-		$ctx.globalCompositeOperation = 'source-over';
-
-		this._drawArea($ctx);
-
-		$ctx.restore();
-	}
-
-	private _drawArea($ctx: CanvasRenderingContext2D): void {
-		const areaWidth: number = this.size.width;
-		const areaHeight: number = this.size.height;
-
-		$ctx.beginPath();
-		$ctx.lineWidth = 1;
-		$ctx.strokeStyle = 'white';
-		$ctx.fillStyle = 'white';
-		// Frame
-		$ctx.rect(-areaWidth / 2, -areaHeight / 2, areaWidth, areaHeight);
-		// Left-up
-		$ctx.fillRect(-areaWidth / 2, -areaHeight / 2, this.cornerSize, 3);
-		$ctx.fillRect(-areaWidth / 2, -areaHeight / 2, 3, this.cornerSize);
-		// Left-down
-		$ctx.fillRect(-areaWidth / 2, areaHeight / 2, this.cornerSize, -3);
-		$ctx.fillRect(-areaWidth / 2, areaHeight / 2, 3, -this.cornerSize);
-		// Right-down
-		$ctx.fillRect(areaWidth / 2, areaHeight / 2, -this.cornerSize, -3);
-		$ctx.fillRect(areaWidth / 2, areaHeight / 2, -3, -this.cornerSize);
-		// Right-up
-		$ctx.fillRect(areaWidth / 2, -areaHeight / 2, -this.cornerSize, 3);
-		$ctx.fillRect(areaWidth / 2, -areaHeight / 2, -3, this.cornerSize);
-
-		// Middle-up
-		$ctx.fillRect(-this.barSize / 2, -areaHeight / 2, this.barSize, 3);
-		// Middle-left
-		$ctx.fillRect(-areaWidth / 2, -this.barSize / 2, 3, this.barSize);
-		// Middle-down
-		$ctx.fillRect(-this.barSize / 2, areaHeight / 2, this.barSize, -3);
-		// Middle-right
-		$ctx.fillRect(areaWidth / 2, -this.barSize / 2, -3, this.barSize);
-
-		// Separation
-		$ctx.lineWidth = 0.5;
-		for (let i = -areaWidth / 2; i < (areaWidth * 2) / 3; i += areaWidth / 3) {
-			$ctx.moveTo(i, -areaHeight / 2);
-			$ctx.lineTo(i, areaHeight / 2);
-		}
-		for (let i = -areaHeight / 2; i < (areaHeight * 2) / 3; i += areaHeight / 3) {
-			$ctx.moveTo(-areaWidth / 2, i);
-			$ctx.lineTo(areaWidth / 2, i);
-		}
-
-		$ctx.stroke();
+		this.offset.prev.x = this.offset.current.x;
+		this.offset.prev.y = this.offset.current.y;
 
 		//////////////////////////////////////////////////////////
 		//
@@ -291,12 +64,23 @@ export class CropService {
 		//
 		//////////////////////////////////////////////////////////
 
-		this.switchCursor($ctx);
+		const c: HTMLCanvasElement = this.memory.renderer.element.overlay;
+		const ctx: CanvasRenderingContext2D = c.getContext('2d');
+		const crop: Crop = {
+			offset: this.offset,
+			size: this.size
+		};
+
+		this.switchCursor(ctx, crop);
 	}
 
-	private switchCursor($ctx: CanvasRenderingContext2D): void {
-		const areaWidth: number = this.size.width;
-		const areaHeight: number = this.size.height;
+	private switchCursor($ctx: CanvasRenderingContext2D, $crop: Crop): void {
+		const areaX: number = $crop.offset.current.x;
+		const areaY: number = $crop.offset.current.y;
+		const areaWidth: number = $crop.size.width;
+		const areaHeight: number = $crop.size.height;
+
+		$ctx.translate(areaX, areaY);
 
 		//////////////////////////////////////////////////////////
 		//
@@ -306,29 +90,49 @@ export class CropService {
 
 		// Left-up
 		const leftUp = new Path2D();
-		leftUp.rect(-areaWidth / 2 - 10, -areaHeight / 2 - 10, this.cornerSize, this.cornerSize);
+		leftUp.rect(
+			-areaWidth / 2 - this.cornerSize,
+			-areaHeight / 2 - this.cornerSize,
+			this.cornerSize * 2,
+			this.cornerSize * 2
+		);
 		// Left-down
 		const leftDown = new Path2D();
-		leftDown.rect(-areaWidth / 2 - 10, areaHeight / 2 - 10, this.cornerSize, this.cornerSize);
+		leftDown.rect(
+			-areaWidth / 2 - this.cornerSize,
+			areaHeight / 2 - this.cornerSize,
+			this.cornerSize * 2,
+			this.cornerSize * 2
+		);
 		// Right-down
 		const rightDown = new Path2D();
-		rightDown.rect(areaWidth / 2 - 10, areaHeight / 2 - 10, this.cornerSize, this.cornerSize);
+		rightDown.rect(
+			areaWidth / 2 - this.cornerSize,
+			areaHeight / 2 - this.cornerSize,
+			this.cornerSize * 2,
+			this.cornerSize * 2
+		);
 		// Right-up
 		const rightUp = new Path2D();
-		rightUp.rect(areaWidth / 2 - 10, -areaHeight / 2 - 10, this.cornerSize, this.cornerSize);
+		rightUp.rect(
+			areaWidth / 2 - this.cornerSize,
+			-areaHeight / 2 - this.cornerSize,
+			this.cornerSize * 2,
+			this.cornerSize * 2
+		);
 
 		// Middle-up
 		const middleUp = new Path2D();
-		middleUp.rect(-this.barSize / 2, -areaHeight / 2 - 15, this.barSize, this.barSize);
+		middleUp.rect(-this.barSize / 2, -areaHeight / 2 - this.barSize / 2, this.barSize, this.barSize);
 		// Middle-left
 		const middleLeft = new Path2D();
-		middleLeft.rect(-areaWidth / 2 - 15, -this.barSize / 2, this.barSize, this.barSize);
+		middleLeft.rect(-areaWidth / 2 - this.barSize / 2, -this.barSize / 2, this.barSize, this.barSize);
 		// Middle-down
 		const middleDown = new Path2D();
-		middleDown.rect(-this.barSize / 2, areaHeight / 2 - 15, this.barSize, this.barSize);
+		middleDown.rect(-this.barSize / 2, areaHeight / 2 - this.barSize / 2, this.barSize, this.barSize);
 		// Middle-right
 		const middleRight = new Path2D();
-		middleRight.rect(areaWidth / 2 - 15, -this.barSize / 2, this.barSize, this.barSize);
+		middleRight.rect(areaWidth / 2 - this.barSize / 2, -this.barSize / 2, this.barSize, this.barSize);
 
 		//////////////////////////////////////////////////////////
 		//
@@ -428,12 +232,243 @@ export class CropService {
 				}
 			}
 
-			// Allow sizing cropping area
+			// Allow sizing of cropping area
 			this.cursorState.isSwitched = true;
 		} else {
 			if (!this.cursorState.isSwitched) {
 				this.resetStates();
 			}
 		}
+	}
+
+	registerOnMouseLeftUp(): void {
+		this.resetStates();
+	}
+
+	private resetStates(): void {
+		const target: HTMLDivElement = this.memory.renderer.element.psdViewer;
+		target.classList.remove('nwse-resize');
+		target.classList.remove('nesw-resize');
+		target.classList.remove('ns-resize');
+		target.classList.remove('ew-resize');
+
+		this.cursorState.isSwitched = false;
+		this.cursorState.areaName = '';
+	}
+
+	registerOnMouseLeftDownMove($newOffsetX: number, $newOffsetY: number, $event: Pointer): void {
+		if (this.cursorState.isSwitched) {
+			// Calcurate size of cropping area
+			this._calcSize();
+		} else {
+			// Calcurate offsets of cropping area
+			this._calcOffset($newOffsetX, $newOffsetY);
+		}
+
+		// Validate offset and size
+		this._validateOffset();
+
+		const crop: Crop = {
+			offset: this.offset,
+			size: this.size
+		};
+		this.memory.updateCrop(crop);
+	}
+
+	private _calcOffset($newOffsetX: number, $newOffsetY: number): void {
+		this.offset.current.x = this.offset.prev.x + $newOffsetX;
+		this.offset.current.y = this.offset.prev.y + $newOffsetY;
+	}
+
+	private _calcSize(): void {
+		const switchName: string = this.cursorState.areaName;
+		const canvasWidth: number = this.memory.renderer.element.main.clientWidth;
+		const canvasHeight: number = this.memory.renderer.element.main.clientHeight;
+		const diffX: number = this.memory.pointerOffset.current.x - this.offset.current.x;
+		const diffY: number = this.memory.pointerOffset.current.y - this.offset.current.y;
+
+		let halfW: number = this.size.width / 2;
+		let halfH: number = this.size.height / 2;
+
+		switch (switchName) {
+			case 'leftUp':
+				halfW -= diffX;
+				halfH -= diffY;
+				break;
+
+			case 'rightDown':
+				halfW += diffX;
+				halfH += diffY;
+				break;
+
+			case 'leftDown':
+				halfW -= diffX;
+				halfH += diffY;
+				break;
+
+			case 'rightUp':
+				halfW += diffX;
+				halfH -= diffY;
+				break;
+
+			case 'middleUp':
+				halfH -= diffY;
+				break;
+
+			case 'middleDown':
+				halfH += diffY;
+				break;
+
+			case 'middleRight':
+				halfW += diffX;
+				break;
+
+			case 'middleLeft':
+				halfW -= diffX;
+				break;
+
+			default:
+				break;
+		}
+
+		const min: number = this.cornerSize + this.barSize / 2;
+		const maxW: number = canvasWidth;
+		const maxH: number = canvasHeight;
+		const isLargerW: boolean = halfW > min;
+		const isLargerH: boolean = halfH > min;
+		const isSmallerW: boolean = halfW < maxW;
+		const isSmallerH: boolean = halfH < maxH;
+
+		if (halfW !== this.size.width / 2) {
+			this.size.width = isLargerW ? (isSmallerW ? halfW : maxW) : min;
+		}
+		if (halfH !== this.size.height / 2) {
+			this.size.height = isLargerH ? (isSmallerH ? halfH : maxH) : min;
+		}
+	}
+
+	private _validateOffset(): void {
+		const canvasWidth: number = this.memory.renderer.element.main.clientWidth;
+		const canvasHeight: number = this.memory.renderer.element.main.clientHeight;
+		const minX: number = this.size.width / 2;
+		const minY: number = this.size.height / 2;
+		const maxX: number = canvasWidth;
+		const maxY: number = canvasHeight;
+		const x: number = this.offset.current.x;
+		const y: number = this.offset.current.y;
+
+		// x
+		if (x - minX < 0) this.offset.current.x = minX;
+		if (canvasWidth < x + minX) this.offset.current.x = canvasWidth - minX;
+		// y
+		if (y - minY < 0) this.offset.current.y = minY;
+		if (canvasHeight < y + minY) this.offset.current.y = canvasHeight - minY;
+	}
+
+	///////////////////////////////////////////////////////////////////////////
+	//
+	//	Render
+	//
+	///////////////////////////////////////////////////////////////////////////
+
+	render($crop: Crop): void {
+		if (!this.memory.isLoaded$.getValue()) return;
+		const c: HTMLCanvasElement = this.memory.renderer.element.overlay;
+		c.width = this.memory.renderer.element.main.clientWidth;
+		c.height = this.memory.renderer.element.main.clientHeight;
+		const ctx: CanvasRenderingContext2D = c.getContext('2d');
+
+		this._createBackground(ctx);
+		this._createArea(ctx, $crop);
+	}
+
+	private _createBackground($ctx: CanvasRenderingContext2D): void {
+		const canvasWidth: number = this.memory.renderer.element.main.clientWidth;
+		const canvasHeight: number = this.memory.renderer.element.main.clientHeight;
+
+		// Background
+		$ctx.save();
+		$ctx.imageSmoothingEnabled = false;
+		$ctx.translate(canvasWidth / 2, canvasHeight / 2);
+		$ctx.beginPath();
+		$ctx.moveTo(-canvasWidth / 2, -canvasHeight / 2);
+		$ctx.lineTo(-canvasWidth / 2, canvasHeight / 2);
+		$ctx.lineTo(canvasWidth / 2, canvasHeight / 2);
+		$ctx.lineTo(canvasWidth / 2, -canvasHeight / 2);
+		$ctx.globalAlpha = 0.5;
+		$ctx.closePath();
+		$ctx.fill();
+		$ctx.globalAlpha = 1.0;
+		$ctx.restore();
+	}
+
+	private _createArea($ctx: CanvasRenderingContext2D, $crop: Crop): void {
+		const areaX: number = $crop.offset.current.x;
+		const areaY: number = $crop.offset.current.y;
+		const areaWidth: number = $crop.size.width;
+		const areaHeight: number = $crop.size.height;
+
+		$ctx.save();
+		$ctx.imageSmoothingEnabled = false;
+		$ctx.translate(areaX, areaY);
+		$ctx.beginPath();
+		$ctx.moveTo(-areaWidth / 2, -areaHeight / 2);
+		$ctx.lineTo(-areaWidth / 2, areaHeight / 2);
+		$ctx.lineTo(areaWidth / 2, areaHeight / 2);
+		$ctx.lineTo(areaWidth / 2, -areaHeight / 2);
+		$ctx.closePath();
+		$ctx.globalCompositeOperation = 'destination-out';
+		$ctx.fill();
+		$ctx.globalCompositeOperation = 'source-over';
+
+		this._drawArea($ctx, $crop.size);
+
+		$ctx.restore();
+	}
+
+	private _drawArea($ctx: CanvasRenderingContext2D, $size: { width: number; height: number }): void {
+		const areaWidth: number = $size.width;
+		const areaHeight: number = $size.height;
+
+		$ctx.beginPath();
+		$ctx.lineWidth = 1;
+		$ctx.strokeStyle = 'white';
+		$ctx.fillStyle = 'white';
+		// Frame
+		$ctx.rect(-areaWidth / 2, -areaHeight / 2, areaWidth, areaHeight);
+		// Left-up
+		$ctx.fillRect(-areaWidth / 2, -areaHeight / 2, this.cornerSize, 3);
+		$ctx.fillRect(-areaWidth / 2, -areaHeight / 2, 3, this.cornerSize);
+		// Left-down
+		$ctx.fillRect(-areaWidth / 2, areaHeight / 2, this.cornerSize, -3);
+		$ctx.fillRect(-areaWidth / 2, areaHeight / 2, 3, -this.cornerSize);
+		// Right-down
+		$ctx.fillRect(areaWidth / 2, areaHeight / 2, -this.cornerSize, -3);
+		$ctx.fillRect(areaWidth / 2, areaHeight / 2, -3, -this.cornerSize);
+		// Right-up
+		$ctx.fillRect(areaWidth / 2, -areaHeight / 2, -this.cornerSize, 3);
+		$ctx.fillRect(areaWidth / 2, -areaHeight / 2, -3, this.cornerSize);
+
+		// Middle-up
+		$ctx.fillRect(-this.barSize / 2, -areaHeight / 2, this.barSize, 3);
+		// Middle-left
+		$ctx.fillRect(-areaWidth / 2, -this.barSize / 2, 3, this.barSize);
+		// Middle-down
+		$ctx.fillRect(-this.barSize / 2, areaHeight / 2, this.barSize, -3);
+		// Middle-right
+		$ctx.fillRect(areaWidth / 2, -this.barSize / 2, -3, this.barSize);
+
+		// Separation
+		$ctx.lineWidth = 0.5;
+		for (let i = -areaWidth / 2; i < (areaWidth * 2) / 3; i += areaWidth / 3) {
+			$ctx.moveTo(i, -areaHeight / 2);
+			$ctx.lineTo(i, areaHeight / 2);
+		}
+		for (let i = -areaHeight / 2; i < (areaHeight * 2) / 3; i += areaHeight / 3) {
+			$ctx.moveTo(-areaWidth / 2, i);
+			$ctx.lineTo(areaWidth / 2, i);
+		}
+
+		$ctx.stroke();
 	}
 }

@@ -326,18 +326,28 @@ footer {
 	box-shadow: $box-shadow;
 	background-color: rgba(white, 1);
 
+	span {
+		font-weight: bold;
+	}
+
 	input {
-		width: 50px;
+		color: $black;
+	}
+
+	input[type='text'] {
+		width: 60px;
 		border: none;
 		margin: 5px 5px;
 		padding: 2px 10px;
 		border-radius: 5px;
 		background-color: $thin-black;
-		font-weight: bold;
 
 		&:focus {
 			outline: none;
 		}
+	}
+
+	input[type='button'] {
 	}
 }
 
