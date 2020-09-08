@@ -15,6 +15,9 @@ import { Crop } from '../../model/crop.model';
 import { FlagService } from '../../service/core/flag.service';
 import { CpuService } from '../../service/core/cpu.service';
 
+// Module
+import { CropService } from '../../service/module/crop.service';
+
 // Fontawesome
 import { faFileImage } from '@fortawesome/free-solid-svg-icons';
 import { faSignature } from '@fortawesome/free-solid-svg-icons';
@@ -74,7 +77,8 @@ export class ViewerComponent implements OnInit, OnDestroy {
 		private gpu: GpuService,
 		private func: FuncService,
 		private flag: FlagService,
-		private cpu: CpuService
+		private cpu: CpuService,
+		private cropModule: CropService
 	) {}
 
 	ngOnInit(): void {
@@ -92,14 +96,26 @@ export class ViewerComponent implements OnInit, OnDestroy {
 			height: new FormControl('', [])
 		});
 
+		this.cropConf.valueChanges.subscribe(($val) => {
+			const crop: Crop = {
+				offset: this.memory.crop$.getValue().offset,
+				size: {
+					width: $val.width,
+					height: $val.height
+				}
+			};
+
+			this.cropModule.validateInput(crop);
+		});
+
 		this.memory.psdData$.subscribe((data: { psd: Psd; fileName: string }) => {
 			console.log(data);
 			if (this.memory.isLoaded$.getValue()) return;
 
-			const rendererSize: DOMRect = this.dropAreaRef.nativeElement.getBoundingClientRect();
-			const width = rendererSize.width;
-			const height = rendererSize.width * (data.psd.height / data.psd.width);
-			const scaleRatio = rendererSize.width / data.psd.width;
+			const canvasSize: DOMRect = this.mainCanvasRef.nativeElement.getBoundingClientRect();
+			const width = canvasSize.width;
+			const height = Math.floor(canvasSize.width * (data.psd.height / data.psd.width));
+			const scaleRatio = canvasSize.width / data.psd.width;
 
 			this.memory.updateRenderer({ width, height, scaleRatio }, data.psd);
 			this.memory.updateLayerInfos(this._extractPsdData(data.psd));
@@ -130,8 +146,9 @@ export class ViewerComponent implements OnInit, OnDestroy {
 
 			// Set width and height for renderer
 			setTimeout(() => {
-				// 60px is due to the renderer set to padding: 30px;
-				this.memory.renderer.element.psdViewer.style.maxHeight = height + 60 + 'px';
+				// 60px is due to the psdViewer set to padding: 30px;
+				// 2px is due to the psdViewer's border-width set to 1px, which is border: solid 1px $color;
+				this.memory.renderer.element.psdViewer.style.maxHeight = height + 60 + 2 + 'px';
 				this.memory.renderer.element.dropArea.classList.remove('active');
 			}, 500);
 

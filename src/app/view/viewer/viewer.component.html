@@ -86,42 +86,17 @@
 				class="crop-panel"
 			>
 				<form #formCheck="ngForm" [formGroup]="cropConf" class="form-check">
-					<input type="text" [formControl]="cropConf.controls['width']" />
+					<input
+						type="number"
+						[formControl]="cropConf.controls['width']"
+						[value]="(memory.crop$ | async)?.size.width"
+					/>
 					<span>×</span>
-					<input type="text" [formControl]="cropConf.controls['height']" />
-					<div class="icon-prefix name-info-wrapper">
-						<fa-icon [icon]="faUnlock" [fixedWidth]="true" size="sm"></fa-icon>
-						<div class="name-info-row">アスペクト比の固定</div>
-					</div>
-					<div class="icon-prefix name-info-wrapper">
-						<fa-icon [icon]="faUndo" [fixedWidth]="true" size="sm" style="transform: scale(-1, 1)"></fa-icon>
-						<div class="name-info-row">回転</div>
-					</div>
-					<input type="button" value="切り取り" (click)="crop()" />
-				</form>
-			</div>
-
-			<!-- <div [style.top]="100 + 'px'" [style.left]="500 + 'px'" class="crop-panel">
-				<form #formCheck="ngForm" [formGroup]="cropConf" class="form-check">
-					<input type="text" [formControl]="cropConf.controls['width']" />
-					<span>×</span>
-					<input type="text" [formControl]="cropConf.controls['height']" />
-					<div class="lock-icon">
-						<fa-icon [icon]="faUnlock" [fixedWidth]="true" size="sm"></fa-icon>
-					</div>
-					<input type="button" value="切り取り" (click)="crop()" />
-				</form>
-			</div> -->
-
-			<div
-				[style.top]="100 + 'px'"
-				[style.left]="500 + 'px'"
-				class="crop-panel"
-			>
-				<form #formCheck="ngForm" [formGroup]="cropConf" class="form-check">
-					<input type="text" [formControl]="cropConf.controls['width']" />
-					<span>×</span>
-					<input type="text" [formControl]="cropConf.controls['height']" />
+					<input
+						type="number"
+						[formControl]="cropConf.controls['height']"
+						[value]="(memory.crop$ | async)?.size.height"
+					/>
 					<div class="icon-prefix name-info-wrapper">
 						<fa-icon [icon]="faUnlock" [fixedWidth]="true" size="sm"></fa-icon>
 						<div class="name-info-row">アスペクト比の固定</div>

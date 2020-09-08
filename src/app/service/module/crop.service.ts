@@ -3,6 +3,7 @@ import { MemoryService } from '../core/memory.service';
 import { Offset } from '../../model/offset.model';
 import { Pointer } from '../../model/pointer.model';
 import { Crop } from '../../model/crop.model';
+import * as _ from 'lodash';
 
 @Injectable({
 	providedIn: 'root'
@@ -42,10 +43,58 @@ export class CropService {
 				return;
 			}
 
+			this.offset = $crop.offset;
+			this.size.width = !!$crop.size.width ? $crop.size.width : this.size.width;
+			this.size.height = !!$crop.size.height ? $crop.size.height : this.size.height;
+
 			// Validate offset and size
 			this._validateOffset();
-			this.render($crop);
+
+			const crop: Crop = {
+				offset: this.offset,
+				size: this.size
+			};
+			this.render(crop);
 		});
+	}
+
+	validateInput($crop: Crop): void {
+		const w: number = !!$crop.size.width ? $crop.size.width : this.size.width;
+		const h: number = !!$crop.size.height ? $crop.size.height : this.size.height;
+
+		const minLength: number = this.cornerSize * 2;
+		const maxWidth: number = this.memory.renderer.size.width;
+		const maxHeight: number = this.memory.renderer.size.height;
+		const isSmaller: boolean = w < minLength || h < minLength;
+		const isBigger: boolean = maxWidth < w || maxHeight < h;
+
+		if (minLength <= w && w <= maxWidth) {
+			this.size.width = w;
+		} else {
+			// Width validation
+			if (maxWidth < w && this.size.width !== maxWidth) {
+				this.size.width = maxWidth;
+			} else {
+				return;
+			}
+		}
+
+		if (minLength <= h && h <= maxHeight) {
+			this.size.height = h;
+		} else {
+			// Height validation
+			if (maxHeight < h && this.size.height !== maxHeight) {
+				this.size.height = maxHeight;
+			} else {
+				return;
+			}
+		}
+
+		const crop: Crop = {
+			offset: this.offset,
+			size: this.size
+		};
+		this.memory.updateCrop(crop);
 	}
 
 	activate(): void {
@@ -54,9 +103,6 @@ export class CropService {
 			type: '',
 			group: ''
 		});
-
-		// Validate offset and size
-		this._validateOffset();
 
 		this.render(this.memory.crop$.getValue());
 	}
@@ -273,9 +319,6 @@ export class CropService {
 			this._calcOffset($newOffsetX, $newOffsetY);
 		}
 
-		// Validate offset and size
-		this._validateOffset();
-
 		const crop: Crop = {
 			offset: this.offset,
 			size: this.size
@@ -290,8 +333,8 @@ export class CropService {
 
 	private _calcSize(): void {
 		const switchName: string = this.cursorState.areaName;
-		const canvasWidth: number = this.memory.renderer.element.main.clientWidth;
-		const canvasHeight: number = this.memory.renderer.element.main.clientHeight;
+		const canvasWidth: number = this.memory.renderer.element.main.getBoundingClientRect().width;
+		const canvasHeight: number = this.memory.renderer.element.main.getBoundingClientRect().height;
 		const diffX: number = this.memory.pointerOffset.current.x - this.offset.current.x;
 		const diffY: number = this.memory.pointerOffset.current.y - this.offset.current.y;
 
@@ -356,8 +399,8 @@ export class CropService {
 	}
 
 	private _validateOffset(): void {
-		const canvasWidth: number = this.memory.renderer.element.main.clientWidth;
-		const canvasHeight: number = this.memory.renderer.element.main.clientHeight;
+		const canvasWidth: number = this.memory.renderer.element.main.getBoundingClientRect().width;
+		const canvasHeight: number = this.memory.renderer.element.main.getBoundingClientRect().height;
 		const minX: number = this.size.width / 2;
 		const minY: number = this.size.height / 2;
 		const maxX: number = canvasWidth;
@@ -366,11 +409,11 @@ export class CropService {
 		const y: number = this.offset.current.y;
 
 		// x
-		if (x - minX <= 0) this.offset.current.x = minX;
-		if (canvasWidth <= x + minX) this.offset.current.x = canvasWidth - minX;
+		if (x - minX < 0) this.offset.current.x = minX;
+		if (canvasWidth < x + minX) this.offset.current.x = canvasWidth - minX;
 		// y
-		if (y - minY <= 0) this.offset.current.y = minY;
-		if (canvasHeight <= y + minY) this.offset.current.y = canvasHeight - minY;
+		if (y - minY < 0) this.offset.current.y = minY;
+		if (canvasHeight < y + minY) this.offset.current.y = canvasHeight - minY;
 	}
 
 	///////////////////////////////////////////////////////////////////////////
@@ -381,8 +424,8 @@ export class CropService {
 
 	render($crop: Crop): void {
 		const c: HTMLCanvasElement = this.memory.renderer.element.overlay;
-		c.width = this.memory.renderer.element.main.clientWidth;
-		c.height = this.memory.renderer.element.main.clientHeight;
+		c.width = this.memory.renderer.element.main.getBoundingClientRect().width;
+		c.height = this.memory.renderer.element.main.getBoundingClientRect().height;
 		const ctx: CanvasRenderingContext2D = c.getContext('2d');
 
 		this._createBackground(ctx);
@@ -390,8 +433,8 @@ export class CropService {
 	}
 
 	private _createBackground($ctx: CanvasRenderingContext2D): void {
-		const canvasWidth: number = this.memory.renderer.element.main.clientWidth;
-		const canvasHeight: number = this.memory.renderer.element.main.clientHeight;
+		const canvasWidth: number = this.memory.renderer.element.main.getBoundingClientRect().width;
+		const canvasHeight: number = this.memory.renderer.element.main.getBoundingClientRect().height;
 
 		// Background
 		$ctx.save();
