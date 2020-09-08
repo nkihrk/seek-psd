@@ -33,6 +33,12 @@
 	color: $gray;
 }
 
+///////////////////////////////////////////////////
+//
+//	icon-prefix
+//
+///////////////////////////////////////////////////
+
 .icon-prefix {
 	display: flex;
 	justify-content: center;
@@ -54,6 +60,82 @@
 		background-color: $thin-black;
 	}
 }
+
+///////////////////////////////////////////////////
+//
+//	Name info
+//
+///////////////////////////////////////////////////
+
+.name-info-wrapper {
+	position: relative;
+
+	&:hover {
+		.name-info-column,
+		.name-info-row {
+			transition-delay: 500ms;
+			opacity: 1;
+		}
+	}
+
+	.name-info-column,
+	.name-info-row {
+		display: flex;
+		align-content: center;
+		justify-content: center;
+		position: absolute;
+		z-index: 10;
+		font-size: 0.8rem;
+		font-weight: bold;
+		padding: 5px 10px;
+		border-radius: 3px;
+		white-space: nowrap;
+		opacity: 0;
+		color: white;
+		background-color: $black;
+		border: none;
+
+		user-select: none;
+		pointer-events: none;
+		transition: opacity $transition;
+
+		&:before {
+			content: '';
+			position: absolute;
+			top: 50%;
+			left: -12px;
+			transform: translateY(-50%);
+			border: 6px solid transparent;
+		}
+	}
+
+	.name-info-column {
+		top: 50%;
+		left: 140%;
+		transform: translateY(-50%);
+
+		&:before {
+			top: 50%;
+			left: -12px;
+			transform: translateY(-50%);
+			border-right: 6px solid $black;
+		}
+	}
+
+	.name-info-row {
+		top: -45px;
+		left: 50%;
+		transform: translateX(-50%);
+
+		&:before {
+			top: 98%;
+			left: 50%;
+			transform: translateX(-50%);
+			border-top: 6px solid $black;
+		}
+	}
+}
+
 ///////////////////////////////////////////////////
 //
 // Common structure
@@ -330,6 +412,7 @@ footer {
 
 		span {
 			font-weight: bold;
+			user-select: none;
 		}
 
 		input {
@@ -362,23 +445,11 @@ footer {
 			border: solid 1.5px $red;
 		}
 
-		.lock-icon {
-			display: flex;
-			justify-content: center;
-			align-items: center;
-			width: 28px;
-			border-radius: 3px;
-			margin: 0 5px;
-
-			&:hover {
-				background-color: $gray;
-			}
-
-			&::before {
-				content: '';
-				display: block;
-				padding-top: 100%;
-			}
+		.icon-prefix {
+			width: 30px;
+			height: 30px;
+			margin: 2px;
+			border-radius: 5px;
 		}
 	}
 }
@@ -431,58 +502,6 @@ footer {
 	border-radius: 10px;
 	box-shadow: $box-shadow;
 	color: $red;
-}
-
-///////////////////////////////////////////////////
-//
-//	Name info
-//
-///////////////////////////////////////////////////
-
-.name-info-wrapper {
-	position: relative;
-
-	&:hover {
-		.name-info-column {
-			transition-delay: 500ms;
-			opacity: 1;
-		}
-	}
-
-	.name-info-column {
-		display: flex;
-		align-content: center;
-		justify-content: center;
-		position: absolute;
-		z-index: 10;
-		top: 50%;
-		left: 140%;
-		transform: translateY(-50%);
-		font-size: 0.8rem;
-		font-weight: bold;
-		padding: 5px 10px;
-		border-radius: 3px;
-		white-space: nowrap;
-		opacity: 0;
-
-		color: white;
-		background-color: $black;
-		border: none;
-
-		user-select: none;
-		pointer-events: none;
-		transition: opacity $transition;
-
-		&:before {
-			content: '';
-			position: absolute;
-			top: 50%;
-			left: -12px;
-			transform: translateY(-50%);
-			border: 6px solid transparent;
-			border-right: 6px solid #333333;
-		}
-	}
 }
 
 ///////////////////////////////////////////////////

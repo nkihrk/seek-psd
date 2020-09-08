@@ -29,6 +29,7 @@ import { faSearch } from '@fortawesome/free-solid-svg-icons';
 import { faTrashAlt } from '@fortawesome/free-solid-svg-icons';
 import { faLock } from '@fortawesome/free-solid-svg-icons';
 import { faUnlock } from '@fortawesome/free-solid-svg-icons';
+import { faUndo } from '@fortawesome/free-solid-svg-icons';
 
 @Component({
 	selector: 'app-viewer',
@@ -62,6 +63,7 @@ export class ViewerComponent implements OnInit, OnDestroy {
 	faTrashAlt = faTrashAlt;
 	faLock = faLock;
 	faUnlock = faUnlock;
+	faUndo = faUndo;
 
 	isLoading = false;
 
