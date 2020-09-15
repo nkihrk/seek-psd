@@ -495,6 +495,22 @@ footer {
 	box-shadow: $box-shadow;
 }
 
+.separator-wrapper {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	width: 45px;
+	height: 10px;
+	margin: 5px;
+	user-select: none;
+
+	.separator {
+		width: 80%;
+		height: 1px;
+		background: $gray;
+	}
+}
+
 ///////////////////////////////////////////////////
 //
 //	Garbage

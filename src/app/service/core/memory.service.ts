@@ -45,6 +45,8 @@ export class MemoryService {
 			height: 500
 		}
 	});
+	isGrayscale$: BehaviorSubject<boolean> = new BehaviorSubject(false);
+	isFlip$: BehaviorSubject<boolean> = new BehaviorSubject(false);
 
 	// Renderer
 	renderer = { element: {} as Element, size: {} as Size } as Renderer;
@@ -145,6 +147,16 @@ export class MemoryService {
 
 	updateCrop($crop: Crop): void {
 		this.crop$.next($crop);
+	}
+
+	updateIsGrayScale(): void {
+		const flg: boolean = this.isGrayscale$.getValue();
+		this.isGrayscale$.next(!flg);
+	}
+
+	updateIsFlip(): void {
+		const flg: boolean = this.isFlip$.getValue();
+		this.isFlip$.next(!flg);
 	}
 }
 

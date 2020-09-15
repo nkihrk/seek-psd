@@ -25,7 +25,7 @@ import { faEye } from '@fortawesome/free-solid-svg-icons';
 import { faEyeSlash } from '@fortawesome/free-solid-svg-icons';
 import { faAngleRight } from '@fortawesome/free-solid-svg-icons';
 import { faFolder } from '@fortawesome/free-solid-svg-icons';
-import { faDownload } from '@fortawesome/free-solid-svg-icons';
+import { faFileDownload } from '@fortawesome/free-solid-svg-icons';
 import { faEyeDropper } from '@fortawesome/free-solid-svg-icons';
 import { faCropAlt } from '@fortawesome/free-solid-svg-icons';
 import { faSearch } from '@fortawesome/free-solid-svg-icons';
@@ -33,6 +33,9 @@ import { faTrashAlt } from '@fortawesome/free-solid-svg-icons';
 import { faLock } from '@fortawesome/free-solid-svg-icons';
 import { faUnlock } from '@fortawesome/free-solid-svg-icons';
 import { faUndo } from '@fortawesome/free-solid-svg-icons';
+import { faPaintRoller } from '@fortawesome/free-solid-svg-icons';
+import { faExchangeAlt } from '@fortawesome/free-solid-svg-icons';
+import { faDownload } from '@fortawesome/free-solid-svg-icons';
 
 @Component({
 	selector: 'app-viewer',
@@ -59,7 +62,7 @@ export class ViewerComponent implements OnInit, OnDestroy {
 	faEyeSlash = faEyeSlash;
 	faAngleRight = faAngleRight;
 	faFolder = faFolder;
-	faDownload = faDownload;
+	faFileDownload = faFileDownload;
 	faEyeDropper = faEyeDropper;
 	faCropAlt = faCropAlt;
 	faSearch = faSearch;
@@ -67,6 +70,9 @@ export class ViewerComponent implements OnInit, OnDestroy {
 	faLock = faLock;
 	faUnlock = faUnlock;
 	faUndo = faUndo;
+	faPaintRoller = faPaintRoller;
+	faExchangeAlt = faExchangeAlt;
+	faDownload = faDownload;
 
 	isLoading = false;
 
@@ -210,19 +216,20 @@ export class ViewerComponent implements OnInit, OnDestroy {
 
 		switch ($name) {
 			case 'color-picker':
-				this.func.colorPicker();
+				this.func.activateColorPicker();
 				break;
 
 			case 'crop':
-				this.func.crop();
+				this.func.activateCrop();
 				break;
 
 			case 'zoom':
-				this.func.zoom();
+				this.func.activateZoom();
 				break;
 
 			case 'garbage':
-				this._garbage();
+				this.func.garbage();
+				this.isLoading = false;
 				break;
 
 			default:
@@ -230,39 +237,27 @@ export class ViewerComponent implements OnInit, OnDestroy {
 		}
 	}
 
-	private _garbage(): void {
-		this.memory.refreshData();
+	execExplicitFunc($name: string): void {
+		switch ($name) {
+			case 'crop':
+				this.func.crop();
+				break;
 
-		// Initialize reservedByFuncs
-		this.memory.updateReservedByFunc({
-			name: '',
-			type: '',
-			group: ''
-		});
+			case 'grayscale':
+				this.func.grayscale();
+				break;
 
-		this.memory.renderer.element.dropArea.classList.add('active');
-		this.isLoading = false;
+			case 'flip':
+				this.func.flip();
+				break;
 
-		setTimeout(() => {
-			this.memory.renderer.element.psdViewer.style.maxHeight = '300px';
-		}, 400);
+			case 'download':
+				this.func.download();
+				break;
 
-		setTimeout(() => {
-			// Initialize main canvas
-			const c: HTMLCanvasElement = this.memory.renderer.element.main;
-			c.width = 1;
-			c.height = 1;
-		}, 1000);
-	}
-
-	///////////////////////////////////////////////////////////////////////////
-	//
-	//	Crop
-	//
-	///////////////////////////////////////////////////////////////////////////
-
-	crop(): void {
-		this.cropModule.getImage();
+			default:
+				break;
+		}
 	}
 
 	///////////////////////////////////////////////////////////////////////////

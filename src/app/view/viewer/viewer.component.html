@@ -33,6 +33,45 @@
 			<fa-icon [icon]="faSearch" [fixedWidth]="true" size="lg" style="transform: scale(-1, 1)"></fa-icon>
 			<div class="name-info-column">拡大・縮小</div>
 		</li>
+		<li class="separator-wrapper">
+			<div class="separator"></div>
+		</li>
+		<li
+			(click)="execExplicitFunc('grayscale')"
+			[ngClass]="{
+				active: (memory.isGrayscale$ | async),
+				disable: !(memory.isLoaded$ | async)
+			}"
+			class="icon-prefix name-info-wrapper"
+		>
+			<fa-icon [icon]="faPaintRoller" [fixedWidth]="true" size="lg"></fa-icon>
+			<div class="name-info-column">グレースケール化</div>
+		</li>
+		<li
+			(click)="execExplicitFunc('flip')"
+			[ngClass]="{
+				active: (memory.isFlip$ | async),
+				disable: !(memory.isLoaded$ | async)
+			}"
+			class="icon-prefix name-info-wrapper"
+		>
+			<fa-icon [icon]="faExchangeAlt" [fixedWidth]="true" size="lg"></fa-icon>
+			<div class="name-info-column">左右反転</div>
+		</li>
+		<li class="separator-wrapper">
+			<div class="separator"></div>
+		</li>
+		<li
+			(click)="execExplicitFunc('download')"
+			[ngClass]="{
+				active: (memory.reservedByFunc$ | async)?.current.name === 'download',
+				disable: !(memory.isLoaded$ | async)
+			}"
+			class="icon-prefix name-info-wrapper"
+		>
+			<fa-icon [icon]="faDownload" [fixedWidth]="true" size="lg"></fa-icon>
+			<div class="name-info-column">現在のレイヤーを出力</div>
+		</li>
 	</ul>
 </nav>
 
@@ -62,7 +101,7 @@
 					<p>ここにファイルをドラッグ＆ドロップ</p>
 				</div>
 				<div class="hover">
-					<fa-icon [icon]="faDownload" size="3x"></fa-icon>
+					<fa-icon [icon]="faFileDownload" size="3x"></fa-icon>
 				</div>
 				<div *ngIf="isLoading" class="hover active">
 					<div class="loader">
@@ -105,7 +144,7 @@
 						<fa-icon [icon]="faUndo" [fixedWidth]="true" size="sm" style="transform: scale(-1, 1)"></fa-icon>
 						<div class="name-info-row">回転</div>
 					</div>
-					<input type="button" value="切り取り" (click)="crop()" />
+					<input type="button" value="切り取り" (click)="execExplicitFunc('crop')" />
 				</form>
 			</div>
 		</div>

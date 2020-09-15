@@ -101,8 +101,34 @@ export class GpuService {
 			ctxBuffer.restore();
 		});
 
+		// Flip
+		if (this.memory.isFlip$.getValue()) {
+			ctx.translate(c.width, 0);
+			ctx.scale(-1, 1);
+		}
+
 		// Render to the screen
 		ctx.drawImage(cBuffer, 0, 0, this.memory.renderer.size.width, this.memory.renderer.size.height);
+
+		// Grayscale
+		if (this.memory.isGrayscale$.getValue()) {
+			this.grayscale(ctx, c.width, c.height);
+		}
+	}
+
+	private grayscale($ctx: CanvasRenderingContext2D, $w: number, $h: number): void {
+		const pixels: ImageData = $ctx.getImageData(0, 0, $w, $h);
+		for (let y = 0; y < pixels.height; y++) {
+			for (let x = 0; x < pixels.width; x++) {
+				const i: number = y * 4 * pixels.width + x * 4;
+				const rgb = Number((pixels.data[i] + pixels.data[i + 1] + pixels.data[i + 2]) / 3);
+				pixels.data[i] = rgb;
+				pixels.data[i + 1] = rgb;
+				pixels.data[i + 2] = rgb;
+			}
+		}
+
+		$ctx.putImageData(pixels, 0, 0, 0, 0, pixels.width, pixels.height);
 	}
 
 	toggleVisibility($name: string, $uniqueId: string): void {

@@ -3,7 +3,6 @@ import { MemoryService } from '../core/memory.service';
 import { Offset } from '../../model/offset.model';
 import { Pointer } from '../../model/pointer.model';
 import { Crop } from '../../model/crop.model';
-import * as _ from 'lodash';
 import { saveAs } from 'file-saver';
 import { NotifierService } from 'angular-notifier';
 
