@@ -21,10 +21,17 @@ export class GpuService {
 	}
 
 	reRender(): void {
+		// Main renderer
 		const c: HTMLCanvasElement = this.memory.renderer.element.main;
 		c.width = this.memory.renderer.size.width;
 		c.height = this.memory.renderer.size.height;
 		const ctx: CanvasRenderingContext2D = c.getContext('2d');
+
+		// Buffer
+		const cBuffer: HTMLCanvasElement = this.memory.renderer.element.buffer;
+		cBuffer.width = this.memory.renderer.psd.width;
+		cBuffer.height = this.memory.renderer.psd.height;
+		const ctxBuffer: CanvasRenderingContext2D = cBuffer.getContext('2d');
 
 		const root: LayerInfo[] = this.memory.layerInfos$.getValue();
 		this.recursive(root, ($layer: LayerInfo, $layerInfos: LayerInfo[], $index: number) => {
@@ -37,9 +44,9 @@ export class GpuService {
 			let w: number = psd.right - psd.left;
 			let h: number = psd.bottom - psd.top;
 
-			ctx.save();
+			ctxBuffer.save();
 			// Set opacity
-			ctx.globalAlpha = psd.opacity;
+			ctxBuffer.globalAlpha = psd.opacity;
 
 			// Blend mode
 			let blendMode = '';
@@ -56,7 +63,7 @@ export class GpuService {
 			} else {
 				blendMode = 'source-over';
 			}
-			ctx.globalCompositeOperation = blendMode;
+			ctxBuffer.globalCompositeOperation = blendMode;
 
 			if ($layer.psd.clipping) {
 				for (let i = $index; i < $layerInfos.length; i++) {
@@ -68,18 +75,18 @@ export class GpuService {
 					const maskCanvas: HTMLCanvasElement = document.createElement('canvas');
 					maskCanvas.width = this.memory.renderer.psd.width;
 					maskCanvas.height = this.memory.renderer.psd.height;
-					const maskCtx: CanvasRenderingContext2D = maskCanvas.getContext('2d');
+					const maskCtxBuffer: CanvasRenderingContext2D = maskCanvas.getContext('2d');
 
-					maskCtx.globalCompositeOperation = 'source-over';
+					maskCtxBuffer.globalCompositeOperation = 'source-over';
 					const sourceW: number = source.right - source.left;
 					const sourceH: number = source.bottom - source.top;
-					maskCtx.drawImage(source.canvas, source.left, source.top, sourceW, sourceH);
+					maskCtxBuffer.drawImage(source.canvas, source.left, source.top, sourceW, sourceH);
 
-					maskCtx.globalCompositeOperation = 'destination-in';
+					maskCtxBuffer.globalCompositeOperation = 'destination-in';
 					const targetW: number = target.right - target.left;
 					const targetH: number = target.bottom - target.top;
 					// If its folder layer, no canvas, which causes error
-					if (!!target.canvas) maskCtx.drawImage(target.canvas, target.left, target.top, targetW, targetH);
+					if (!!target.canvas) maskCtxBuffer.drawImage(target.canvas, target.left, target.top, targetW, targetH);
 
 					canvas = maskCanvas;
 					x = 0;
@@ -90,14 +97,12 @@ export class GpuService {
 				}
 			}
 
-			x *= this.memory.renderer.size.scaleRatio;
-			y *= this.memory.renderer.size.scaleRatio;
-			w *= this.memory.renderer.size.scaleRatio;
-			h *= this.memory.renderer.size.scaleRatio;
-
-			ctx.drawImage(canvas, x, y, w, h);
-			ctx.restore();
+			ctxBuffer.drawImage(canvas, x, y, w, h);
+			ctxBuffer.restore();
 		});
+
+		// Render to the screen
+		ctx.drawImage(cBuffer, 0, 0, this.memory.renderer.size.width, this.memory.renderer.size.height);
 	}
 
 	toggleVisibility($name: string, $uniqueId: string): void {

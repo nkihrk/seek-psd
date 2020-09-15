@@ -262,7 +262,7 @@ export class ViewerComponent implements OnInit, OnDestroy {
 	///////////////////////////////////////////////////////////////////////////
 
 	crop(): void {
-		console.log(this.cropConf.controls['width'].value, this.cropConf.controls['height'].value);
+		this.cropModule.getImage();
 	}
 
 	///////////////////////////////////////////////////////////////////////////

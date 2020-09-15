@@ -106,6 +106,9 @@ export class MemoryService {
 		this.renderer.element.main = $main;
 		this.renderer.element.screen = $screen;
 		this.renderer.element.overlay = $overlay;
+
+		// Create buffer for psd
+		this.renderer.element.buffer = document.createElement('canvas');
 	}
 
 	updateRenderer($size: { width: number; height: number; scaleRatio: number }, $psd: Psd): void {
@@ -171,6 +174,7 @@ interface Element {
 	main: HTMLCanvasElement;
 	screen: HTMLCanvasElement;
 	overlay: HTMLCanvasElement;
+	buffer: HTMLCanvasElement;
 }
 
 interface Size {

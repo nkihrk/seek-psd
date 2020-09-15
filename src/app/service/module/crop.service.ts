@@ -4,6 +4,8 @@ import { Offset } from '../../model/offset.model';
 import { Pointer } from '../../model/pointer.model';
 import { Crop } from '../../model/crop.model';
 import * as _ from 'lodash';
+import { saveAs } from 'file-saver';
+import { NotifierService } from 'angular-notifier';
 
 @Injectable({
 	providedIn: 'root'
@@ -31,7 +33,7 @@ export class CropService {
 	private cornerSize = 20;
 	private barSize = 30;
 
-	constructor(private memory: MemoryService) {
+	constructor(private memory: MemoryService, private notifier: NotifierService) {
 		this.memory.crop$.subscribe(($crop: Crop) => {
 			if (!this.memory.isLoaded$.getValue()) return;
 
@@ -105,6 +107,41 @@ export class CropService {
 		});
 
 		this.render(this.memory.crop$.getValue());
+	}
+
+	getImage(): void {
+		try {
+			const cBuffer: HTMLCanvasElement = this.memory.renderer.element.buffer;
+			const c: HTMLCanvasElement = document.createElement('canvas');
+			c.width = this.size.width / this.memory.renderer.size.scaleRatio;
+			c.height = this.size.height / this.memory.renderer.size.scaleRatio;
+			const ctx: CanvasRenderingContext2D = c.getContext('2d');
+
+			const fixedX: number = (this.offset.current.x - this.size.width / 2) / this.memory.renderer.size.scaleRatio;
+			const fixedY: number = (this.offset.current.y - this.size.height / 2) / this.memory.renderer.size.scaleRatio;
+			const fixedW: number = this.size.width / this.memory.renderer.size.scaleRatio;
+			const fixedH: number = this.size.height / this.memory.renderer.size.scaleRatio;
+
+			ctx.drawImage(cBuffer, fixedX, fixedY, fixedW, fixedH, 0, 0, c.width, c.height);
+
+			c.toBlob(($blob: Blob) => {
+				const fName: string = this.memory.fileName$.getValue().split('.')[0];
+				saveAs($blob, fName);
+			}, 'image/png');
+
+			// Initialize
+			this.memory.updateReservedByFunc({
+				name: '',
+				type: '',
+				group: ''
+			});
+			this.memory.renderer.element.overlay.width = 1;
+			this.memory.renderer.element.overlay.height = 1;
+		} catch ($e) {
+			console.log($e);
+
+			this.notifier.notify('error', 'ファイルの出力に失敗しました');
+		}
 	}
 
 	registerOnMouseDown(): void {
