@@ -135,6 +135,8 @@ export class MemoryService {
 		this.updateLayerInfos([]);
 		this.updateFileName('');
 		this.updateLoadedState(false);
+		this.updateIsGrayScale(false);
+		this.updateIsFlip(false);
 	}
 
 	updateReservedByFunc($reserved: Reserved): void {
@@ -149,14 +151,12 @@ export class MemoryService {
 		this.crop$.next($crop);
 	}
 
-	updateIsGrayScale(): void {
-		const flg: boolean = this.isGrayscale$.getValue();
-		this.isGrayscale$.next(!flg);
+	updateIsGrayScale($flg: boolean): void {
+		this.isGrayscale$.next($flg);
 	}
 
-	updateIsFlip(): void {
-		const flg: boolean = this.isFlip$.getValue();
-		this.isFlip$.next(!flg);
+	updateIsFlip($flg: boolean): void {
+		this.isFlip$.next($flg);
 	}
 }
 
