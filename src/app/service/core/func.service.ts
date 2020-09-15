@@ -94,7 +94,7 @@ export class FuncService {
 		ctx.drawImage(cBuffer, 0, 0);
 
 		if (this.memory.isFlip$.getValue()) {
-			ctx.clearRect(0, 0, cBuffer.width, cBuffer.height);
+			ctx.clearRect(0, 0, c.width, c.height);
 			ctx.translate(c.width, 0);
 			ctx.scale(-1, 1);
 

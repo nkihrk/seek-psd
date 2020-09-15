@@ -123,6 +123,28 @@ export class CropService {
 
 			ctx.drawImage(cBuffer, fixedX, fixedY, fixedW, fixedH, 0, 0, c.width, c.height);
 
+			if (this.memory.isFlip$.getValue()) {
+				ctx.clearRect(0, 0, c.width, c.height);
+				ctx.translate(c.width, 0);
+				ctx.scale(-1, 1);
+
+				ctx.drawImage(
+					cBuffer,
+					this.memory.renderer.size.width / this.memory.renderer.size.scaleRatio - fixedX - fixedW,
+					fixedY,
+					fixedW,
+					fixedH,
+					0,
+					0,
+					c.width,
+					c.height
+				);
+			}
+
+			if (this.memory.isGrayscale$.getValue()) {
+				this._grayscale(ctx, c.width, c.height);
+			}
+
 			c.toBlob(($blob: Blob) => {
 				const fName: string = this.memory.fileName$.getValue().split('.')[0];
 				saveAs($blob, fName);
@@ -141,6 +163,21 @@ export class CropService {
 
 			this.notifier.notify('error', 'ファイルの出力に失敗しました');
 		}
+	}
+
+	private _grayscale($ctx: CanvasRenderingContext2D, $w: number, $h: number): void {
+		const pixels: ImageData = $ctx.getImageData(0, 0, $w, $h);
+		for (let y = 0; y < pixels.height; y++) {
+			for (let x = 0; x < pixels.width; x++) {
+				const i: number = y * 4 * pixels.width + x * 4;
+				const rgb = Number((pixels.data[i] + pixels.data[i + 1] + pixels.data[i + 2]) / 3);
+				pixels.data[i] = rgb;
+				pixels.data[i + 1] = rgb;
+				pixels.data[i + 2] = rgb;
+			}
+		}
+
+		$ctx.putImageData(pixels, 0, 0, 0, 0, pixels.width, pixels.height);
 	}
 
 	registerOnMouseDown(): void {
