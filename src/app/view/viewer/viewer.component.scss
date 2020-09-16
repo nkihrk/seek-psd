@@ -146,6 +146,7 @@
 	max-width: $totalWidth;
 	margin: 0 auto;
 	padding: 0 30px;
+	transition: max-width $transition;
 
 	h1 {
 		margin: 20px 0;
@@ -291,7 +292,21 @@ footer {
 	align-self: flex-start;
 
 	h2 {
+		display: flex;
+		align-items: center;
 		margin: 10px 0;
+
+		fa-icon {
+			margin-right: 10px;
+		}
+
+		.layer-skelton-title {
+			display: inline-block;
+			width: calc(100% - 34px - 20px);
+			height: 30px;
+			background-color: $gray;
+			border-radius: 5px;
+		}
 	}
 
 	.outer-layer-panel {
@@ -332,6 +347,26 @@ footer {
 		}
 
 		li {
+			&.layer-skelton {
+				position: relative;
+				width: calc(100% - 35px);
+				height: 30px;
+				border-radius: 5px;
+				background-color: $gray;
+				margin-bottom: 5px;
+
+				.layer-skelton-box {
+					position: absolute;
+					top: 50%;
+					right: -35px;
+					width: 30px;
+					height: 30px;
+					background-color: $gray;
+					border-radius: 5px;
+					transform: translateY(-50%);
+				}
+			}
+
 			label {
 				width: calc(100% - 35px);
 				height: 100%;

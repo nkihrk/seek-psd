@@ -164,11 +164,22 @@
 			<h2 class="ellipsis">
 				<fa-icon [icon]="faSignature" [fixedWidth]="true" size="sm"></fa-icon>
 				{{ memory.fileName$ | async }}
+				<div *ngIf="!(memory.isLoaded$ | async)" class="layer-skelton-title"></div>
 			</h2>
 
 			<div class="outer-layer-panel">
 				<nav class="layer-panel">
 					<ul>
+						<li *ngIf="!(memory.isLoaded$ | async)" class="layer-skelton">
+							<div class="layer-skelton-box"></div>
+						</li>
+						<li *ngIf="!(memory.isLoaded$ | async)" class="layer-skelton">
+							<div class="layer-skelton-box"></div>
+						</li>
+						<li *ngIf="!(memory.isLoaded$ | async)" class="layer-skelton">
+							<div class="layer-skelton-box"></div>
+						</li>
+
 						<ng-template #recursiveList let-list>
 							<li *ngFor="let item of list; let i = index" style="position: relative">
 								<div class="eye-icon" (click)="toggleVisibility(item.name, item.uniqueId)">
