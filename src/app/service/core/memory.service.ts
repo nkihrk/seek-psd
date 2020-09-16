@@ -17,6 +17,7 @@ export class MemoryService {
 	layerInfos$: BehaviorSubject<LayerInfo[]> = new BehaviorSubject([]);
 	fileName$: BehaviorSubject<string> = new BehaviorSubject('');
 	isLoaded$: BehaviorSubject<boolean> = new BehaviorSubject(false);
+	isLoading$: BehaviorSubject<boolean> = new BehaviorSubject(false);
 	reservedByFunc$: BehaviorSubject<ReservedByFunc> = new BehaviorSubject({
 		current: {
 			name: '',
@@ -47,6 +48,7 @@ export class MemoryService {
 	});
 	isGrayscale$: BehaviorSubject<boolean> = new BehaviorSubject(false);
 	isFlip$: BehaviorSubject<boolean> = new BehaviorSubject(false);
+	isResizeCanvas$: BehaviorSubject<boolean> = new BehaviorSubject(false);
 
 	// Renderer
 	renderer = { element: {} as Element, size: {} as Size } as Renderer;
@@ -126,15 +128,19 @@ export class MemoryService {
 		this.fileName$.next($name);
 	}
 
-	updateLoadedState($flg: boolean): void {
+	updateIsLoaded($flg: boolean): void {
 		this.isLoaded$.next($flg);
+	}
+
+	updateIsLoading($flg): void {
+		this.isLoading$.next($flg);
 	}
 
 	refreshData(): void {
 		this.updateRenderer(null, null);
 		this.updateLayerInfos([]);
 		this.updateFileName('');
-		this.updateLoadedState(false);
+		this.updateIsLoaded(false);
 		this.updateIsGrayScale(false);
 		this.updateIsFlip(false);
 	}
@@ -157,6 +163,10 @@ export class MemoryService {
 
 	updateIsFlip($flg: boolean): void {
 		this.isFlip$.next($flg);
+	}
+
+	updateIsResizeCanvas($flg: boolean): void {
+		this.isResizeCanvas$.next($flg);
 	}
 }
 

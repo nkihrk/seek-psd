@@ -1,6 +1,7 @@
 import { Component, OnInit, OnDestroy, ViewChild, ElementRef, ChangeDetectorRef } from '@angular/core';
 import { Observable, of } from 'rxjs';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
+import { NotifierService } from 'angular-notifier';
 
 // Service
 import { FileLoaderService } from '../../service/core/file-loader.service';
@@ -14,6 +15,7 @@ import { Pointer } from '../../model/pointer.model';
 import { Crop } from '../../model/crop.model';
 import { FlagService } from '../../service/core/flag.service';
 import { CpuService } from '../../service/core/cpu.service';
+import { ValidateFormatService } from '../../service/util/validate-format.service';
 
 // Module
 import { CropService } from '../../service/module/crop.service';
@@ -36,6 +38,7 @@ import { faUndo } from '@fortawesome/free-solid-svg-icons';
 import { faPaintRoller } from '@fortawesome/free-solid-svg-icons';
 import { faExchangeAlt } from '@fortawesome/free-solid-svg-icons';
 import { faDownload } from '@fortawesome/free-solid-svg-icons';
+import { faExpandAlt } from '@fortawesome/free-solid-svg-icons';
 
 @Component({
 	selector: 'app-viewer',
@@ -73,8 +76,7 @@ export class ViewerComponent implements OnInit, OnDestroy {
 	faPaintRoller = faPaintRoller;
 	faExchangeAlt = faExchangeAlt;
 	faDownload = faDownload;
-
-	isLoading = false;
+	faExpandAlt = faExpandAlt;
 
 	constructor(
 		private fileLoader: FileLoaderService,
@@ -84,7 +86,9 @@ export class ViewerComponent implements OnInit, OnDestroy {
 		private func: FuncService,
 		private flag: FlagService,
 		private cpu: CpuService,
-		private cropModule: CropService
+		private cropModule: CropService,
+		private validateFormat: ValidateFormatService,
+		private notifier: NotifierService
 	) {}
 
 	ngOnInit(): void {
@@ -126,7 +130,7 @@ export class ViewerComponent implements OnInit, OnDestroy {
 			this.memory.updateRenderer({ width, height, scaleRatio }, data.psd);
 			this.memory.updateLayerInfos(this._extractPsdData(data.psd));
 			this.memory.updateFileName(data.fileName);
-			this.memory.updateLoadedState(true);
+			this.memory.updateIsLoaded(true);
 
 			const crop: Crop = {
 				offset: {
@@ -170,8 +174,12 @@ export class ViewerComponent implements OnInit, OnDestroy {
 	}
 
 	onFileDropped($fileList: File[]) {
-		// Set loading
-		this.isLoading = true;
+		if (this.memory.isLoaded$.getValue()) {
+			this.notifier.notify('error', 'すでにファイルが読み込まれています');
+			return;
+		}
+
+		this.memory.updateIsLoading(true);
 		this.changeDetectorRef.detectChanges();
 
 		this.fileLoader.onFileDropped($fileList);
@@ -229,7 +237,7 @@ export class ViewerComponent implements OnInit, OnDestroy {
 
 			case 'garbage':
 				this.func.garbage();
-				this.isLoading = false;
+				this.memory.updateIsLoading(false);
 				break;
 
 			default:
@@ -249,6 +257,10 @@ export class ViewerComponent implements OnInit, OnDestroy {
 
 			case 'flip':
 				this.func.flip();
+				break;
+
+			case 'resize-canvas':
+				this.func.resizeCanvas();
 				break;
 
 			case 'download':

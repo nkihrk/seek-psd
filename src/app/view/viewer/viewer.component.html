@@ -58,6 +58,17 @@
 			<fa-icon [icon]="faExchangeAlt" [fixedWidth]="true" size="lg"></fa-icon>
 			<div class="name-info-column">左右反転</div>
 		</li>
+		<li
+			(click)="execExplicitFunc('resize-canvas')"
+			[ngClass]="{
+				active: (memory.isResizeCanvas$ | async),
+				disable: !(memory.isLoaded$ | async)
+			}"
+			class="icon-prefix name-info-wrapper"
+		>
+			<fa-icon [icon]="faExpandAlt" [fixedWidth]="true" size="lg"></fa-icon>
+			<div class="name-info-column">キャンバスのサイズを変更</div>
+		</li>
 		<li class="separator-wrapper">
 			<div class="separator"></div>
 		</li>
@@ -103,7 +114,7 @@
 				<div class="hover">
 					<fa-icon [icon]="faFileDownload" size="3x"></fa-icon>
 				</div>
-				<div *ngIf="isLoading" class="hover active">
+				<div *ngIf="memory.isLoading$ | async" class="hover active">
 					<div class="loader">
 						<div class="bar1"></div>
 						<div class="bar2"></div>
@@ -150,7 +161,7 @@
 		</div>
 
 		<div class="layer-info">
-			<h2>
+			<h2 class="ellipsis">
 				<fa-icon [icon]="faSignature" [fixedWidth]="true" size="sm"></fa-icon>
 				{{ memory.fileName$ | async }}
 			</h2>
