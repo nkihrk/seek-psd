@@ -347,7 +347,8 @@ footer {
 		}
 
 		li {
-			&.layer-skelton {
+			// Skelton for layer-info's list
+			&.layer-skelton-list {
 				position: relative;
 				width: calc(100% - 35px);
 				height: 30px;
