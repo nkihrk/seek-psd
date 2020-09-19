@@ -11,6 +11,7 @@
 			<fa-icon [icon]="faEyeDropper" [fixedWidth]="true" size="lg"></fa-icon>
 			<div class="name-info-column">スポイト</div>
 		</li>
+
 		<li
 			(click)="execFunc('crop')"
 			[ngClass]="{
@@ -22,6 +23,7 @@
 			<fa-icon [icon]="faCropAlt" [fixedWidth]="true" size="lg"></fa-icon>
 			<div class="name-info-column">クロッピング</div>
 		</li>
+
 		<li
 			(click)="execFunc('zoom')"
 			[ngClass]="{
@@ -33,9 +35,11 @@
 			<fa-icon [icon]="faSearch" [fixedWidth]="true" size="lg" style="transform: scale(-1, 1)"></fa-icon>
 			<div class="name-info-column">拡大・縮小</div>
 		</li>
+
 		<li class="separator-wrapper">
 			<div class="separator"></div>
 		</li>
+
 		<li
 			(click)="execExplicitFunc('grayscale')"
 			[ngClass]="{
@@ -47,6 +51,7 @@
 			<fa-icon [icon]="faPaintRoller" [fixedWidth]="true" size="lg"></fa-icon>
 			<div class="name-info-column">グレースケール化</div>
 		</li>
+
 		<li
 			(click)="execExplicitFunc('flip')"
 			[ngClass]="{
@@ -58,6 +63,7 @@
 			<fa-icon [icon]="faExchangeAlt" [fixedWidth]="true" size="lg"></fa-icon>
 			<div class="name-info-column">左右反転</div>
 		</li>
+
 		<li
 			(click)="execExplicitFunc('resize-canvas')"
 			[ngClass]="{
@@ -67,11 +73,22 @@
 			class="icon-prefix name-info-wrapper"
 		>
 			<fa-icon [icon]="faExpandAlt" [fixedWidth]="true" size="lg"></fa-icon>
-			<div class="name-info-column">キャンバスのサイズを変更</div>
+			<div [ngClass]="{ disable: (memory.isResizeCanvas$ | async) }" class="name-info-column">
+				キャンバスのサイズを変更
+			</div>
+			<div [ngClass]="{ active: (memory.isResizeCanvas$ | async) }" class="sub-tool-bar">
+				<ul>
+					<li class="icon-prefix active">x1</li>
+					<li class="icon-prefix">x1.2</li>
+					<li class="icon-prefix">x1.5</li>
+				</ul>
+			</div>
 		</li>
+
 		<li class="separator-wrapper">
 			<div class="separator"></div>
 		</li>
+
 		<li
 			(click)="execExplicitFunc('download')"
 			[ngClass]="{
@@ -93,7 +110,7 @@
 	</div>
 </div>
 
-<div class="container">
+<div #container class="container">
 	<header>
 		<h1>
 			<a href="./">

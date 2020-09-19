@@ -97,6 +97,7 @@ export class MemoryService {
 	///////////////////////////////////////////////////////////////////////////
 
 	initRenderer(
+		$container: HTMLDivElement,
 		$psdViewer: HTMLDivElement,
 		$dropArea: HTMLDivElement,
 		$screenCanvasWrapper: HTMLDivElement,
@@ -104,6 +105,7 @@ export class MemoryService {
 		$screen: HTMLCanvasElement,
 		$overlay: HTMLCanvasElement
 	): void {
+		this.renderer.element.container = $container;
 		this.renderer.element.psdViewer = $psdViewer;
 		this.renderer.element.dropArea = $dropArea;
 		this.renderer.element.screenCanvasWrapper = $screenCanvasWrapper;
@@ -189,6 +191,7 @@ interface Renderer {
 
 interface Element {
 	// div
+	container: HTMLDivElement;
 	psdViewer: HTMLDivElement;
 	dropArea: HTMLDivElement;
 	screenCanvasWrapper: HTMLDivElement;

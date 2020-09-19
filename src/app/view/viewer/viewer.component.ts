@@ -47,6 +47,7 @@ import { faExpandAlt } from '@fortawesome/free-solid-svg-icons';
 })
 export class ViewerComponent implements OnInit, OnDestroy {
 	// div
+	@ViewChild('container', { static: true }) containerRef: ElementRef<HTMLDivElement>;
 	@ViewChild('psdViewer', { static: true }) psdViewerRef: ElementRef<HTMLDivElement>;
 	@ViewChild('dropArea', { static: true }) dropAreaRef: ElementRef<HTMLDivElement>;
 	@ViewChild('screenCanvasWrapper', { static: true }) screenCanvasWrapperRef: ElementRef<HTMLDivElement>;
@@ -93,6 +94,7 @@ export class ViewerComponent implements OnInit, OnDestroy {
 
 	ngOnInit(): void {
 		this.memory.initRenderer(
+			this.containerRef.nativeElement,
 			this.psdViewerRef.nativeElement,
 			this.dropAreaRef.nativeElement,
 			this.screenCanvasWrapperRef.nativeElement,

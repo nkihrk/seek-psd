@@ -107,6 +107,12 @@
 			transform: translateY(-50%);
 			border: 6px solid transparent;
 		}
+
+		&.disable {
+			transition: opacity $transition;
+			transition-delay: initial;
+			opacity: 0 !important;
+		}
 	}
 
 	.name-info-column {
@@ -529,6 +535,28 @@ footer {
 	border: solid 1px $thin-black;
 	border-radius: 10px;
 	box-shadow: $box-shadow;
+
+	.sub-tool-bar {
+		position: absolute;
+		top: 50;
+		left: 140%;
+		border: solid 1px $thin-black;
+		border-radius: 10px;
+		box-shadow: $box-shadow;
+		pointer-events: none;
+		opacity: 0;
+		transition: opacity $transition;
+
+		&.active {
+			opacity: 1;
+			pointer-events: initial;
+		}
+
+		ul {
+			display: flex;
+			flex-direction: row;
+		}
+	}
 }
 
 .separator-wrapper {
