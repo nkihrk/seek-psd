@@ -46,7 +46,7 @@ export class PointerEventDirective {
 	}
 
 	// Down event
-	_onDown($e: any): void {
+	private _onDown($e: any): void {
 		let clientX: number;
 		let clientY: number;
 
@@ -61,7 +61,7 @@ export class PointerEventDirective {
 	}
 
 	// Up event
-	_onUp($e: any): void {
+	private _onUp($e: any): void {
 		let clientX: number;
 		let clientY: number;
 
@@ -74,7 +74,7 @@ export class PointerEventDirective {
 	}
 
 	// Move event
-	_onMove($e: any): void {
+	private _onMove($e: any): void {
 		let clientX: number;
 		let clientY: number;
 

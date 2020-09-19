@@ -28,6 +28,7 @@ export class CropService {
 		isSwitched: false,
 		areaName: ''
 	};
+	private isPointerMoveEnabled = false;
 
 	private cornerSize = 20;
 	private barSize = 30;
@@ -181,6 +182,11 @@ export class CropService {
 	}
 
 	registerOnMouseDown(): void {
+		if (!this._isPointerOffsetValid()) return;
+
+		// Enable pointermover event
+		this.isPointerMoveEnabled = true;
+
 		// To sync crop offsets with dataList
 		this.offset.prev.x = this.offset.current.x;
 		this.offset.prev.y = this.offset.current.y;
@@ -199,6 +205,15 @@ export class CropService {
 		};
 
 		this.switchCursor(ctx, crop);
+	}
+
+	private _isPointerOffsetValid(): boolean {
+		const rendererOffset: DOMRect = this.memory.renderer.element.main.getBoundingClientRect();
+		const pointerRawOffset: { x: number; y: number } = this.memory.pointerOffset.raw;
+		const isInsideX: boolean = rendererOffset.left < pointerRawOffset.x && pointerRawOffset.x < rendererOffset.right;
+		const isInsideY: boolean = rendererOffset.top < pointerRawOffset.y && pointerRawOffset.y < rendererOffset.bottom;
+
+		return isInsideX && isInsideY;
 	}
 
 	private switchCursor($ctx: CanvasRenderingContext2D, $crop: Crop): void {
@@ -370,6 +385,7 @@ export class CropService {
 
 	registerOnMouseLeftUp(): void {
 		this.resetStates();
+		this.isPointerMoveEnabled = false;
 	}
 
 	private resetStates(): void {
@@ -384,6 +400,8 @@ export class CropService {
 	}
 
 	registerOnMouseLeftDownMove($newOffsetX: number, $newOffsetY: number, $event: Pointer): void {
+		if (!this.isPointerMoveEnabled) return;
+
 		if (this.cursorState.isSwitched) {
 			// Calcurate size of cropping area
 			this._calcSize();
