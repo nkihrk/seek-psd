@@ -10,8 +10,7 @@ This project focusses on people practicing illustration who's trying to understa
 
 <br>
 
-![seek-psd-preview_1](./src/assets/seek-psd_1.png)
-![seek-psd-preview_2](./src/assets/seek-psd_2.png)
+![seek-psd-preview](./src/assets/seek-psd.png)
 
 # Document
 
