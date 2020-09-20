@@ -200,11 +200,15 @@
 						[formControl]="cropConf.controls['height']"
 						[value]="(memory.crop$ | async)?.size.height"
 					/>
-					<div class="icon-prefix name-info-wrapper">
+					<div
+						(click)="toggleFixedResizeResolution()"
+						[ngClass]="{ active: memory.fixedResizeResolution$ | async }"
+						class="icon-prefix name-info-wrapper"
+					>
 						<fa-icon [icon]="faUnlock" [fixedWidth]="true" size="sm"></fa-icon>
 						<div class="name-info-row">アスペクト比の固定</div>
 					</div>
-					<div class="icon-prefix name-info-wrapper">
+					<div (click)="rotateResolution()" class="icon-prefix name-info-wrapper">
 						<fa-icon [icon]="faUndo" [fixedWidth]="true" size="sm" style="transform: scale(-1, 1)"></fa-icon>
 						<div class="name-info-row">回転</div>
 					</div>

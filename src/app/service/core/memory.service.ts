@@ -53,6 +53,7 @@ export class MemoryService {
 		type: 0,
 		ratio: 1
 	});
+	fixedResizeResolution$: BehaviorSubject<boolean> = new BehaviorSubject(false);
 
 	// Renderer
 	renderer = { element: {} as Element, size: {} as Size } as Renderer;
@@ -178,6 +179,10 @@ export class MemoryService {
 			type: $type,
 			ratio: $ratio
 		});
+	}
+
+	updateFixedResizeResolution($flg: boolean): void {
+		this.fixedResizeResolution$.next($flg);
 	}
 }
 

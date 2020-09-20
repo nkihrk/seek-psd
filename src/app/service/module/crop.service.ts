@@ -480,6 +480,8 @@ export class CropService {
 	}
 
 	private _calcSize(): void {
+		const isFixedResolution: boolean = this.memory.fixedResizeResolution$.getValue();
+
 		const switchName: string = this.cursorState.areaName;
 		const canvasWidth: number = this.memory.renderer.element.main.getBoundingClientRect().width;
 		const canvasHeight: number = this.memory.renderer.element.main.getBoundingClientRect().height;
@@ -492,38 +494,58 @@ export class CropService {
 		switch (switchName) {
 			case 'leftUp':
 				halfW -= diffX;
-				halfH -= diffY;
+				if (isFixedResolution) {
+					halfH -= diffX;
+				} else {
+					halfH -= diffY;
+				}
 				break;
 
 			case 'rightDown':
 				halfW += diffX;
-				halfH += diffY;
+				if (isFixedResolution) {
+					halfH += diffX;
+				} else {
+					halfH += diffY;
+				}
 				break;
 
 			case 'leftDown':
 				halfW -= diffX;
-				halfH += diffY;
+				if (isFixedResolution) {
+					halfH -= diffX;
+				} else {
+					halfH += diffY;
+				}
 				break;
 
 			case 'rightUp':
 				halfW += diffX;
-				halfH -= diffY;
+				if (isFixedResolution) {
+					halfH += diffX;
+				} else {
+					halfH -= diffY;
+				}
 				break;
 
 			case 'middleUp':
+				if (isFixedResolution) halfW -= diffY;
 				halfH -= diffY;
 				break;
 
 			case 'middleDown':
+				if (isFixedResolution) halfW += diffY;
 				halfH += diffY;
 				break;
 
 			case 'middleRight':
 				halfW += diffX;
+				if (isFixedResolution) halfH += diffX;
 				break;
 
 			case 'middleLeft':
 				halfW -= diffX;
+				if (isFixedResolution) halfH -= diffX;
 				break;
 
 			default:
@@ -543,6 +565,14 @@ export class CropService {
 		}
 		if (halfH !== this.size.height / 2) {
 			this.size.height = isLargerH ? (isSmallerH ? halfH : maxH) : min;
+		}
+
+		if (!isFixedResolution) return;
+
+		if (!isSmallerW && this.size.width < this.size.height) {
+			this.size.height = maxW;
+		} else if (!isSmallerH && this.size.height < this.size.width) {
+			this.size.width = maxH;
 		}
 	}
 

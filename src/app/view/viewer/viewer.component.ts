@@ -280,6 +280,12 @@ export class ViewerComponent implements OnInit, OnDestroy {
 		}
 	}
 
+	///////////////////////////////////////////////////////////////////////////
+	//
+	//	resize canvas
+	//
+	///////////////////////////////////////////////////////////////////////////
+
 	execResizeCanvas($id: number): void {
 		if (this.prevResizeCanvasId === $id) return;
 		// 0 : x1
@@ -327,6 +333,13 @@ export class ViewerComponent implements OnInit, OnDestroy {
 			this.gpu.reRender();
 		}, 500);
 	}
+
+	toggleFixedResizeResolution(): void {
+		const flg: boolean = this.memory.fixedResizeResolution$.getValue();
+		this.memory.updateFixedResizeResolution(!flg);
+	}
+
+	rotateResolution(): void {}
 
 	///////////////////////////////////////////////////////////////////////////
 	//
