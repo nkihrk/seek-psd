@@ -36,8 +36,27 @@ export class GpuService {
 		const ctxBuffer: CanvasRenderingContext2D = cBuffer.getContext('2d');
 
 		const root: LayerInfo[] = this.memory.layerInfos$.getValue();
-		this.recursive(root, ($layer: LayerInfo, $layerInfos: LayerInfo[], $index: number) => {
-			const psd = $layer.psd;
+		this.parseLayers(root, ctxBuffer);
+
+		// Flip
+		if (this.memory.isFlip$.getValue()) {
+			ctx.translate(c.width, 0);
+			ctx.scale(-1, 1);
+		}
+
+		// Render to the screen
+		ctx.drawImage(cBuffer, 0, 0, c.width, c.height);
+
+		// Grayscale
+		if (this.memory.isGrayscale$.getValue()) {
+			this.grayscale(ctx, c.width, c.height);
+		}
+	}
+
+	private parseLayers($root: LayerInfo[], $ctx: CanvasRenderingContext2D): void {
+		this.recursive($root, ($layer: LayerInfo, $layerInfos: LayerInfo[], $index: number) => {
+			const psd: Layer = $layer.psd;
+
 			if ($layer.hidden.current || !psd?.canvas) return;
 
 			let canvas: HTMLCanvasElement = psd.canvas;
@@ -46,11 +65,9 @@ export class GpuService {
 			let w: number = psd.right - psd.left;
 			let h: number = psd.bottom - psd.top;
 
-			ctxBuffer.save();
+			$ctx.save();
 			// Set opacity
-			ctxBuffer.globalAlpha = psd.opacity;
-
-			console.log(psd.blendMode);
+			$ctx.globalAlpha = psd.opacity;
 
 			// Blend mode
 			let blendMode = '';
@@ -79,7 +96,7 @@ export class GpuService {
 			} else {
 				blendMode = 'source-over';
 			}
-			ctxBuffer.globalCompositeOperation = blendMode;
+			$ctx.globalCompositeOperation = blendMode;
 
 			if ($layer.psd.clipping) {
 				for (let i = $index; i < $layerInfos.length; i++) {
@@ -101,8 +118,20 @@ export class GpuService {
 					maskCtxBuffer.globalCompositeOperation = 'destination-in';
 					const targetW: number = target.right - target.left;
 					const targetH: number = target.bottom - target.top;
-					// If its folder layer, no canvas, which causes error
-					if (!!target.canvas) maskCtxBuffer.drawImage(target.canvas, target.left, target.top, targetW, targetH);
+
+					// If the target has no canvas, it is folder,
+					// which means folder clipping
+					if (!!target.canvas) {
+						maskCtxBuffer.drawImage(target.canvas, target.left, target.top, targetW, targetH);
+					} else {
+						console.log($layer.name);
+						const subRoot: LayerInfo[] = $layerInfos[i].children;
+						const subC: HTMLCanvasElement = this.parseSubLayers(subRoot);
+
+						maskCtxBuffer.drawImage(subC, 0, 0, maskCanvas.width, maskCanvas.height);
+
+						console.log('---');
+					}
 
 					canvas = maskCanvas;
 					x = 0;
@@ -113,23 +142,39 @@ export class GpuService {
 				}
 			}
 
-			ctxBuffer.drawImage(canvas, x, y, w, h);
-			ctxBuffer.restore();
+			$ctx.drawImage(canvas, x, y, w, h);
+			$ctx.restore();
+		});
+	}
+
+	private parseSubLayers($subRoot: LayerInfo[]): HTMLCanvasElement {
+		const c: HTMLCanvasElement = document.createElement('canvas');
+		c.width = this.memory.renderer.psd.width;
+		c.height = this.memory.renderer.psd.height;
+		const ctx: CanvasRenderingContext2D = c.getContext('2d');
+
+		this.recursive($subRoot, ($layer: LayerInfo, $layerInfos: LayerInfo[], $index: number) => {
+			if ($layer.hidden.current || $layer.psd.clipping) return;
+
+			const psd: Layer = $layer.psd;
+
+			if (!!psd.canvas) {
+				const canvas: HTMLCanvasElement = psd.canvas;
+				const x: number = psd.left;
+				const y: number = psd.top;
+				const w: number = psd.right - psd.left;
+				const h: number = psd.bottom - psd.top;
+
+				ctx.drawImage(canvas, x, y, w, h);
+			} else {
+				console.log($layer.name);
+				const subRoot: LayerInfo[] = $layer.children;
+				const subC: HTMLCanvasElement = this.parseSubLayers(subRoot);
+				ctx.drawImage(subC, 0, 0, c.width, c.height);
+			}
 		});
 
-		// Flip
-		if (this.memory.isFlip$.getValue()) {
-			ctx.translate(c.width, 0);
-			ctx.scale(-1, 1);
-		}
-
-		// Render to the screen
-		ctx.drawImage(cBuffer, 0, 0, c.width, c.height);
-
-		// Grayscale
-		if (this.memory.isGrayscale$.getValue()) {
-			this.grayscale(ctx, c.width, c.height);
-		}
+		return c;
 	}
 
 	private grayscale($ctx: CanvasRenderingContext2D, $w: number, $h: number): void {
