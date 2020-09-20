@@ -30,6 +30,8 @@ export class CropService {
 	};
 	private isPointerMoveEnabled = false;
 
+	private prevRendererRatio = 1;
+
 	private cornerSize = 20;
 	private barSize = 30;
 
@@ -49,7 +51,21 @@ export class CropService {
 			this.size.width = !!$crop.size.width ? $crop.size.width : this.size.width;
 			this.size.height = !!$crop.size.height ? $crop.size.height : this.size.height;
 
-			// Validate offset and size
+			// Rescale
+			const currentRendererRatio =
+				this.memory.renderer.element.main.getBoundingClientRect().width / this.memory.renderer.size.width;
+			this.size.width = (this.size.width / this.prevRendererRatio) * currentRendererRatio;
+			this.size.height = (this.size.height / this.prevRendererRatio) * currentRendererRatio;
+			this.offset.current.x = (this.offset.current.x / this.prevRendererRatio) * currentRendererRatio;
+			this.offset.current.y = (this.offset.current.y / this.prevRendererRatio) * currentRendererRatio;
+			this.offset.prev.x = (this.offset.prev.x / this.prevRendererRatio) * currentRendererRatio;
+			this.offset.prev.y = (this.offset.prev.y / this.prevRendererRatio) * currentRendererRatio;
+
+			// Update prevRendererRatio
+			this.prevRendererRatio = currentRendererRatio;
+
+			// Validate size and offset
+			this._validateSize();
 			this._validateOffset();
 
 			const crop: Crop = {
@@ -58,6 +74,14 @@ export class CropService {
 			};
 			this.render(crop);
 		});
+	}
+
+	private _validateSize(): void {
+		const maxW: number = this.memory.renderer.element.main.getBoundingClientRect().width;
+		const maxH: number = this.memory.renderer.element.main.getBoundingClientRect().height;
+
+		if (maxW < this.size.width) this.size.width = maxW;
+		if (maxH < this.size.height) this.size.height = maxH;
 	}
 
 	validateInput($crop: Crop): void {
@@ -111,18 +135,27 @@ export class CropService {
 
 	getImage(): void {
 		try {
+			const rendererRatio: number =
+				this.memory.renderer.size.width / this.memory.renderer.element.main.getBoundingClientRect().width;
+			const size = {
+				width: this.size.width * rendererRatio,
+				height: this.size.height * rendererRatio
+			};
+			const offset = {
+				x: this.offset.current.x * rendererRatio,
+				y: this.offset.current.y * rendererRatio
+			};
+
 			const cBuffer: HTMLCanvasElement = this.memory.renderer.element.buffer;
 			const c: HTMLCanvasElement = document.createElement('canvas');
-			c.width = this.size.width / this.memory.renderer.size.scaleRatio;
-			c.height = this.size.height / this.memory.renderer.size.scaleRatio;
+			c.width = size.width / this.memory.renderer.size.scaleRatio;
+			c.height = size.height / this.memory.renderer.size.scaleRatio;
 			const ctx: CanvasRenderingContext2D = c.getContext('2d');
 
-			const fixedX: number = (this.offset.current.x - this.size.width / 2) / this.memory.renderer.size.scaleRatio;
-			const fixedY: number = (this.offset.current.y - this.size.height / 2) / this.memory.renderer.size.scaleRatio;
-			const fixedW: number = this.size.width / this.memory.renderer.size.scaleRatio;
-			const fixedH: number = this.size.height / this.memory.renderer.size.scaleRatio;
-
-			ctx.drawImage(cBuffer, fixedX, fixedY, fixedW, fixedH, 0, 0, c.width, c.height);
+			const fixedX: number = (offset.x - size.width / 2) / this.memory.renderer.size.scaleRatio;
+			const fixedY: number = (offset.y - size.height / 2) / this.memory.renderer.size.scaleRatio;
+			const fixedW: number = size.width / this.memory.renderer.size.scaleRatio;
+			const fixedH: number = size.height / this.memory.renderer.size.scaleRatio;
 
 			if (this.memory.isFlip$.getValue()) {
 				ctx.clearRect(0, 0, c.width, c.height);
@@ -140,6 +173,8 @@ export class CropService {
 					c.width,
 					c.height
 				);
+			} else {
+				ctx.drawImage(cBuffer, fixedX, fixedY, fixedW, fixedH, 0, 0, c.width, c.height);
 			}
 
 			if (this.memory.isGrayscale$.getValue()) {

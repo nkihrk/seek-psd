@@ -316,6 +316,9 @@ export class ViewerComponent implements OnInit, OnDestroy {
 		this.memory.renderer.element.psdViewer.style.maxHeight =
 			(this.defaultContainerWidth * ratio * 0.97 - 300) * aspect + 'px';
 
+		// To tell cropFunc that the resizeCanvas is executed
+		this.memory.updateCrop(this.memory.crop$.getValue());
+
 		// Store current $id to prevent recursive execution of this function
 		this.prevResizeId = $id;
 
