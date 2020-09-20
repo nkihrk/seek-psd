@@ -33,47 +33,26 @@
 			<div class="name-info-column">拡大・縮小</div>
 		</li>
 
-		<li class="separator-wrapper">
-			<div class="separator"></div>
-		</li>
-
 		<li
-			(click)="execExplicitFunc('grayscale')"
+			(click)="execFunc('resize-canvas')"
 			[ngClass]="{
-				active: (memory.isGrayscale$ | async),
-				disable: !(memory.isLoaded$ | async)
-			}"
-			class="icon-prefix name-info-wrapper"
-		>
-			<fa-icon [icon]="faPaintRoller" [fixedWidth]="true" size="lg"></fa-icon>
-			<div class="name-info-column">グレースケール化</div>
-		</li>
-
-		<li
-			(click)="execExplicitFunc('flip')"
-			[ngClass]="{
-				active: (memory.isFlip$ | async),
-				disable: !(memory.isLoaded$ | async)
-			}"
-			class="icon-prefix name-info-wrapper"
-		>
-			<fa-icon [icon]="faExchangeAlt" [fixedWidth]="true" size="lg"></fa-icon>
-			<div class="name-info-column">左右反転</div>
-		</li>
-
-		<li
-			(click)="execExplicitFunc('resize-canvas')"
-			[ngClass]="{
-				active: (memory.resizeCanvas$ | async)?.flg,
+				active: (memory.reservedByFunc$ | async)?.current.name === 'resize-canvas',
 				disable: !(memory.isLoaded$ | async)
 			}"
 			class="icon-prefix name-info-wrapper"
 		>
 			<fa-icon [icon]="faExpandAlt" [fixedWidth]="true" size="lg"></fa-icon>
-			<div [ngClass]="{ disable: (memory.resizeCanvas$ | async)?.flg }" class="name-info-column">
+			<div
+				[ngClass]="{ disable: (memory.reservedByFunc$ | async)?.current.name === 'resize-canvas' }"
+				class="name-info-column"
+			>
 				キャンバスのサイズを変更
 			</div>
-			<div [ngClass]="{ active: (memory.resizeCanvas$ | async)?.flg }" appPreventClickPropagation class="sub-tool-bar">
+			<div
+				[ngClass]="{ active: (memory.reservedByFunc$ | async)?.current.name === 'resize-canvas' }"
+				appPreventClickPropagation
+				class="sub-tool-bar"
+			>
 				<ul>
 					<li
 						(click)="execResizeCanvas(0)"
@@ -119,6 +98,34 @@
 					</li>
 				</ul>
 			</div>
+		</li>
+
+		<li class="separator-wrapper">
+			<div class="separator"></div>
+		</li>
+
+		<li
+			(click)="execExplicitFunc('grayscale')"
+			[ngClass]="{
+				active: (memory.isGrayscale$ | async),
+				disable: !(memory.isLoaded$ | async)
+			}"
+			class="icon-prefix name-info-wrapper"
+		>
+			<fa-icon [icon]="faPaintRoller" [fixedWidth]="true" size="lg"></fa-icon>
+			<div class="name-info-column">グレースケール化</div>
+		</li>
+
+		<li
+			(click)="execExplicitFunc('flip')"
+			[ngClass]="{
+				active: (memory.isFlip$ | async),
+				disable: !(memory.isLoaded$ | async)
+			}"
+			class="icon-prefix name-info-wrapper"
+		>
+			<fa-icon [icon]="faExchangeAlt" [fixedWidth]="true" size="lg"></fa-icon>
+			<div class="name-info-column">左右反転</div>
 		</li>
 
 		<li class="separator-wrapper">
@@ -205,7 +212,18 @@
 						[ngClass]="{ active: memory.fixedResizeResolution$ | async }"
 						class="icon-prefix name-info-wrapper"
 					>
-						<fa-icon [icon]="faUnlock" [fixedWidth]="true" size="sm"></fa-icon>
+						<fa-icon
+							*ngIf="memory.fixedResizeResolution$ | async"
+							[icon]="faLock"
+							[fixedWidth]="true"
+							size="sm"
+						></fa-icon>
+						<fa-icon
+							*ngIf="!(memory.fixedResizeResolution$ | async)"
+							[icon]="faUnlock"
+							[fixedWidth]="true"
+							size="sm"
+						></fa-icon>
 						<div class="name-info-row">アスペクト比の固定</div>
 					</div>
 					<div (click)="rotateResolution()" class="icon-prefix name-info-wrapper">

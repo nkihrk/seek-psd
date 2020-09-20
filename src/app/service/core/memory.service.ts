@@ -48,8 +48,7 @@ export class MemoryService {
 	});
 	isGrayscale$: BehaviorSubject<boolean> = new BehaviorSubject(false);
 	isFlip$: BehaviorSubject<boolean> = new BehaviorSubject(false);
-	resizeCanvas$: BehaviorSubject<{ flg: boolean; type: number; ratio: number }> = new BehaviorSubject({
-		flg: false,
+	resizeCanvas$: BehaviorSubject<{ type: number; ratio: number }> = new BehaviorSubject({
 		type: 0,
 		ratio: 1
 	});
@@ -148,9 +147,11 @@ export class MemoryService {
 		this.updateLayerInfos([]);
 		this.updateFileName('');
 		this.updateIsLoaded(false);
+
 		this.updateIsGrayScale(false);
 		this.updateIsFlip(false);
-		this.updateResizeCanvas(false, 0, 1);
+		this.updateResizeCanvas(0, 1);
+		this.updateFixedResizeResolution(false);
 	}
 
 	updateReservedByFunc($reserved: Reserved): void {
@@ -173,9 +174,8 @@ export class MemoryService {
 		this.isFlip$.next($flg);
 	}
 
-	updateResizeCanvas($flg: boolean, $type: number, $ratio: number): void {
+	updateResizeCanvas($type: number, $ratio: number): void {
 		this.resizeCanvas$.next({
-			flg: $flg,
 			type: $type,
 			ratio: $ratio
 		});

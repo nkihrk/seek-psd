@@ -85,10 +85,15 @@ export class FuncService {
 	///////////////////////////////////////////////////////////////////////////
 
 	resizeCanvas(): void {
-		const flg: boolean = this.memory.resizeCanvas$.getValue().flg;
 		const type: number = this.memory.resizeCanvas$.getValue().type;
 		const ratio: number = this.memory.resizeCanvas$.getValue().ratio;
-		this.memory.updateResizeCanvas(!flg, type, ratio);
+		this.memory.updateResizeCanvas(type, ratio);
+
+		this.memory.updateReservedByFunc({
+			name: 'resize-canvas',
+			type: '',
+			group: ''
+		});
 	}
 
 	///////////////////////////////////////////////////////////////////////////

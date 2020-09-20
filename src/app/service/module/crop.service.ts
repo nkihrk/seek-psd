@@ -136,8 +136,6 @@ export class CropService {
 		const isLargerW: boolean = maxW <= this.size.width;
 		const isLargerH: boolean = maxH <= this.size.height;
 
-		console.log(this.size, maxW, maxH);
-
 		if (isLargerW && this.size.width < this.size.height) {
 			this.size.height = maxW;
 		} else if (isLargerH && this.size.height < this.size.width) {

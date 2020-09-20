@@ -265,6 +265,10 @@ export class ViewerComponent implements OnInit, OnDestroy {
 				this.func.activateZoom();
 				break;
 
+			case 'resize-canvas':
+				this.func.resizeCanvas();
+				break;
+
 			case 'garbage':
 				this.func.garbage();
 				this.memory.updateIsLoading(false);
@@ -287,10 +291,6 @@ export class ViewerComponent implements OnInit, OnDestroy {
 
 			case 'flip':
 				this.func.flip();
-				break;
-
-			case 'resize-canvas':
-				this.func.resizeCanvas();
 				break;
 
 			case 'download':
@@ -333,7 +333,7 @@ export class ViewerComponent implements OnInit, OnDestroy {
 		}
 
 		// Update state
-		this.memory.updateResizeCanvas(true, $id, ratio);
+		this.memory.updateResizeCanvas($id, ratio);
 
 		// Set scaled size
 		this.containerRef.nativeElement.style.maxWidth = this.defaultContainerWidth * ratio + 'px';
@@ -361,7 +361,17 @@ export class ViewerComponent implements OnInit, OnDestroy {
 		this.memory.updateFixedResizeResolution(!flg);
 	}
 
-	rotateResolution(): void {}
+	rotateResolution(): void {
+		const crop: Crop = {
+			offset: this.memory.crop$.getValue().offset,
+			size: {
+				width: this.memory.crop$.getValue().size.height,
+				height: this.memory.crop$.getValue().size.width
+			}
+		};
+
+		this.cropModule.validateInput(crop);
+	}
 
 	///////////////////////////////////////////////////////////////////////////
 	//
