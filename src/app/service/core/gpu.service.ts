@@ -50,6 +50,8 @@ export class GpuService {
 			// Set opacity
 			ctxBuffer.globalAlpha = psd.opacity;
 
+			console.log(psd.blendMode);
+
 			// Blend mode
 			let blendMode = '';
 			if (psd.blendMode === 'overlay') {
@@ -62,6 +64,18 @@ export class GpuService {
 				blendMode = 'lighter';
 			} else if (psd.blendMode === 'soft light') {
 				blendMode = 'soft-light';
+			} else if (psd.blendMode === 'hard light') {
+				blendMode = 'hard-light';
+			} else if (psd.blendMode === 'color burn') {
+				blendMode = 'color-burn';
+			} else if (psd.blendMode === 'saturation') {
+				blendMode = 'saturation';
+			} else if (psd.blendMode === 'hue') {
+				blendMode = 'hue';
+			} else if (psd.blendMode === 'color') {
+				blendMode = 'color';
+			} else if (psd.blendMode === 'color dodge') {
+				blendMode = 'color-dodge';
 			} else {
 				blendMode = 'source-over';
 			}

@@ -27,6 +27,7 @@ export class FileLoaderService {
 		return new Promise((resolve: any) => {
 			const input: HTMLInputElement = document.createElement('input');
 			input.type = 'file';
+			input.accept = '.jpeg, .jpg, .png, .bmp, .psd';
 			input.onchange = ($e: any) => {
 				const files: FileList = $e.target.files;
 				const fileList: any[] = [];
