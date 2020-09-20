@@ -29,8 +29,6 @@ export class GpuService {
 		c.height = c.width * aspect;
 		const ctx: CanvasRenderingContext2D = c.getContext('2d');
 
-		console.log(c.height);
-
 		// Buffer
 		const cBuffer: HTMLCanvasElement = this.memory.renderer.element.buffer;
 		cBuffer.width = this.memory.renderer.psd.width;

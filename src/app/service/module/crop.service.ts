@@ -65,7 +65,7 @@ export class CropService {
 			this.prevRendererRatio = currentRendererRatio;
 
 			// Validate size and offset
-			this._validateSize();
+			//this._validateSize();
 			this._validateOffset();
 
 			const crop: Crop = {
@@ -80,8 +80,8 @@ export class CropService {
 		const maxW: number = this.memory.renderer.element.main.getBoundingClientRect().width;
 		const maxH: number = this.memory.renderer.element.main.getBoundingClientRect().height;
 
-		if (maxW < this.size.width) this.size.width = maxW;
-		if (maxH < this.size.height) this.size.height = maxH;
+		if (maxW <= this.size.width) this.size.width = maxW;
+		if (maxH <= this.size.height) this.size.height = maxH;
 	}
 
 	validateInput($crop: Crop): void {
@@ -129,6 +129,28 @@ export class CropService {
 			type: '',
 			group: ''
 		});
+
+		// Rescale
+		const currentRendererRatio =
+			this.memory.renderer.element.main.getBoundingClientRect().width / this.memory.renderer.size.width;
+		this.size.width = (this.size.width / this.prevRendererRatio) * currentRendererRatio;
+		this.size.height = (this.size.height / this.prevRendererRatio) * currentRendererRatio;
+		this.offset.current.x = (this.offset.current.x / this.prevRendererRatio) * currentRendererRatio;
+		this.offset.current.y = (this.offset.current.y / this.prevRendererRatio) * currentRendererRatio;
+		this.offset.prev.x = (this.offset.prev.x / this.prevRendererRatio) * currentRendererRatio;
+		this.offset.prev.y = (this.offset.prev.y / this.prevRendererRatio) * currentRendererRatio;
+
+		// Update prevRendererRatio
+		this.prevRendererRatio = currentRendererRatio;
+
+		// Validate size and offset
+		this._validateSize();
+		this._validateOffset();
+
+		const crop: Crop = {
+			offset: this.offset,
+			size: this.size
+		};
 
 		this.render(this.memory.crop$.getValue());
 	}

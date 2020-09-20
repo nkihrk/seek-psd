@@ -63,7 +63,7 @@ export class ViewerComponent implements OnInit, OnDestroy {
 	// Make sure to change this value when $max-width in scss has been changed
 	private defaultContainerWidth = 1200;
 
-	private prevResizeId = 0;
+	private prevResizeCanvasId = 0;
 
 	// Fontawesome
 	faFileImage = faFileImage;
@@ -281,7 +281,7 @@ export class ViewerComponent implements OnInit, OnDestroy {
 	}
 
 	execResizeCanvas($id: number): void {
-		if (this.prevResizeId === $id) return;
+		if (this.prevResizeCanvasId === $id) return;
 		// 0 : x1
 		// 1 : x1.2
 		// 2 : x1.4
@@ -320,7 +320,7 @@ export class ViewerComponent implements OnInit, OnDestroy {
 		this.memory.updateCrop(this.memory.crop$.getValue());
 
 		// Store current $id to prevent recursive execution of this function
-		this.prevResizeId = $id;
+		this.prevResizeCanvasId = $id;
 
 		setTimeout(() => {
 			// Rerender
