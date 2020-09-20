@@ -87,10 +87,12 @@ export class CropService {
 	validateInput($crop: Crop): void {
 		const w: number = !!$crop.size.width ? $crop.size.width : this.size.width;
 		const h: number = !!$crop.size.height ? $crop.size.height : this.size.height;
+		const canvasWidth: number = this.memory.renderer.element.main.getBoundingClientRect().width;
+		const canvasHeight: number = this.memory.renderer.element.main.getBoundingClientRect().height;
 
 		const minLength: number = this.cornerSize * 2;
-		const maxWidth: number = this.memory.renderer.size.width;
-		const maxHeight: number = this.memory.renderer.size.height;
+		const maxWidth: number = canvasWidth;
+		const maxHeight: number = canvasHeight;
 		const isSmaller: boolean = w < minLength || h < minLength;
 		const isBigger: boolean = maxWidth < w || maxHeight < h;
 
@@ -116,11 +118,31 @@ export class CropService {
 			}
 		}
 
+		if (this.memory.fixedResizeResolution$.getValue()) this._validateFixedResizeResolution();
+
 		const crop: Crop = {
 			offset: this.offset,
 			size: this.size
 		};
 		this.memory.updateCrop(crop);
+	}
+
+	private _validateFixedResizeResolution(): void {
+		const canvasWidth: number = this.memory.renderer.element.main.getBoundingClientRect().width;
+		const canvasHeight: number = this.memory.renderer.element.main.getBoundingClientRect().height;
+		const min: number = this.cornerSize + this.barSize / 2;
+		const maxW: number = canvasWidth;
+		const maxH: number = canvasHeight;
+		const isLargerW: boolean = maxW <= this.size.width;
+		const isLargerH: boolean = maxH <= this.size.height;
+
+		console.log(this.size, maxW, maxH);
+
+		if (isLargerW && this.size.width < this.size.height) {
+			this.size.height = maxW;
+		} else if (isLargerH && this.size.height < this.size.width) {
+			this.size.width = maxH;
+		}
 	}
 
 	activate(): void {

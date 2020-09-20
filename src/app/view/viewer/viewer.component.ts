@@ -114,14 +114,36 @@ export class ViewerComponent implements OnInit, OnDestroy {
 			height: new FormControl('', [])
 		});
 
-		this.cropConf.valueChanges.subscribe(($val) => {
+		// Width input
+		this.cropConf.get('width').valueChanges.subscribe(($width: number) => {
 			const crop: Crop = {
 				offset: this.memory.crop$.getValue().offset,
 				size: {
-					width: $val.width,
-					height: $val.height
+					width: $width,
+					height: null
 				}
 			};
+
+			if (this.memory.fixedResizeResolution$.getValue()) {
+				crop.size.height = crop.size.width;
+			}
+
+			this.cropModule.validateInput(crop);
+		});
+
+		// Width input
+		this.cropConf.get('height').valueChanges.subscribe(($height: number) => {
+			const crop: Crop = {
+				offset: this.memory.crop$.getValue().offset,
+				size: {
+					width: null,
+					height: $height
+				}
+			};
+
+			if (this.memory.fixedResizeResolution$.getValue()) {
+				crop.size.width = crop.size.height;
+			}
 
 			this.cropModule.validateInput(crop);
 		});
