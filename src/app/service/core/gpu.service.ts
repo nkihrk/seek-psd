@@ -21,11 +21,15 @@ export class GpuService {
 	}
 
 	reRender(): void {
+		const aspect: number = this.memory.renderer.psd.height / this.memory.renderer.psd.width;
+
 		// Main renderer
 		const c: HTMLCanvasElement = this.memory.renderer.element.main;
-		c.width = this.memory.renderer.size.width;
-		c.height = this.memory.renderer.size.height;
+		c.width = this.memory.renderer.element.psdViewer.getBoundingClientRect().width - 60 - 2;
+		c.height = c.width * aspect;
 		const ctx: CanvasRenderingContext2D = c.getContext('2d');
+
+		console.log(c.height);
 
 		// Buffer
 		const cBuffer: HTMLCanvasElement = this.memory.renderer.element.buffer;
@@ -108,7 +112,7 @@ export class GpuService {
 		}
 
 		// Render to the screen
-		ctx.drawImage(cBuffer, 0, 0, this.memory.renderer.size.width, this.memory.renderer.size.height);
+		ctx.drawImage(cBuffer, 0, 0, c.width, c.height);
 
 		// Grayscale
 		if (this.memory.isGrayscale$.getValue()) {

@@ -81,6 +81,11 @@ export class ColorPickerService {
 		c.height = this.memory.renderer.element.screenCanvasWrapper.clientHeight;
 		const ctx: CanvasRenderingContext2D = c.getContext('2d');
 
+		const mainC: HTMLCanvasElement = this.memory.renderer.element.main;
+		const ctxC: CanvasRenderingContext2D = mainC.getContext('2d');
+		// This will somehow prevent anti-aliasing
+		const tmpRgb: Uint8ClampedArray = ctxC.getImageData(1, 1, 1, 1).data;
+
 		const size: number = this.defaultSize;
 		const ratio: number = this.defaultRatio;
 		const offset: number = size / 10;
@@ -147,7 +152,7 @@ export class ColorPickerService {
 
 		// Draw a pixelated image
 		ctx.drawImage(
-			this.memory.renderer.element.main,
+			mainC,
 			pointerOffset.x - rendererOffset.x - ratio / 2,
 			pointerOffset.y - rendererOffset.y - ratio / 2,
 			ratio,

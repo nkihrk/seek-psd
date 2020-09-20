@@ -85,8 +85,10 @@ export class FuncService {
 	///////////////////////////////////////////////////////////////////////////
 
 	resizeCanvas(): void {
-		const flg: boolean = this.memory.isResizeCanvas$.getValue();
-		this.memory.updateIsResizeCanvas(!flg);
+		const flg: boolean = this.memory.resizeCanvas$.getValue().flg;
+		const type: number = this.memory.resizeCanvas$.getValue().type;
+		const ratio: number = this.memory.resizeCanvas$.getValue().ratio;
+		this.memory.updateResizeCanvas(!flg, type, ratio);
 	}
 
 	///////////////////////////////////////////////////////////////////////////
@@ -156,6 +158,7 @@ export class FuncService {
 		this.memory.renderer.element.dropArea.classList.add('active');
 
 		setTimeout(() => {
+			this.memory.renderer.element.container.style.maxWidth = '1200px';
 			this.memory.renderer.element.psdViewer.style.maxHeight = '300px';
 		}, 400);
 

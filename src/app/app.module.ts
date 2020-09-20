@@ -10,6 +10,7 @@ import { ViewerComponent } from './view/viewer/viewer.component';
 import { PreventHoverPropagationDirective } from './directive/prevent-hover-propagation.directive';
 import { FileEventDirective } from './directive/file-event.directive';
 import { PointerEventDirective } from './directive/pointer-event.directive';
+import { PreventClickPropagationDirective } from './directive/prevent-click-propagation.directive';
 
 @NgModule({
 	declarations: [
@@ -17,7 +18,8 @@ import { PointerEventDirective } from './directive/pointer-event.directive';
 		ViewerComponent,
 		PreventHoverPropagationDirective,
 		FileEventDirective,
-		PointerEventDirective
+		PointerEventDirective,
+		PreventClickPropagationDirective
 	],
 	imports: [
 		BrowserModule,

@@ -33,6 +33,17 @@
 	color: $gray;
 }
 
+.prevent-AA {
+	image-rendering: optimizeSpeed;
+	image-rendering: -moz-crisp-edges;
+	image-rendering: -webkit-optimize-contrast;
+	image-rendering: optimize-contrast;
+	image-rendering: pixelated;
+	image-rendering: crisp-edges;
+	-ms-interpolation-mode: nearest-neighbor;
+	-webkit-font-smoothing: none;
+}
+
 ///////////////////////////////////////////////////
 //
 //	icon-prefix
@@ -152,7 +163,7 @@
 	max-width: $totalWidth;
 	margin: 0 auto;
 	padding: 0 30px;
-	transition: max-width $transition;
+	transition: max-width 0.5s ease;
 
 	h1 {
 		margin: 20px 0;
@@ -160,10 +171,7 @@
 }
 
 header {
-	a,
-	a:hover,
-	a:active,
-	a:visited {
+	a {
 		color: $black;
 	}
 }
@@ -205,7 +213,8 @@ footer {
 
 .psd-viewer {
 	position: relative;
-	width: 72%;
+	//width: 72%;
+	width: calc(97% - 300px);
 	max-height: 300px;
 	padding: 30px;
 
@@ -293,13 +302,12 @@ footer {
 .layer-info {
 	position: sticky;
 	top: 0;
-	width: 25%;
+	//width: 25%;
+	width: 300px;
 	font-weight: bold;
 	align-self: flex-start;
 
 	h2 {
-		display: flex;
-		align-items: center;
 		margin: 10px 0;
 
 		fa-icon {
@@ -308,8 +316,9 @@ footer {
 
 		.layer-skelton-title {
 			display: inline-block;
-			width: calc(100% - 34px - 20px);
+			width: calc(100% - 40px - 20px);
 			height: 30px;
+			transform: translateY(25%);
 			background-color: $gray;
 			border-radius: 5px;
 		}

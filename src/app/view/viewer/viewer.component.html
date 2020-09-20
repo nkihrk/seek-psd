@@ -26,11 +26,8 @@
 
 		<li
 			(click)="execFunc('zoom')"
-			[ngClass]="{
-				active: (memory.reservedByFunc$ | async)?.current.name === 'zoom',
-				disable: !(memory.isLoaded$ | async)
-			}"
-			class="icon-prefix name-info-wrapper"
+			[ngClass]="{ active: (memory.reservedByFunc$ | async)?.current.name === 'zoom' }"
+			class="icon-prefix name-info-wrapper disable"
 		>
 			<fa-icon [icon]="faSearch" [fixedWidth]="true" size="lg" style="transform: scale(-1, 1)"></fa-icon>
 			<div class="name-info-column">拡大・縮小</div>
@@ -67,20 +64,59 @@
 		<li
 			(click)="execExplicitFunc('resize-canvas')"
 			[ngClass]="{
-				active: (memory.isResizeCanvas$ | async),
+				active: (memory.resizeCanvas$ | async)?.flg,
 				disable: !(memory.isLoaded$ | async)
 			}"
 			class="icon-prefix name-info-wrapper"
 		>
 			<fa-icon [icon]="faExpandAlt" [fixedWidth]="true" size="lg"></fa-icon>
-			<div [ngClass]="{ disable: (memory.isResizeCanvas$ | async) }" class="name-info-column">
+			<div [ngClass]="{ disable: (memory.resizeCanvas$ | async)?.flg }" class="name-info-column">
 				キャンバスのサイズを変更
 			</div>
-			<div [ngClass]="{ active: (memory.isResizeCanvas$ | async) }" class="sub-tool-bar">
+			<div [ngClass]="{ active: (memory.resizeCanvas$ | async)?.flg }" appPreventClickPropagation class="sub-tool-bar">
 				<ul>
-					<li class="icon-prefix active">x1</li>
-					<li class="icon-prefix">x1.2</li>
-					<li class="icon-prefix">x1.5</li>
+					<li
+						(click)="execResizeCanvas(0)"
+						[ngClass]="{ active: (memory.resizeCanvas$ | async)?.type === 0 }"
+						class="icon-prefix"
+					>
+						x1
+					</li>
+					<li
+						(click)="execResizeCanvas(1)"
+						[ngClass]="{ active: (memory.resizeCanvas$ | async)?.type === 1 }"
+						class="icon-prefix"
+					>
+						x1.2
+					</li>
+					<li
+						(click)="execResizeCanvas(2)"
+						[ngClass]="{ active: (memory.resizeCanvas$ | async)?.type === 2 }"
+						class="icon-prefix"
+					>
+						x1.4
+					</li>
+					<li
+						(click)="execResizeCanvas(3)"
+						[ngClass]="{ active: (memory.resizeCanvas$ | async)?.type === 3 }"
+						class="icon-prefix"
+					>
+						x1.6
+					</li>
+					<li
+						(click)="execResizeCanvas(4)"
+						[ngClass]="{ active: (memory.resizeCanvas$ | async)?.type === 4 }"
+						class="icon-prefix"
+					>
+						x1.8
+					</li>
+					<li
+						(click)="execResizeCanvas(5)"
+						[ngClass]="{ active: (memory.resizeCanvas$ | async)?.type === 5 }"
+						class="icon-prefix"
+					>
+						x2
+					</li>
 				</ul>
 			</div>
 		</li>
@@ -144,7 +180,7 @@
 			</div>
 
 			<canvas #mainCanvas class="psd-canvas"></canvas>
-			<canvas #overlayCanvas class="overlay-canvas"></canvas>
+			<canvas #overlayCanvas class="overlay-canvas prevent-AA"></canvas>
 
 			<div
 				*ngIf="(memory.reservedByFunc$ | async)?.current.name === 'crop'"
@@ -247,5 +283,5 @@
 </footer>
 
 <div #screenCanvasWrapper appPointerEvent (pointerData)="onPointerEvent($event)" class="color-picker-wrapper">
-	<canvas #screenCanvas></canvas>
+	<canvas #screenCanvas class="prevent-AA"></canvas>
 </div>
