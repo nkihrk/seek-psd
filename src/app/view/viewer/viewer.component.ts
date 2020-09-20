@@ -59,12 +59,6 @@ export class ViewerComponent implements OnInit, OnDestroy {
 
 	cropConf: FormGroup;
 
-	// tcontainer's default max-width.
-	// Make sure to change this value when $max-width in scss has been changed
-	private defaultContainerWidth = 1200;
-
-	private prevResizeCanvasId = 0;
-
 	// Fontawesome
 	faFileImage = faFileImage;
 	faSignature = faSignature;
@@ -93,9 +87,9 @@ export class ViewerComponent implements OnInit, OnDestroy {
 		private func: FuncService,
 		private flag: FlagService,
 		private cpu: CpuService,
-		private cropModule: CropService,
 		private validateFormat: ValidateFormatService,
-		private notifier: NotifierService
+		private notifier: NotifierService,
+		public cropModule: CropService
 	) {}
 
 	ngOnInit(): void {
@@ -124,7 +118,7 @@ export class ViewerComponent implements OnInit, OnDestroy {
 				}
 			};
 
-			if (this.memory.fixedResizeResolution$.getValue()) {
+			if (this.memory.isFixedCropResolution$.getValue()) {
 				crop.size.height = crop.size.width;
 			}
 
@@ -141,7 +135,7 @@ export class ViewerComponent implements OnInit, OnDestroy {
 				}
 			};
 
-			if (this.memory.fixedResizeResolution$.getValue()) {
+			if (this.memory.isFixedCropResolution$.getValue()) {
 				crop.size.width = crop.size.height;
 			}
 
@@ -300,77 +294,6 @@ export class ViewerComponent implements OnInit, OnDestroy {
 			default:
 				break;
 		}
-	}
-
-	///////////////////////////////////////////////////////////////////////////
-	//
-	//	resize canvas
-	//
-	///////////////////////////////////////////////////////////////////////////
-
-	execResizeCanvas($id: number): void {
-		if (this.prevResizeCanvasId === $id) return;
-		// 0 : x1
-		// 1 : x1.2
-		// 2 : x1.4
-		// 3 : x1.6
-		// 4 : x1.8
-		// 5 : x2
-
-		let ratio = 1;
-		if ($id === 0) {
-			ratio = 1;
-		} else if ($id === 1) {
-			ratio = 1.2;
-		} else if ($id === 2) {
-			ratio = 1.4;
-		} else if ($id === 3) {
-			ratio = 1.6;
-		} else if ($id === 4) {
-			ratio = 1.8;
-		} else if ($id === 5) {
-			ratio = 2;
-		}
-
-		// Update state
-		this.memory.updateResizeCanvas($id, ratio);
-
-		// Set scaled size
-		this.containerRef.nativeElement.style.maxWidth = this.defaultContainerWidth * ratio + 'px';
-		// 60px is padding-top and padding-bottom
-		// 2px is border-width
-		const aspect: number = this.memory.renderer.psd.height / this.memory.renderer.psd.width;
-		// This calcuration is the same as calc(97% - 300px) in scss
-		this.memory.renderer.element.psdViewer.style.maxHeight =
-			(this.defaultContainerWidth * ratio * 0.97 - 300) * aspect + 'px';
-
-		// To tell cropFunc that the resizeCanvas is executed
-		this.memory.updateCrop(this.memory.crop$.getValue());
-
-		// Store current $id to prevent recursive execution of this function
-		this.prevResizeCanvasId = $id;
-
-		setTimeout(() => {
-			// Rerender
-			this.gpu.reRender();
-		}, 500);
-	}
-
-	toggleFixedResizeResolution(): void {
-		const flg: boolean = this.memory.fixedResizeResolution$.getValue();
-		this.memory.updateFixedResizeResolution(!flg);
-	}
-
-	rotateResolution(): void {
-		const crop: Crop = {
-			offset: this.memory.crop$.getValue().offset,
-			size: {
-				width: this.memory.crop$.getValue().size.height,
-				height: this.memory.crop$.getValue().size.width
-			}
-		};
-
-		this.cropModule.validateInput(crop);
 	}
 
 	///////////////////////////////////////////////////////////////////////////

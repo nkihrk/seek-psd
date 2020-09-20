@@ -55,42 +55,42 @@
 			>
 				<ul>
 					<li
-						(click)="execResizeCanvas(0)"
+						(click)="cropModule.execResizeCanvas(0)"
 						[ngClass]="{ active: (memory.resizeCanvas$ | async)?.type === 0 }"
 						class="icon-prefix"
 					>
 						x1
 					</li>
 					<li
-						(click)="execResizeCanvas(1)"
+						(click)="cropModule.execResizeCanvas(1)"
 						[ngClass]="{ active: (memory.resizeCanvas$ | async)?.type === 1 }"
 						class="icon-prefix"
 					>
 						x1.2
 					</li>
 					<li
-						(click)="execResizeCanvas(2)"
+						(click)="cropModule.execResizeCanvas(2)"
 						[ngClass]="{ active: (memory.resizeCanvas$ | async)?.type === 2 }"
 						class="icon-prefix"
 					>
 						x1.4
 					</li>
 					<li
-						(click)="execResizeCanvas(3)"
+						(click)="cropModule.execResizeCanvas(3)"
 						[ngClass]="{ active: (memory.resizeCanvas$ | async)?.type === 3 }"
 						class="icon-prefix"
 					>
 						x1.6
 					</li>
 					<li
-						(click)="execResizeCanvas(4)"
+						(click)="cropModule.execResizeCanvas(4)"
 						[ngClass]="{ active: (memory.resizeCanvas$ | async)?.type === 4 }"
 						class="icon-prefix"
 					>
 						x1.8
 					</li>
 					<li
-						(click)="execResizeCanvas(5)"
+						(click)="cropModule.execResizeCanvas(5)"
 						[ngClass]="{ active: (memory.resizeCanvas$ | async)?.type === 5 }"
 						class="icon-prefix"
 					>
@@ -208,25 +208,25 @@
 						[value]="(memory.crop$ | async)?.size.height"
 					/>
 					<div
-						(click)="toggleFixedResizeResolution()"
-						[ngClass]="{ active: memory.fixedResizeResolution$ | async }"
+						(click)="cropModule.toggleFixedResolution()"
+						[ngClass]="{ active: memory.isFixedCropResolution$ | async }"
 						class="icon-prefix name-info-wrapper"
 					>
 						<fa-icon
-							*ngIf="memory.fixedResizeResolution$ | async"
+							*ngIf="memory.isFixedCropResolution$ | async"
 							[icon]="faLock"
 							[fixedWidth]="true"
 							size="sm"
 						></fa-icon>
 						<fa-icon
-							*ngIf="!(memory.fixedResizeResolution$ | async)"
+							*ngIf="!(memory.isFixedCropResolution$ | async)"
 							[icon]="faUnlock"
 							[fixedWidth]="true"
 							size="sm"
 						></fa-icon>
 						<div class="name-info-row">アスペクト比の固定</div>
 					</div>
-					<div (click)="rotateResolution()" class="icon-prefix name-info-wrapper">
+					<div (click)="cropModule.rotateResolution()" class="icon-prefix name-info-wrapper">
 						<fa-icon [icon]="faUndo" [fixedWidth]="true" size="sm" style="transform: scale(-1, 1)"></fa-icon>
 						<div class="name-info-row">回転</div>
 					</div>

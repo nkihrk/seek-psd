@@ -18,6 +18,10 @@ export class MemoryService {
 	fileName$: BehaviorSubject<string> = new BehaviorSubject('');
 	isLoaded$: BehaviorSubject<boolean> = new BehaviorSubject(false);
 	isLoading$: BehaviorSubject<boolean> = new BehaviorSubject(false);
+	isGrayscale$: BehaviorSubject<boolean> = new BehaviorSubject(false);
+	isFlip$: BehaviorSubject<boolean> = new BehaviorSubject(false);
+	isFixedCropResolution$: BehaviorSubject<boolean> = new BehaviorSubject(false);
+
 	reservedByFunc$: BehaviorSubject<ReservedByFunc> = new BehaviorSubject({
 		current: {
 			name: '',
@@ -46,13 +50,10 @@ export class MemoryService {
 			height: 500
 		}
 	});
-	isGrayscale$: BehaviorSubject<boolean> = new BehaviorSubject(false);
-	isFlip$: BehaviorSubject<boolean> = new BehaviorSubject(false);
 	resizeCanvas$: BehaviorSubject<{ type: number; ratio: number }> = new BehaviorSubject({
 		type: 0,
 		ratio: 1
 	});
-	fixedResizeResolution$: BehaviorSubject<boolean> = new BehaviorSubject(false);
 
 	// Renderer
 	renderer = { element: {} as Element, size: {} as Size } as Renderer;
@@ -151,7 +152,7 @@ export class MemoryService {
 		this.updateIsGrayScale(false);
 		this.updateIsFlip(false);
 		this.updateResizeCanvas(0, 1);
-		this.updateFixedResizeResolution(false);
+		this.updateIsFixedCropResolution(false);
 	}
 
 	updateReservedByFunc($reserved: Reserved): void {
@@ -181,8 +182,8 @@ export class MemoryService {
 		});
 	}
 
-	updateFixedResizeResolution($flg: boolean): void {
-		this.fixedResizeResolution$.next($flg);
+	updateIsFixedCropResolution($flg: boolean): void {
+		this.isFixedCropResolution$.next($flg);
 	}
 }
 
