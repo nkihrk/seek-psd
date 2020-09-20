@@ -30,13 +30,7 @@ export class CropService {
 		areaName: ''
 	};
 	private isPointerMoveEnabled = false;
-
-	// container's default max-width.
-	// Make sure to change this value when $max-width in scss has been changed
-	private defaultContainerWidth = 1200;
-	private prevResizeCanvasId = 0;
 	private prevRendererRatio = 1;
-
 	private cornerSize = 20;
 	private barSize = 30;
 
@@ -114,7 +108,7 @@ export class CropService {
 			}
 		}
 
-		if (this.memory.isFixedCropResolution$.getValue()) this._validateFixedResizeResolution();
+		if (this.memory.isFixedCropResolution$.getValue()) this._validateFixedResolution();
 
 		const crop: Crop = {
 			offset: this.offset,
@@ -123,7 +117,7 @@ export class CropService {
 		this.memory.updateCrop(crop);
 	}
 
-	private _validateFixedResizeResolution(): void {
+	private _validateFixedResolution(): void {
 		const canvasWidth: number = this.memory.renderer.element.main.getBoundingClientRect().width;
 		const canvasHeight: number = this.memory.renderer.element.main.getBoundingClientRect().height;
 		const min: number = this.cornerSize + this.barSize / 2;
@@ -137,54 +131,6 @@ export class CropService {
 		} else if (isLargerH && this.size.height < this.size.width) {
 			this.size.width = maxH;
 		}
-	}
-
-	execResizeCanvas($id: number): void {
-		if (this.prevResizeCanvasId === $id) return;
-		// 0 : x1
-		// 1 : x1.2
-		// 2 : x1.4
-		// 3 : x1.6
-		// 4 : x1.8
-		// 5 : x2
-
-		let ratio = 1;
-		if ($id === 0) {
-			ratio = 1;
-		} else if ($id === 1) {
-			ratio = 1.2;
-		} else if ($id === 2) {
-			ratio = 1.4;
-		} else if ($id === 3) {
-			ratio = 1.6;
-		} else if ($id === 4) {
-			ratio = 1.8;
-		} else if ($id === 5) {
-			ratio = 2;
-		}
-
-		// Update state
-		this.memory.updateResizeCanvas($id, ratio);
-
-		// Set scaled size
-		this.memory.renderer.element.container.style.maxWidth = this.defaultContainerWidth * ratio + 'px';
-		// 60px is padding-top and padding-bottom
-		// 2px is border-width
-		const aspect: number = this.memory.renderer.psd.height / this.memory.renderer.psd.width;
-		// This calcuration is the same as calc(97% - 300px) in scss
-		this.memory.renderer.element.psdViewer.style.maxHeight =
-			(this.defaultContainerWidth * ratio * 0.97 - 300) * aspect + 'px';
-
-		// To tell cropFunc that the resizeCanvas is executed
-		this.memory.updateCrop(this.memory.crop$.getValue());
-
-		// Store current $id to prevent recursive execution of this function
-		this.prevResizeCanvasId = $id;
-
-		setTimeout(() => {
-			// Rerender
-			this.gpu.reRender();
-		}, 500);
 	}
 
 	toggleFixedResolution(): void {

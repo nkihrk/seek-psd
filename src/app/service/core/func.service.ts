@@ -8,6 +8,9 @@ import { ColorPickerService } from '../module/color-picker.service';
 import { CropService } from '../module/crop.service';
 import { ZoomService } from '../module/zoom.service';
 
+// Model
+import { Crop } from '../../model/crop.model';
+
 @Injectable({
 	providedIn: 'root'
 })
@@ -42,6 +45,18 @@ export class FuncService {
 
 	crop(): void {
 		this.cropFunc.getImage();
+	}
+
+	validateCropInput($crop: Crop): void {
+		this.cropFunc.validateInput($crop);
+	}
+
+	toggleCropFixedResolution(): void {
+		this.cropFunc.toggleFixedResolution();
+	}
+
+	rotateCropResolution(): void {
+		this.cropFunc.rotateResolution();
 	}
 
 	///////////////////////////////////////////////////////////////////////////

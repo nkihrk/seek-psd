@@ -55,42 +55,42 @@
 			>
 				<ul>
 					<li
-						(click)="cropModule.execResizeCanvas(0)"
+						(click)="execResizeCanvas(0)"
 						[ngClass]="{ active: (memory.resizeCanvas$ | async)?.type === 0 }"
 						class="icon-prefix"
 					>
 						x1
 					</li>
 					<li
-						(click)="cropModule.execResizeCanvas(1)"
+						(click)="execResizeCanvas(1)"
 						[ngClass]="{ active: (memory.resizeCanvas$ | async)?.type === 1 }"
 						class="icon-prefix"
 					>
 						x1.2
 					</li>
 					<li
-						(click)="cropModule.execResizeCanvas(2)"
+						(click)="execResizeCanvas(2)"
 						[ngClass]="{ active: (memory.resizeCanvas$ | async)?.type === 2 }"
 						class="icon-prefix"
 					>
 						x1.4
 					</li>
 					<li
-						(click)="cropModule.execResizeCanvas(3)"
+						(click)="execResizeCanvas(3)"
 						[ngClass]="{ active: (memory.resizeCanvas$ | async)?.type === 3 }"
 						class="icon-prefix"
 					>
 						x1.6
 					</li>
 					<li
-						(click)="cropModule.execResizeCanvas(4)"
+						(click)="execResizeCanvas(4)"
 						[ngClass]="{ active: (memory.resizeCanvas$ | async)?.type === 4 }"
 						class="icon-prefix"
 					>
 						x1.8
 					</li>
 					<li
-						(click)="cropModule.execResizeCanvas(5)"
+						(click)="execResizeCanvas(5)"
 						[ngClass]="{ active: (memory.resizeCanvas$ | async)?.type === 5 }"
 						class="icon-prefix"
 					>
@@ -148,7 +148,7 @@
 
 <div (click)="execFunc('garbage')" class="garbage">
 	<div [ngClass]="{ disable: !(memory.isLoaded$ | async) }" class="icon-prefix name-info-wrapper">
-		<fa-icon [icon]="faTrashAlt" [fixedWidth]="true" size="lg" style="transform: scale(-1, 1)"></fa-icon>
+		<fa-icon [icon]="faTrashAlt" [fixedWidth]="true" size="lg"></fa-icon>
 		<div class="name-info-column">ゴミ箱</div>
 	</div>
 </div>
@@ -208,7 +208,7 @@
 						[value]="(memory.crop$ | async)?.size.height"
 					/>
 					<div
-						(click)="cropModule.toggleFixedResolution()"
+						(click)="func.toggleCropFixedResolution()"
 						[ngClass]="{ active: memory.isFixedCropResolution$ | async }"
 						class="icon-prefix name-info-wrapper"
 					>
@@ -226,8 +226,8 @@
 						></fa-icon>
 						<div class="name-info-row">アスペクト比の固定</div>
 					</div>
-					<div (click)="cropModule.rotateResolution()" class="icon-prefix name-info-wrapper">
-						<fa-icon [icon]="faUndo" [fixedWidth]="true" size="sm" style="transform: scale(-1, 1)"></fa-icon>
+					<div (click)="func.rotateCropResolution()" class="icon-prefix name-info-wrapper">
+						<fa-icon [icon]="faUndo" [fixedWidth]="true" size="sm" flip="horizontal"></fa-icon>
 						<div class="name-info-row">回転</div>
 					</div>
 					<input type="button" value="切り取り" (click)="execExplicitFunc('crop')" />
@@ -276,6 +276,14 @@
 											size="sm"
 										></fa-icon>
 									</div>
+									<fa-icon
+										*ngIf="item.psd.clipping"
+										[icon]="faLevelDownAlt"
+										[fixedWidth]="true"
+										size="sm"
+										flip="horizontal"
+										[styles]="{ color: '#a8a8a8' }"
+									></fa-icon>
 									<fa-icon *ngIf="item.children.length > 0" [icon]="faFolder" [fixedWidth]="true" size="sm"></fa-icon>
 									{{ item.name }}
 								</label>
