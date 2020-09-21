@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { LayerInfo } from '../../model/layer-info.model';
 import { MemoryService } from './memory.service';
-import { Layer } from 'ag-psd';
+import { Layer, LayerMaskData } from 'ag-psd';
 
 @Injectable({
 	providedIn: 'root'
@@ -59,11 +59,14 @@ export class GpuService {
 
 			if ($layer.hidden.current || !psd?.canvas) return;
 
-			let canvas: HTMLCanvasElement = psd.canvas;
-			let x: number = psd.left;
-			let y: number = psd.top;
-			let w: number = psd.right - psd.left;
-			let h: number = psd.bottom - psd.top;
+			let canvas: HTMLCanvasElement = document.createElement('canvas');
+			canvas.width = this.memory.renderer.psd.width;
+			canvas.height = this.memory.renderer.psd.height;
+			const x: number = psd.left;
+			const y: number = psd.top;
+			const w: number = psd.right - psd.left;
+			const h: number = psd.bottom - psd.top;
+			canvas.getContext('2d').drawImage(psd.canvas, x, y, w, h);
 
 			$ctx.save();
 			// Set opacity
@@ -98,6 +101,7 @@ export class GpuService {
 			}
 			$ctx.globalCompositeOperation = blendMode;
 
+			// Clipping layer
 			if ($layer.psd.clipping) {
 				for (let i = $index; i < $layerInfos.length; i++) {
 					if ($layerInfos[i].psd.clipping) continue;
@@ -105,41 +109,77 @@ export class GpuService {
 					const source: Layer = $layer.psd;
 					const target: Layer = $layerInfos[i].psd;
 
-					const maskCanvas: HTMLCanvasElement = document.createElement('canvas');
-					maskCanvas.width = this.memory.renderer.psd.width;
-					maskCanvas.height = this.memory.renderer.psd.height;
-					const maskCtxBuffer: CanvasRenderingContext2D = maskCanvas.getContext('2d');
+					const clipCanvas: HTMLCanvasElement = document.createElement('canvas');
+					clipCanvas.width = canvas.width;
+					clipCanvas.height = canvas.height;
+					const clipCtxBuffer: CanvasRenderingContext2D = clipCanvas.getContext('2d');
 
-					maskCtxBuffer.globalCompositeOperation = 'source-over';
-					const sourceW: number = source.right - source.left;
-					const sourceH: number = source.bottom - source.top;
-					maskCtxBuffer.drawImage(source.canvas, source.left, source.top, sourceW, sourceH);
+					clipCtxBuffer.globalCompositeOperation = 'source-over';
+					clipCtxBuffer.drawImage(canvas, 0, 0, clipCanvas.width, clipCanvas.height);
 
-					maskCtxBuffer.globalCompositeOperation = 'destination-in';
+					clipCtxBuffer.globalCompositeOperation = 'destination-in';
 					const targetW: number = target.right - target.left;
 					const targetH: number = target.bottom - target.top;
 
 					// If the target has no canvas, it is folder,
 					// which means folder clipping
 					if (!!target.canvas) {
-						maskCtxBuffer.drawImage(target.canvas, target.left, target.top, targetW, targetH);
+						clipCtxBuffer.drawImage(target.canvas, target.left, target.top, targetW, targetH);
 					} else {
 						const subRoot: LayerInfo[] = $layerInfos[i].children;
 						const subC: HTMLCanvasElement = this.parseSubLayers(subRoot);
 
-						maskCtxBuffer.drawImage(subC, 0, 0, maskCanvas.width, maskCanvas.height);
+						clipCtxBuffer.drawImage(subC, 0, 0, clipCanvas.width, clipCanvas.height);
 					}
 
-					canvas = maskCanvas;
-					x = 0;
-					y = 0;
-					w = maskCanvas.width;
-					h = maskCanvas.height;
+					canvas = clipCanvas;
 					break;
 				}
 			}
 
-			$ctx.drawImage(canvas, x, y, w, h);
+			// Mask layer
+			if (!!$layer.psd.mask) {
+				console.log($layer.psd);
+
+				const source: Layer = $layer.psd;
+				const mask: LayerMaskData = $layer.psd.mask;
+
+				// Maybe I should escape this case for now
+				if (mask.positionRelativeToLayer) return;
+
+				const maskCanvas: HTMLCanvasElement = document.createElement('canvas');
+				maskCanvas.width = canvas.width;
+				maskCanvas.height = canvas.height;
+				const maskCtxBuffer: CanvasRenderingContext2D = maskCanvas.getContext('2d');
+
+				maskCtxBuffer.globalCompositeOperation = 'source-over';
+				maskCtxBuffer.drawImage(canvas, 0, 0, canvas.width, canvas.height);
+
+				maskCtxBuffer.globalCompositeOperation = 'destination-in';
+				const targetW: number = mask.right - mask.left;
+				const targetH: number = mask.bottom - mask.top;
+
+				const imageData: ImageData = mask.canvas
+					.getContext('2d')
+					.getImageData(0, 0, mask.canvas.width, mask.canvas.height);
+				const data: Uint8ClampedArray = imageData.data;
+
+				for (let i = 0; i < data.length; i += 4) {
+					data[i + 3] = data[i];
+				}
+
+				const tmpCanvas: HTMLCanvasElement = document.createElement('canvas');
+				tmpCanvas.width = targetW;
+				tmpCanvas.height = targetH;
+				const tmpCtx: CanvasRenderingContext2D = tmpCanvas.getContext('2d');
+				tmpCtx.putImageData(imageData, 0, 0);
+
+				maskCtxBuffer.drawImage(tmpCanvas, mask.left, mask.top, targetW, targetH);
+
+				canvas = maskCanvas;
+			}
+
+			$ctx.drawImage(canvas, 0, 0, canvas.width, canvas.height);
 			$ctx.restore();
 		});
 	}
