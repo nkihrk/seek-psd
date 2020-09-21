@@ -138,9 +138,7 @@ export class GpuService {
 			}
 
 			// Mask layer
-			if (!!$layer.psd.mask) {
-				console.log($layer.psd);
-
+			if (!!$layer.psd.mask && !!$layer.psd.mask.canvas) {
 				const source: Layer = $layer.psd;
 				const mask: LayerMaskData = $layer.psd.mask;
 
