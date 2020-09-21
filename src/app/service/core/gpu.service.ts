@@ -124,13 +124,10 @@ export class GpuService {
 					if (!!target.canvas) {
 						maskCtxBuffer.drawImage(target.canvas, target.left, target.top, targetW, targetH);
 					} else {
-						console.log($layer.name);
 						const subRoot: LayerInfo[] = $layerInfos[i].children;
 						const subC: HTMLCanvasElement = this.parseSubLayers(subRoot);
 
 						maskCtxBuffer.drawImage(subC, 0, 0, maskCanvas.width, maskCanvas.height);
-
-						console.log('---');
 					}
 
 					canvas = maskCanvas;
@@ -167,7 +164,6 @@ export class GpuService {
 
 				ctx.drawImage(canvas, x, y, w, h);
 			} else {
-				console.log($layer.name);
 				const subRoot: LayerInfo[] = $layer.children;
 				const subC: HTMLCanvasElement = this.parseSubLayers(subRoot);
 				ctx.drawImage(subC, 0, 0, c.width, c.height);
