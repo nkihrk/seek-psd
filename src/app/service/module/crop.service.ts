@@ -194,6 +194,7 @@ export class CropService {
 		try {
 			const rendererRatio: number =
 				this.memory.renderer.size.width / this.memory.renderer.element.main.getBoundingClientRect().width;
+
 			const size = {
 				width: this.size.width * rendererRatio,
 				height: this.size.height * rendererRatio
@@ -205,14 +206,14 @@ export class CropService {
 
 			const cBuffer: HTMLCanvasElement = this.memory.renderer.element.buffer;
 			const c: HTMLCanvasElement = document.createElement('canvas');
-			c.width = size.width / this.memory.renderer.size.scaleRatio;
-			c.height = size.height / this.memory.renderer.size.scaleRatio;
+			c.width = size.width;
+			c.height = size.height;
 			const ctx: CanvasRenderingContext2D = c.getContext('2d');
 
-			const fixedX: number = (offset.x - size.width / 2) / this.memory.renderer.size.scaleRatio;
-			const fixedY: number = (offset.y - size.height / 2) / this.memory.renderer.size.scaleRatio;
-			const fixedW: number = size.width / this.memory.renderer.size.scaleRatio;
-			const fixedH: number = size.height / this.memory.renderer.size.scaleRatio;
+			const fixedX: number = offset.x - size.width / 2;
+			const fixedY: number = offset.y - size.height / 2;
+			const fixedW: number = size.width;
+			const fixedH: number = size.height;
 
 			if (this.memory.isFlip$.getValue()) {
 				ctx.clearRect(0, 0, c.width, c.height);
@@ -221,7 +222,7 @@ export class CropService {
 
 				ctx.drawImage(
 					cBuffer,
-					this.memory.renderer.size.width / this.memory.renderer.size.scaleRatio - fixedX - fixedW,
+					this.memory.renderer.size.width - fixedX - fixedW,
 					fixedY,
 					fixedW,
 					fixedH,

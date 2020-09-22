@@ -154,9 +154,8 @@ export class ViewerComponent implements OnInit, OnDestroy {
 			const canvasSize: DOMRect = this.mainCanvasRef.nativeElement.getBoundingClientRect();
 			const width = canvasSize.width;
 			const height = Math.floor(canvasSize.width * (data.psd.height / data.psd.width));
-			const scaleRatio = canvasSize.width / data.psd.width;
 
-			this.memory.updateRenderer({ width, height, scaleRatio }, data.psd);
+			this.memory.updateRenderer({ width, height }, data.psd);
 			this.memory.updateLayerInfos(this._extractPsdData(data.psd));
 			this.memory.updateFileName(data.fileName);
 			this.memory.updateIsLoaded(true);

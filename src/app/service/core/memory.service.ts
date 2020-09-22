@@ -122,7 +122,7 @@ export class MemoryService {
 		this.renderer.element.buffer = document.createElement('canvas');
 	}
 
-	updateRenderer($size: { width: number; height: number; scaleRatio: number }, $psd: Psd): void {
+	updateRenderer($size: { width: number; height: number }, $psd: Psd): void {
 		this.renderer.size = $size;
 		this.renderer.psd = $psd;
 	}
@@ -220,5 +220,4 @@ interface Element {
 interface Size {
 	width: number;
 	height: number;
-	scaleRatio: number;
 }
