@@ -11,12 +11,45 @@ export class GpuService {
 
 	constructor(private memory: MemoryService) {}
 
+	get rawPsdCanvas(): HTMLCanvasElement {
+		// Main
+		const c: HTMLCanvasElement = document.createElement('canvas');
+		c.width = this.memory.renderer.psd.width;
+		c.height = this.memory.renderer.psd.height;
+		const ctx: CanvasRenderingContext2D = c.getContext('2d');
+
+		// Buffer
+		const cBuffer: HTMLCanvasElement = document.createElement('canvas');
+		cBuffer.width = c.width;
+		cBuffer.height = c.height;
+		const ctxBuffer: CanvasRenderingContext2D = cBuffer.getContext('2d');
+
+		const root: LayerInfo[] = this.memory.layerInfos$.getValue();
+		this.parseLayers(root, ctxBuffer, c.width, c.height, 1);
+
+		// Flip
+		if (this.memory.isFlip$.getValue()) {
+			ctx.translate(c.width, 0);
+			ctx.scale(-1, 1);
+		}
+
+		// Render to the screen
+		ctx.drawImage(cBuffer, 0, 0, c.width, c.height);
+
+		// Grayscale
+		if (this.memory.isGrayscale$.getValue()) {
+			this.grayscale(ctx, c.width, c.height);
+		}
+
+		return c;
+	}
+
 	reRender(): void {
 		const aspect: number = this.memory.renderer.psd.height / this.memory.renderer.psd.width;
 
 		// Main renderer
 		const c: HTMLCanvasElement = this.memory.renderer.element.main;
-		c.width = this.memory.renderer.element.psdViewer.getBoundingClientRect().width - 60 - 2;
+		c.width = this.memory.renderer.element.main.getBoundingClientRect().width;
 		c.height = c.width * aspect;
 		const ctx: CanvasRenderingContext2D = c.getContext('2d');
 
@@ -27,7 +60,9 @@ export class GpuService {
 		const ctxBuffer: CanvasRenderingContext2D = cBuffer.getContext('2d');
 
 		const root: LayerInfo[] = this.memory.layerInfos$.getValue();
-		this.parseLayers(root, ctxBuffer);
+		const scale: number =
+			this.memory.renderer.element.main.getBoundingClientRect().width / this.memory.renderer.psd.width;
+		this.parseLayers(root, ctxBuffer, c.width, c.height, scale);
 
 		// Flip
 		if (this.memory.isFlip$.getValue()) {
@@ -44,27 +79,29 @@ export class GpuService {
 		}
 	}
 
-	private parseLayers($root: LayerInfo[], $ctx: CanvasRenderingContext2D): void {
+	private parseLayers(
+		$root: LayerInfo[],
+		$ctx: CanvasRenderingContext2D,
+		$width: number, // the size of a canvas
+		$height: number, // the size of a canvas
+		$scale: number // the current scale of a canvas
+	): void {
 		this.recursive($root, ($layer: LayerInfo, $layerInfos: LayerInfo[], $index: number) => {
 			const psd: Layer = $layer.psd;
 
 			if ($layer.hidden.current || !psd?.canvas) return;
 
-			const aspect: number = this.memory.renderer.psd.height / this.memory.renderer.psd.width;
-			const scale: number =
-				this.memory.renderer.element.main.getBoundingClientRect().width / this.memory.renderer.psd.width;
-
 			let canvas: HTMLCanvasElement = document.createElement('canvas');
-			canvas.width = this.memory.renderer.element.main.getBoundingClientRect().width;
-			canvas.height = canvas.width * aspect;
+			canvas.width = $width;
+			canvas.height = $height;
 			let x: number = psd.left;
 			let y: number = psd.top;
 			let w: number = psd.right - psd.left;
 			let h: number = psd.bottom - psd.top;
-			x *= scale;
-			y *= scale;
-			w *= scale;
-			h *= scale;
+			x *= $scale;
+			y *= $scale;
+			w *= $scale;
+			h *= $scale;
 			canvas.getContext('2d').drawImage(psd.canvas, x, y, w, h);
 
 			$ctx.save();
@@ -119,13 +156,13 @@ export class GpuService {
 					clipCtxBuffer.globalCompositeOperation = 'destination-in';
 					let targetW: number = target.right - target.left;
 					let targetH: number = target.bottom - target.top;
-					targetW *= scale;
-					targetH *= scale;
+					targetW *= $scale;
+					targetH *= $scale;
 
 					// If the target has no canvas, it is folder,
 					// which means folder clipping
 					if (!!target.canvas) {
-						clipCtxBuffer.drawImage(target.canvas, target.left * scale, target.top * scale, targetW, targetH);
+						clipCtxBuffer.drawImage(target.canvas, target.left * $scale, target.top * $scale, targetW, targetH);
 					} else {
 						// To prevent recursive unnecessary renderings
 						if (i === $index + 1) {
@@ -161,8 +198,8 @@ export class GpuService {
 				maskCtxBuffer.globalCompositeOperation = 'destination-in';
 				let targetW: number = mask.right - mask.left;
 				let targetH: number = mask.bottom - mask.top;
-				targetW *= scale;
-				targetH *= scale;
+				targetW *= $scale;
+				targetH *= $scale;
 
 				const imageData: ImageData = mask.canvas
 					.getContext('2d')
@@ -179,7 +216,7 @@ export class GpuService {
 				const tmpCtx: CanvasRenderingContext2D = tmpCanvas.getContext('2d');
 				tmpCtx.putImageData(imageData, 0, 0);
 
-				maskCtxBuffer.drawImage(tmpCanvas, mask.left * scale, mask.top * scale, targetW, targetH);
+				maskCtxBuffer.drawImage(tmpCanvas, mask.left * $scale, mask.top * $scale, targetW, targetH);
 
 				canvas = maskCanvas;
 			}

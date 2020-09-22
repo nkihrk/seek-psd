@@ -118,25 +118,7 @@ export class FuncService {
 	///////////////////////////////////////////////////////////////////////////
 
 	download(): void {
-		const cBuffer: HTMLCanvasElement = this.memory.renderer.element.buffer;
-		const c: HTMLCanvasElement = document.createElement('canvas');
-		c.width = cBuffer.width;
-		c.height = cBuffer.height;
-		const ctx: CanvasRenderingContext2D = c.getContext('2d');
-
-		ctx.drawImage(cBuffer, 0, 0);
-
-		if (this.memory.isFlip$.getValue()) {
-			ctx.clearRect(0, 0, c.width, c.height);
-			ctx.translate(c.width, 0);
-			ctx.scale(-1, 1);
-
-			ctx.drawImage(cBuffer, 0, 0);
-		}
-
-		if (this.memory.isGrayscale$.getValue()) {
-			this._grayscale(ctx, c.width, c.height);
-		}
+		const c: HTMLCanvasElement = this.gpu.rawPsdCanvas;
 
 		c.toBlob(($blob: Blob) => {
 			const fName: string = this.memory.fileName$.getValue().split('.')[0];

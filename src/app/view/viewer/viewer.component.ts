@@ -179,7 +179,6 @@ export class ViewerComponent implements OnInit, OnDestroy {
 			this.memory.updateCrop(crop);
 
 			// Render
-			//this.gpu.render();
 			this.gpu.reRender();
 
 			// Set width and height for renderer

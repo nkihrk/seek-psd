@@ -192,52 +192,22 @@ export class CropService {
 
 	getImage(): void {
 		try {
-			const rendererRatio: number =
-				this.memory.renderer.size.width / this.memory.renderer.element.main.getBoundingClientRect().width;
+			const scale: number =
+				this.memory.renderer.psd.width / this.memory.renderer.element.main.getBoundingClientRect().width;
 
-			const size = {
-				width: this.size.width * rendererRatio,
-				height: this.size.height * rendererRatio
-			};
-			const offset = {
-				x: this.offset.current.x * rendererRatio,
-				y: this.offset.current.y * rendererRatio
-			};
+			const rawCanvas: HTMLCanvasElement = this.gpu.rawPsdCanvas;
 
-			const cBuffer: HTMLCanvasElement = this.memory.renderer.element.buffer;
 			const c: HTMLCanvasElement = document.createElement('canvas');
-			c.width = size.width;
-			c.height = size.height;
+			c.width = this.size.width * scale;
+			c.height = this.size.height * scale;
 			const ctx: CanvasRenderingContext2D = c.getContext('2d');
 
-			const fixedX: number = offset.x - size.width / 2;
-			const fixedY: number = offset.y - size.height / 2;
-			const fixedW: number = size.width;
-			const fixedH: number = size.height;
+			const fixedX: number = (this.offset.current.x - this.size.width / 2) * scale;
+			const fixedY: number = (this.offset.current.y - this.size.height / 2) * scale;
+			const fixedW: number = this.size.width * scale;
+			const fixedH: number = this.size.height * scale;
 
-			if (this.memory.isFlip$.getValue()) {
-				ctx.clearRect(0, 0, c.width, c.height);
-				ctx.translate(c.width, 0);
-				ctx.scale(-1, 1);
-
-				ctx.drawImage(
-					cBuffer,
-					this.memory.renderer.size.width - fixedX - fixedW,
-					fixedY,
-					fixedW,
-					fixedH,
-					0,
-					0,
-					c.width,
-					c.height
-				);
-			} else {
-				ctx.drawImage(cBuffer, fixedX, fixedY, fixedW, fixedH, 0, 0, c.width, c.height);
-			}
-
-			if (this.memory.isGrayscale$.getValue()) {
-				this._grayscale(ctx, c.width, c.height);
-			}
+			ctx.drawImage(rawCanvas, fixedX, fixedY, fixedW, fixedH, 0, 0, c.width, c.height);
 
 			c.toBlob(($blob: Blob) => {
 				const fName: string = this.memory.fileName$.getValue().split('.')[0];
