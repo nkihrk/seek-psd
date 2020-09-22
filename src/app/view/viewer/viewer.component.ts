@@ -179,7 +179,7 @@ export class ViewerComponent implements OnInit, OnDestroy {
 			this.memory.updateCrop(crop);
 
 			// Render
-			this.gpu.reRender();
+			this.gpu.render();
 
 			// Set width and height for renderer
 			setTimeout(() => {
@@ -227,7 +227,7 @@ export class ViewerComponent implements OnInit, OnDestroy {
 	toggleVisibility($name: string, $uniqueId: string): void {
 		this.gpu.toggleVisibility($name, $uniqueId);
 		this.changeDetectorRef.detectChanges();
-		this.gpu.reRender();
+		this.gpu.render();
 	}
 
 	execFunc($name: string): void {
@@ -342,8 +342,8 @@ export class ViewerComponent implements OnInit, OnDestroy {
 		this.prevResizeCanvasId = $id;
 
 		setTimeout(() => {
-			// Rerender
-			this.gpu.reRender();
+			// Render
+			this.gpu.render();
 		}, 500);
 	}
 

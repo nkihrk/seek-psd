@@ -78,7 +78,7 @@ export class FuncService {
 	grayscale(): void {
 		const flg: boolean = this.memory.isGrayscale$.getValue();
 		this.memory.updateIsGrayScale(!flg);
-		this.gpu.reRender();
+		this.gpu.render();
 	}
 
 	///////////////////////////////////////////////////////////////////////////
@@ -90,7 +90,7 @@ export class FuncService {
 	flip(): void {
 		const flg: boolean = this.memory.isFlip$.getValue();
 		this.memory.updateIsFlip(!flg);
-		this.gpu.reRender();
+		this.gpu.render();
 	}
 
 	///////////////////////////////////////////////////////////////////////////

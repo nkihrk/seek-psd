@@ -44,7 +44,7 @@ export class GpuService {
 		return c;
 	}
 
-	reRender(): void {
+	render(): void {
 		const aspect: number = this.memory.renderer.psd.height / this.memory.renderer.psd.width;
 
 		// Main renderer
