@@ -182,7 +182,7 @@ export class GpuService {
 						if (!!target.canvas) {
 							clipCtxBuffer.drawImage(target.canvas, target.left * $scale, target.top * $scale, targetW, targetH);
 						} else {
-							if ($layerInfos[i].hidden) break;
+							if ($layerInfos[i].hidden.current) break;
 							clipCtxBuffer.drawImage($layerInfos[i].folderCanvas, 0, 0, clipCanvas.width, clipCanvas.height);
 						}
 
@@ -246,7 +246,9 @@ export class GpuService {
 				}
 
 				if (!!$folderCtx && $index === lastIndex) {
-					$folderLayer.folderCanvas = $folderCtx.canvas;
+					const c: HTMLCanvasElement = $folderCtx.canvas;
+					$folderCtx.drawImage(c, 0, 0);
+					$folderLayer.folderCanvas = c;
 				} else {
 					return { state: 0, folderCtx: $folderCtx, folderLayer: $folderLayer };
 				}
@@ -290,6 +292,8 @@ export class GpuService {
 				}
 
 				$layer.hidden.current = !$layer.hidden.current;
+
+				console.log($layer);
 
 				// To get rid of loop
 				return { state: 1 };
