@@ -365,6 +365,7 @@ export class ViewerComponent implements OnInit, OnDestroy {
 					current: root[i].hidden,
 					prev: !root[i].hidden
 				},
+				folderCanvas: null,
 				psd: root[i],
 				children: []
 			};
@@ -387,6 +388,7 @@ export class ViewerComponent implements OnInit, OnDestroy {
 					current: $isFolderHidden ? true : $child.children[i].hidden,
 					prev: $isFolderHidden ? false : !$child.children[i].hidden
 				},
+				folderCanvas: null,
 				psd: $child.children[i],
 				children: []
 			};

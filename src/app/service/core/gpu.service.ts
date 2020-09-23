@@ -7,8 +7,6 @@ import { Layer, LayerMaskData } from 'ag-psd';
 	providedIn: 'root'
 })
 export class GpuService {
-	private tmpClipCanvas: HTMLCanvasElement;
-
 	constructor(private memory: MemoryService) {}
 
 	get rawPsdCanvas(): HTMLCanvasElement {
@@ -86,173 +84,174 @@ export class GpuService {
 		$height: number, // the size of a canvas
 		$scale: number // the current scale of a canvas
 	): void {
-		this.recursive($root, ($layer: LayerInfo, $layerInfos: LayerInfo[], $index: number) => {
-			const psd: Layer = $layer.psd;
+		this.recursive(
+			$root,
+			(
+				$layer: LayerInfo,
+				$layerInfos: LayerInfo[],
+				$index: number,
+				$folderCtx?: CanvasRenderingContext2D,
+				$folderLayer?: LayerInfo
+			) => {
+				const psd: Layer = $layer.psd;
 
-			if ($layer.hidden.current || !psd?.canvas) return;
+				if ($layer.hidden.current) return;
 
-			let canvas: HTMLCanvasElement = document.createElement('canvas');
-			canvas.width = $width;
-			canvas.height = $height;
-			let x: number = psd.left;
-			let y: number = psd.top;
-			let w: number = psd.right - psd.left;
-			let h: number = psd.bottom - psd.top;
-			x *= $scale;
-			y *= $scale;
-			w *= $scale;
-			h *= $scale;
-			canvas.getContext('2d').drawImage(psd.canvas, x, y, w, h);
+				// Folder
+				if ($layer.children.length > 0) {
+					const folderC: HTMLCanvasElement = document.createElement('canvas');
+					folderC.width = $width;
+					folderC.height = $height;
+					const folderCtx: CanvasRenderingContext2D = folderC.getContext('2d');
 
-			$ctx.save();
-			// Set opacity
-			$ctx.globalAlpha = psd.opacity;
+					return { state: 0, folderCtx: folderCtx, folderLayer: $layer };
+				}
 
-			// Blend mode
-			let blendMode = '';
-			if (psd.blendMode === 'overlay') {
-				blendMode = 'overlay';
-			} else if (psd.blendMode === 'screen') {
-				blendMode = 'screen';
-			} else if (psd.blendMode === 'multiply') {
-				blendMode = 'multiply';
-			} else if (psd.blendMode === 'linear dodge') {
-				blendMode = 'lighter';
-			} else if (psd.blendMode === 'soft light') {
-				blendMode = 'soft-light';
-			} else if (psd.blendMode === 'hard light') {
-				blendMode = 'hard-light';
-			} else if (psd.blendMode === 'color burn') {
-				blendMode = 'color-burn';
-			} else if (psd.blendMode === 'saturation') {
-				blendMode = 'saturation';
-			} else if (psd.blendMode === 'hue') {
-				blendMode = 'hue';
-			} else if (psd.blendMode === 'color') {
-				blendMode = 'color';
-			} else if (psd.blendMode === 'color dodge') {
-				blendMode = 'color-dodge';
-			} else {
-				blendMode = 'source-over';
-			}
-			$ctx.globalCompositeOperation = blendMode;
+				if (!psd?.canvas) return;
 
-			// Clipping layer
-			if ($layer.psd.clipping) {
-				for (let i = $index; i < $layerInfos.length; i++) {
-					if ($layerInfos[i].psd.clipping) continue;
+				let canvas: HTMLCanvasElement = document.createElement('canvas');
+				canvas.width = $width;
+				canvas.height = $height;
+				let x: number = psd.left;
+				let y: number = psd.top;
+				let w: number = psd.right - psd.left;
+				let h: number = psd.bottom - psd.top;
+				x *= $scale;
+				y *= $scale;
+				w *= $scale;
+				h *= $scale;
+				canvas.getContext('2d').drawImage(psd.canvas, x, y, w, h);
 
-					const source: Layer = $layer.psd;
-					const target: Layer = $layerInfos[i].psd;
+				$ctx.save();
+				// Set opacity
+				$ctx.globalAlpha = psd.opacity;
 
-					const clipCanvas: HTMLCanvasElement = document.createElement('canvas');
-					clipCanvas.width = canvas.width;
-					clipCanvas.height = canvas.height;
-					const clipCtxBuffer: CanvasRenderingContext2D = clipCanvas.getContext('2d');
+				// Blend mode
+				let blendMode = '';
+				if (psd.blendMode === 'overlay') {
+					blendMode = 'overlay';
+				} else if (psd.blendMode === 'screen') {
+					blendMode = 'screen';
+				} else if (psd.blendMode === 'multiply') {
+					blendMode = 'multiply';
+				} else if (psd.blendMode === 'linear dodge') {
+					blendMode = 'lighter';
+				} else if (psd.blendMode === 'soft light') {
+					blendMode = 'soft-light';
+				} else if (psd.blendMode === 'hard light') {
+					blendMode = 'hard-light';
+				} else if (psd.blendMode === 'color burn') {
+					blendMode = 'color-burn';
+				} else if (psd.blendMode === 'saturation') {
+					blendMode = 'saturation';
+				} else if (psd.blendMode === 'hue') {
+					blendMode = 'hue';
+				} else if (psd.blendMode === 'color') {
+					blendMode = 'color';
+				} else if (psd.blendMode === 'color dodge') {
+					blendMode = 'color-dodge';
+				} else {
+					blendMode = 'source-over';
+				}
+				$ctx.globalCompositeOperation = blendMode;
 
-					clipCtxBuffer.globalCompositeOperation = 'source-over';
-					clipCtxBuffer.drawImage(canvas, 0, 0, clipCanvas.width, clipCanvas.height);
+				// Clipping layer
+				if (psd.clipping) {
+					for (let i = $index; i < $layerInfos.length; i++) {
+						if ($layerInfos[i].psd.clipping) continue;
 
-					clipCtxBuffer.globalCompositeOperation = 'destination-in';
-					let targetW: number = target.right - target.left;
-					let targetH: number = target.bottom - target.top;
+						const source: Layer = psd;
+						const target: Layer = $layerInfos[i].psd;
+
+						const clipCanvas: HTMLCanvasElement = document.createElement('canvas');
+						clipCanvas.width = canvas.width;
+						clipCanvas.height = canvas.height;
+						const clipCtxBuffer: CanvasRenderingContext2D = clipCanvas.getContext('2d');
+
+						clipCtxBuffer.globalCompositeOperation = 'source-over';
+						clipCtxBuffer.drawImage(canvas, 0, 0, clipCanvas.width, clipCanvas.height);
+
+						clipCtxBuffer.globalCompositeOperation = 'destination-in';
+						let targetW: number = target.right - target.left;
+						let targetH: number = target.bottom - target.top;
+						targetW *= $scale;
+						targetH *= $scale;
+
+						// If the target has no canvas, it is folder,
+						// which means folder clipping
+						if (!!target.canvas) {
+							clipCtxBuffer.drawImage(target.canvas, target.left * $scale, target.top * $scale, targetW, targetH);
+						} else {
+							if ($layerInfos[i].hidden) break;
+							clipCtxBuffer.drawImage($layerInfos[i].folderCanvas, 0, 0, clipCanvas.width, clipCanvas.height);
+						}
+
+						canvas = clipCanvas;
+						break;
+					}
+				}
+
+				// Mask layer
+				if (!!psd?.mask?.canvas) {
+					const source: Layer = psd;
+					const mask: LayerMaskData = $layer.psd.mask;
+
+					// Maybe I should escape this case for now
+					if (mask.positionRelativeToLayer) return;
+
+					const maskCanvas: HTMLCanvasElement = document.createElement('canvas');
+					maskCanvas.width = canvas.width;
+					maskCanvas.height = canvas.height;
+					const maskCtxBuffer: CanvasRenderingContext2D = maskCanvas.getContext('2d');
+
+					maskCtxBuffer.globalCompositeOperation = 'source-over';
+					maskCtxBuffer.drawImage(canvas, 0, 0, canvas.width, canvas.height);
+
+					maskCtxBuffer.globalCompositeOperation = 'destination-in';
+					let targetW: number = mask.right - mask.left;
+					let targetH: number = mask.bottom - mask.top;
 					targetW *= $scale;
 					targetH *= $scale;
 
-					// If the target has no canvas, it is folder,
-					// which means folder clipping
-					if (!!target.canvas) {
-						clipCtxBuffer.drawImage(target.canvas, target.left * $scale, target.top * $scale, targetW, targetH);
-					} else {
-						// To prevent recursive unnecessary renderings
-						if (i === $index + 1) {
-							const subRoot: LayerInfo[] = $layerInfos[i].children;
-							const subC: HTMLCanvasElement = this.parseSubLayers(subRoot);
-							this.tmpClipCanvas = subC;
-						}
+					const tmpCanvas: HTMLCanvasElement = document.createElement('canvas');
+					tmpCanvas.width = targetW;
+					tmpCanvas.height = targetH;
+					const tmpCtx: CanvasRenderingContext2D = tmpCanvas.getContext('2d');
+					tmpCtx.drawImage(mask.canvas, 0, 0, tmpCanvas.width, tmpCanvas.height);
 
-						clipCtxBuffer.drawImage(this.tmpClipCanvas, 0, 0, clipCanvas.width, clipCanvas.height);
+					const imageData: ImageData = tmpCtx.getImageData(0, 0, tmpCanvas.width, tmpCanvas.height);
+					const data: Uint8ClampedArray = imageData.data;
+
+					for (let i = 0; i < data.length; i += 4) {
+						data[i + 3] = data[i];
 					}
 
-					canvas = clipCanvas;
-					break;
-				}
-			}
+					tmpCtx.clearRect(0, 0, tmpCanvas.width, tmpCanvas.height);
+					tmpCtx.putImageData(imageData, 0, 0);
 
-			// Mask layer
-			if (!!$layer.psd.mask && !!$layer.psd.mask.canvas) {
-				const source: Layer = $layer.psd;
-				const mask: LayerMaskData = $layer.psd.mask;
+					maskCtxBuffer.drawImage(tmpCanvas, mask.left * $scale, mask.top * $scale, targetW, targetH);
 
-				// Maybe I should escape this case for now
-				if (mask.positionRelativeToLayer) return;
-
-				const maskCanvas: HTMLCanvasElement = document.createElement('canvas');
-				maskCanvas.width = canvas.width;
-				maskCanvas.height = canvas.height;
-				const maskCtxBuffer: CanvasRenderingContext2D = maskCanvas.getContext('2d');
-
-				maskCtxBuffer.globalCompositeOperation = 'source-over';
-				maskCtxBuffer.drawImage(canvas, 0, 0, canvas.width, canvas.height);
-
-				maskCtxBuffer.globalCompositeOperation = 'destination-in';
-				let targetW: number = mask.right - mask.left;
-				let targetH: number = mask.bottom - mask.top;
-				targetW *= $scale;
-				targetH *= $scale;
-
-				const imageData: ImageData = mask.canvas
-					.getContext('2d')
-					.getImageData(0, 0, mask.canvas.width, mask.canvas.height);
-				const data: Uint8ClampedArray = imageData.data;
-
-				for (let i = 0; i < data.length; i += 4) {
-					data[i + 3] = data[i];
+					canvas = maskCanvas;
 				}
 
-				const tmpCanvas: HTMLCanvasElement = document.createElement('canvas');
-				tmpCanvas.width = mask.canvas.width;
-				tmpCanvas.height = mask.canvas.height;
-				const tmpCtx: CanvasRenderingContext2D = tmpCanvas.getContext('2d');
-				tmpCtx.putImageData(imageData, 0, 0);
+				$ctx.drawImage(canvas, 0, 0);
+				$ctx.restore();
 
-				maskCtxBuffer.drawImage(tmpCanvas, mask.left * $scale, mask.top * $scale, targetW, targetH);
+				const isRootDirectory = !$folderCtx;
+				if (!isRootDirectory) $folderCtx.drawImage(canvas, 0, 0);
 
-				canvas = maskCanvas;
+				let lastIndex;
+				for (let i = $layerInfos.length - 1; i > -1; i--) {
+					if (!$layerInfos[i].hidden.current && !!$layerInfos[i].psd?.canvas) lastIndex = i;
+				}
+
+				if (!!$folderCtx && $index === lastIndex) {
+					$folderLayer.folderCanvas = $folderCtx.canvas;
+				} else {
+					return { state: 0, folderCtx: $folderCtx, folderLayer: $folderLayer };
+				}
 			}
-
-			$ctx.drawImage(canvas, 0, 0);
-			$ctx.restore();
-		});
-	}
-
-	private parseSubLayers($subRoot: LayerInfo[]): HTMLCanvasElement {
-		const c: HTMLCanvasElement = document.createElement('canvas');
-		c.width = this.memory.renderer.psd.width;
-		c.height = this.memory.renderer.psd.height;
-		const ctx: CanvasRenderingContext2D = c.getContext('2d');
-
-		this.recursive($subRoot, ($layer: LayerInfo, $layerInfos: LayerInfo[], $index: number) => {
-			if ($layer.hidden.current || $layer.psd.clipping) return;
-
-			const psd: Layer = $layer.psd;
-
-			if (!!psd.canvas) {
-				const canvas: HTMLCanvasElement = psd.canvas;
-				const x: number = psd.left;
-				const y: number = psd.top;
-				const w: number = psd.right - psd.left;
-				const h: number = psd.bottom - psd.top;
-
-				ctx.drawImage(canvas, x, y, w, h);
-			} else {
-				const subRoot: LayerInfo[] = $layer.children;
-				const subC: HTMLCanvasElement = this.parseSubLayers(subRoot);
-				ctx.drawImage(subC, 0, 0, c.width, c.height);
-			}
-		});
-
-		return c;
+		);
 	}
 
 	private grayscale($ctx: CanvasRenderingContext2D, $w: number, $h: number): void {
@@ -293,19 +292,29 @@ export class GpuService {
 				$layer.hidden.current = !$layer.hidden.current;
 
 				// To get rid of loop
-				return 0;
+				return { state: 1 };
 			}
 		});
 	}
 
-	private recursive($root: any[], $callback: Function): void {
+	private recursive(
+		$root: any[],
+		$callback: Function,
+		$folderCtx?: CanvasRenderingContext2D,
+		$folderLayer?: LayerInfo
+	): void {
 		for (let i = $root.length - 1; i > -1; i--) {
-			const state: number = $callback($root[i], $root, i);
+			const payload: {
+				state: number;
+				folderCtx: CanvasRenderingContext2D;
+				folderLayer?: LayerInfo;
+			} = $callback($root[i], $root, i, $folderCtx, $folderLayer);
 
-			if (state === 0) return;
+			if (!!payload && payload.state !== 0) return;
 
 			if (!$root[i].children?.length) continue;
-			this.recursive($root[i].children, $callback);
+
+			this.recursive($root[i].children, $callback, payload?.folderCtx, payload?.folderLayer);
 		}
 	}
 }

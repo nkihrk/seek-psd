@@ -7,6 +7,7 @@ export interface LayerInfo {
 		current: boolean;
 		prev: boolean;
 	};
+	folderCanvas: HTMLCanvasElement;
 	psd: Layer;
 	children: LayerInfo[];
 }
