@@ -84,7 +84,7 @@ export class GpuService {
 		$height: number, // the size of a canvas
 		$scale: number // the current scale of a canvas
 	): void {
-		this.recursive(
+		this.recursiveRender(
 			$root,
 			(
 				$layer: LayerInfo,
@@ -104,7 +104,7 @@ export class GpuService {
 					folderC.height = $height;
 					const folderCtx: CanvasRenderingContext2D = folderC.getContext('2d');
 
-					return { state: 0, folderCtx: folderCtx, folderLayer: $layer };
+					return { folderCtx: folderCtx, folderLayer: $layer };
 				}
 
 				if (!psd?.canvas) return;
@@ -240,18 +240,7 @@ export class GpuService {
 				const isRootDirectory = !$folderCtx;
 				if (!isRootDirectory) $folderCtx.drawImage(canvas, 0, 0);
 
-				let lastIndex;
-				for (let i = $layerInfos.length - 1; i > -1; i--) {
-					if (!$layerInfos[i].hidden.current && !!$layerInfos[i].psd?.canvas) lastIndex = i;
-				}
-
-				if (!!$folderCtx && $index === lastIndex) {
-					const c: HTMLCanvasElement = $folderCtx.canvas;
-					$folderCtx.drawImage(c, 0, 0);
-					$folderLayer.folderCanvas = c;
-				} else {
-					return { state: 0, folderCtx: $folderCtx, folderLayer: $folderLayer };
-				}
+				return { folderCtx: $folderCtx, folderLayer: $folderLayer };
 			}
 		);
 	}
@@ -271,20 +260,40 @@ export class GpuService {
 		$ctx.putImageData(pixels, 0, 0, 0, 0, pixels.width, pixels.height);
 	}
 
+	private recursiveRender(
+		$root: any[],
+		$callback: Function,
+		$folderCtx?: CanvasRenderingContext2D,
+		$folderLayer?: LayerInfo
+	): void {
+		for (let i = $root.length - 1; i > -1; i--) {
+			const payload: {
+				folderCtx?: CanvasRenderingContext2D;
+				folderLayer?: LayerInfo;
+			} = $callback($root[i], $root, i, $folderCtx, $folderLayer);
+
+			if (!!$root[i].children?.length && !!payload?.folderCtx && !!payload?.folderLayer) {
+				this.recursiveRender($root[i].children, $callback, payload.folderCtx, payload.folderLayer);
+				payload.folderLayer.folderCanvas = payload.folderCtx.canvas;
+				if (!!$folderCtx) $folderCtx.drawImage(payload.folderLayer.folderCanvas, 0, 0);
+			}
+		}
+	}
+
 	toggleVisibility($name: string, $uniqueId: string): void {
 		const root: LayerInfo[] = this.memory.layerInfos$.getValue();
-		this.recursive(root, ($layer: LayerInfo) => {
+		this.recursiveCheck(root, ($layer: LayerInfo) => {
 			if ($name === $layer.name && $uniqueId === $layer.uniqueId) {
 				// Folder layer
 				if ($layer.children.length > 0) {
 					if ($layer.hidden.current) {
 						const root: LayerInfo[] = $layer.children;
-						this.recursive(root, ($subLayer: LayerInfo) => {
+						this.recursiveCheck(root, ($subLayer: LayerInfo) => {
 							$subLayer.hidden.current = $subLayer.hidden.prev;
 						});
 					} else {
 						const root: LayerInfo[] = $layer.children;
-						this.recursive(root, ($subLayer: LayerInfo) => {
+						this.recursiveCheck(root, ($subLayer: LayerInfo) => {
 							$subLayer.hidden.prev = $subLayer.hidden.current;
 							$subLayer.hidden.current = !$layer.hidden.current;
 						});
@@ -293,32 +302,28 @@ export class GpuService {
 
 				$layer.hidden.current = !$layer.hidden.current;
 
-				console.log($layer);
+				//console.log($layer);
 
 				// To get rid of loop
-				return { state: 1 };
+				return 0;
 			}
 		});
 	}
 
-	private recursive(
+	private recursiveCheck(
 		$root: any[],
 		$callback: Function,
 		$folderCtx?: CanvasRenderingContext2D,
 		$folderLayer?: LayerInfo
 	): void {
 		for (let i = $root.length - 1; i > -1; i--) {
-			const payload: {
-				state: number;
-				folderCtx: CanvasRenderingContext2D;
-				folderLayer?: LayerInfo;
-			} = $callback($root[i], $root, i, $folderCtx, $folderLayer);
+			const payload: number = $callback($root[i], $root, i, $folderCtx, $folderLayer);
 
-			if (!!payload && payload.state !== 0) return;
+			if (payload === 0) return;
 
-			if (!$root[i].children?.length) continue;
-
-			this.recursive($root[i].children, $callback, payload?.folderCtx, payload?.folderLayer);
+			if (!!$root[i].children?.length) {
+				this.recursiveCheck($root[i].children, $callback);
+			}
 		}
 	}
 }
