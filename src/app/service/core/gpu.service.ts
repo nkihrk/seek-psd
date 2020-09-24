@@ -261,7 +261,7 @@ export class GpuService {
 	}
 
 	private recursiveRender(
-		$root: any[],
+		$root: LayerInfo[],
 		$callback: Function,
 		$folderCtx?: CanvasRenderingContext2D,
 		$folderLayer?: LayerInfo
@@ -311,7 +311,7 @@ export class GpuService {
 	}
 
 	private recursiveCheck(
-		$root: any[],
+		$root: LayerInfo[],
 		$callback: Function,
 		$folderCtx?: CanvasRenderingContext2D,
 		$folderLayer?: LayerInfo
