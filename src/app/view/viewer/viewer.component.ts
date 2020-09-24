@@ -212,7 +212,6 @@ export class ViewerComponent implements OnInit, OnDestroy {
 	private _elementObserver(): void {
 		const ro: any = new ResizeObserver(() => {
 			this.memory.state.isLayerSwitched = true;
-			console.log('hi');
 		});
 
 		ro.observe(this.memory.renderer.element.previewWrapper);
