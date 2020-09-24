@@ -230,6 +230,7 @@ footer {
 		width: calc(100% - 60px); // 60px is for the parent's padding
 		height: calc(100% - 60px);
 		border-radius: 10px;
+		pointer-events: none;
 		user-select: none;
 		background-color: $thin-gray;
 
@@ -244,6 +245,8 @@ footer {
 		&.active {
 			transition-delay: initial;
 			opacity: 1;
+			cursor: pointer;
+			pointer-events: initial;
 		}
 
 		.normal {
@@ -527,6 +530,51 @@ footer {
 	width: 100vw;
 	height: 100vh;
 	pointer-events: none;
+}
+
+///////////////////////////////////////////////////
+//
+//	PSD preview canvas
+//
+///////////////////////////////////////////////////
+
+.psd-preview-wrapper {
+	position: fixed;
+	z-index: 15;
+	top: 0;
+	left: 0;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	width: 100%;
+	height: 100vh;
+	pointer-events: none;
+	user-select: none;
+	opacity: 0;
+	transition: opacity 0.1s ease-in-out;
+	background-color: rgba(black, 0.8);
+
+	&.active {
+		pointer-events: initial;
+		opacity: 1;
+	}
+
+	.loader {
+		z-index: -1;
+	}
+
+	canvas {
+		opacity: 0;
+		transition: opacity $transition;
+
+		&.active {
+			opacity: 1;
+		}
+	}
+}
+
+.cursor-pointer {
+	cursor: pointer;
 }
 
 ///////////////////////////////////////////////////

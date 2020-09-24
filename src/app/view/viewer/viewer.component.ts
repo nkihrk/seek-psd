@@ -2,6 +2,7 @@ import { Component, OnInit, OnDestroy, ViewChild, ElementRef, ChangeDetectorRef 
 import { Observable, of } from 'rxjs';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { NotifierService } from 'angular-notifier';
+import ResizeObserver from 'resize-observer-polyfill';
 
 // Service
 import { FileLoaderService } from '../../service/core/file-loader.service';
@@ -51,11 +52,13 @@ export class ViewerComponent implements OnInit, OnDestroy {
 	@ViewChild('psdViewer', { static: true }) psdViewerRef: ElementRef<HTMLDivElement>;
 	@ViewChild('dropArea', { static: true }) dropAreaRef: ElementRef<HTMLDivElement>;
 	@ViewChild('screenCanvasWrapper', { static: true }) screenCanvasWrapperRef: ElementRef<HTMLDivElement>;
+	@ViewChild('previewWrapper', { static: true }) previewWrapperRef: ElementRef<HTMLDivElement>;
 
 	// canvas
 	@ViewChild('mainCanvas', { static: true }) mainCanvasRef: ElementRef<HTMLCanvasElement>;
 	@ViewChild('screenCanvas', { static: true }) screenCanvasRef: ElementRef<HTMLCanvasElement>;
 	@ViewChild('overlayCanvas', { static: true }) overlayCanvasRef: ElementRef<HTMLCanvasElement>;
+	@ViewChild('previewCanvas', { static: true }) previewCanvasRef: ElementRef<HTMLCanvasElement>;
 
 	cropConf: FormGroup;
 
@@ -103,10 +106,15 @@ export class ViewerComponent implements OnInit, OnDestroy {
 			this.psdViewerRef.nativeElement,
 			this.dropAreaRef.nativeElement,
 			this.screenCanvasWrapperRef.nativeElement,
+			this.previewWrapperRef.nativeElement,
 			this.mainCanvasRef.nativeElement,
 			this.screenCanvasRef.nativeElement,
-			this.overlayCanvasRef.nativeElement
+			this.overlayCanvasRef.nativeElement,
+			this.previewCanvasRef.nativeElement
 		);
+
+		// Detect window size changes
+		this._elementObserver();
 
 		this.cropConf = new FormGroup({
 			width: new FormControl('', []),
@@ -200,6 +208,16 @@ export class ViewerComponent implements OnInit, OnDestroy {
 		this.memory.psdData$.unsubscribe();
 	}
 
+	// https://stackoverflow.com/questions/40659090/element-height-and-width-change-detection-in-angular-2
+	private _elementObserver(): void {
+		const ro: any = new ResizeObserver(() => {
+			this.memory.state.isLayerSwitched = true;
+			console.log('hi');
+		});
+
+		ro.observe(this.memory.renderer.element.previewWrapper);
+	}
+
 	onFileDropped($fileList: File[]) {
 		if (this.memory.isLoaded$.getValue()) {
 			this.notifier.notify('error', 'すでにファイルが読み込まれています');
@@ -228,6 +246,9 @@ export class ViewerComponent implements OnInit, OnDestroy {
 		this.gpu.toggleVisibility($name, $uniqueId);
 		this.changeDetectorRef.detectChanges();
 		this.gpu.render();
+
+		// Update state
+		this.memory.state.isLayerSwitched = true;
 	}
 
 	execFunc($name: string): void {
@@ -284,14 +305,20 @@ export class ViewerComponent implements OnInit, OnDestroy {
 
 			case 'grayscale':
 				this.func.grayscale();
+				this.memory.state.isLayerSwitched = true;
 				break;
 
 			case 'flip':
 				this.func.flip();
+				this.memory.state.isLayerSwitched = true;
 				break;
 
 			case 'download':
 				this.func.download();
+				break;
+
+			case 'preview':
+				this.func.togglePreview();
 				break;
 
 			default:

@@ -187,7 +187,12 @@
 			</div>
 
 			<canvas #mainCanvas class="psd-canvas"></canvas>
-			<canvas #overlayCanvas class="overlay-canvas prevent-AA"></canvas>
+			<canvas
+				(click)="execExplicitFunc('preview')"
+				#overlayCanvas
+				[ngClass]="{ 'cursor-pointer': (memory.reservedByFunc$ | async)?.current.name === '' }"
+				class="overlay-canvas prevent-AA"
+			></canvas>
 
 			<div
 				*ngIf="(memory.reservedByFunc$ | async)?.current.name === 'crop'"
@@ -314,4 +319,16 @@
 
 <div #screenCanvasWrapper appPointerEvent (pointerData)="onPointerEvent($event)" class="color-picker-wrapper">
 	<canvas #screenCanvas class="prevent-AA"></canvas>
+</div>
+
+<div (click)="execExplicitFunc('preview')" #previewWrapper class="cursor-pointer psd-preview-wrapper">
+	<canvas #previewCanvas></canvas>
+	<div class="loader">
+		<div class="bar1"></div>
+		<div class="bar2"></div>
+		<div class="bar3"></div>
+		<div class="bar4"></div>
+		<div class="bar5"></div>
+		<div class="bar6"></div>
+	</div>
 </div>

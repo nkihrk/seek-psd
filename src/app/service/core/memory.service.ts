@@ -95,6 +95,11 @@ export class MemoryService {
 		}
 	};
 
+	// Check if the layer state is changed (switched)
+	state = {
+		isLayerSwitched: true
+	};
+
 	///////////////////////////////////////////////////////////////////////////
 	//
 	//	Public methods
@@ -106,17 +111,21 @@ export class MemoryService {
 		$psdViewer: HTMLDivElement,
 		$dropArea: HTMLDivElement,
 		$screenCanvasWrapper: HTMLDivElement,
+		$previewWrapper: HTMLDivElement,
 		$main: HTMLCanvasElement,
 		$screen: HTMLCanvasElement,
-		$overlay: HTMLCanvasElement
+		$overlay: HTMLCanvasElement,
+		$preview: HTMLCanvasElement
 	): void {
 		this.renderer.element.container = $container;
 		this.renderer.element.psdViewer = $psdViewer;
 		this.renderer.element.dropArea = $dropArea;
 		this.renderer.element.screenCanvasWrapper = $screenCanvasWrapper;
+		this.renderer.element.previewWrapper = $previewWrapper;
 		this.renderer.element.main = $main;
 		this.renderer.element.screen = $screen;
 		this.renderer.element.overlay = $overlay;
+		this.renderer.element.preview = $preview;
 
 		// Create buffer for psd
 		this.renderer.element.buffer = document.createElement('canvas');
@@ -153,6 +162,8 @@ export class MemoryService {
 		this.updateIsFlip(false);
 		this.updateResizeCanvas(0, 1);
 		this.updateIsFixedCropResolution(false);
+
+		this.state.isLayerSwitched = true;
 	}
 
 	updateReservedByFunc($reserved: Reserved): void {
@@ -210,11 +221,13 @@ interface Element {
 	psdViewer: HTMLDivElement;
 	dropArea: HTMLDivElement;
 	screenCanvasWrapper: HTMLDivElement;
+	previewWrapper: HTMLDivElement;
 	// canvas
 	main: HTMLCanvasElement;
 	screen: HTMLCanvasElement;
 	overlay: HTMLCanvasElement;
 	buffer: HTMLCanvasElement;
+	preview: HTMLCanvasElement;
 }
 
 interface Size {

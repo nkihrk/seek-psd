@@ -172,6 +172,56 @@ export class FuncService {
 			const cBuffer: HTMLCanvasElement = this.memory.renderer.element.buffer;
 			cBuffer.width = 1;
 			cBuffer.height = 1;
+			const cPreview: HTMLCanvasElement = this.memory.renderer.element.preview;
+			cPreview.width = 1;
+			cPreview.height = 1;
 		}, 1000);
+	}
+
+	///////////////////////////////////////////////////////////////////////////
+	//
+	//	Preview
+	//
+	///////////////////////////////////////////////////////////////////////////
+
+	togglePreview(): boolean {
+		if (!!this.memory.reservedByFunc$.getValue().current.name) return;
+
+		const wrapper: HTMLDivElement = this.memory.renderer.element.previewWrapper;
+		const c: HTMLCanvasElement = this.memory.renderer.element.preview;
+
+		if (wrapper.classList.contains('active')) {
+			wrapper.classList.remove('active');
+			c.classList.remove('active');
+			return;
+		} else {
+			wrapper.classList.add('active');
+		}
+
+		if (this.memory.state.isLayerSwitched) {
+			this.memory.renderer.element.preview.width = 1;
+			this.memory.renderer.element.preview.height = 1;
+		} else {
+			setTimeout(() => {
+				c.classList.add('active');
+			}, 500);
+			return;
+		}
+
+		setTimeout(() => {
+			const buffer: HTMLCanvasElement = this.gpu.rawPsdCanvas;
+			const w: number = wrapper.getBoundingClientRect().width;
+			const h: number = wrapper.getBoundingClientRect().height;
+			const aspect: number = buffer.width / buffer.height;
+
+			c.width = h * aspect;
+			c.height = h;
+			const ctx: CanvasRenderingContext2D = c.getContext('2d');
+
+			ctx.drawImage(buffer, 0, 0, c.width, c.height);
+
+			c.classList.add('active');
+			this.memory.state.isLayerSwitched = false;
+		}, 500);
 	}
 }
