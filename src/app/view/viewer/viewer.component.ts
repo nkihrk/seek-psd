@@ -53,6 +53,7 @@ export class ViewerComponent implements OnInit, OnDestroy {
 	@ViewChild('dropArea', { static: true }) dropAreaRef: ElementRef<HTMLDivElement>;
 	@ViewChild('screenCanvasWrapper', { static: true }) screenCanvasWrapperRef: ElementRef<HTMLDivElement>;
 	@ViewChild('previewWrapper', { static: true }) previewWrapperRef: ElementRef<HTMLDivElement>;
+	@ViewChild('previewLoader', { static: true }) previewLoaderRef: ElementRef<HTMLDivElement>;
 
 	// canvas
 	@ViewChild('mainCanvas', { static: true }) mainCanvasRef: ElementRef<HTMLCanvasElement>;
@@ -107,6 +108,7 @@ export class ViewerComponent implements OnInit, OnDestroy {
 			this.dropAreaRef.nativeElement,
 			this.screenCanvasWrapperRef.nativeElement,
 			this.previewWrapperRef.nativeElement,
+			this.previewLoaderRef.nativeElement,
 			this.mainCanvasRef.nativeElement,
 			this.screenCanvasRef.nativeElement,
 			this.overlayCanvasRef.nativeElement,
@@ -380,24 +382,41 @@ export class ViewerComponent implements OnInit, OnDestroy {
 	///////////////////////////////////////////////////////////////////////////
 
 	private _extractPsdData($psd: Psd): LayerInfo[] {
-		const root: Layer[] = $psd.children;
 		const list: LayerInfo[] = [];
 
-		for (let i = root.length - 1; i > -1; i--) {
+		if (!!$psd?.children) {
+			const root: Layer[] = $psd.children;
+
+			for (let i = root.length - 1; i > -1; i--) {
+				const item: LayerInfo = {
+					name: root[i].name,
+					uniqueId: Math.random().toString(36).substr(2, 9),
+					hidden: {
+						current: root[i].hidden,
+						prev: !root[i].hidden
+					},
+					folderCanvas: null,
+					psd: root[i],
+					children: []
+				};
+
+				list.push(item);
+				this._getChildren(root[i], item, root[i].hidden);
+			}
+		} else {
 			const item: LayerInfo = {
-				name: root[i].name,
+				name: this.memory.fileName$.getValue(),
 				uniqueId: Math.random().toString(36).substr(2, 9),
 				hidden: {
-					current: root[i].hidden,
-					prev: !root[i].hidden
+					current: false,
+					prev: true
 				},
 				folderCanvas: null,
-				psd: root[i],
+				psd: $psd,
 				children: []
 			};
 
 			list.push(item);
-			this._getChildren(root[i], item, root[i].hidden);
 		}
 
 		return list;

@@ -112,6 +112,7 @@ export class MemoryService {
 		$dropArea: HTMLDivElement,
 		$screenCanvasWrapper: HTMLDivElement,
 		$previewWrapper: HTMLDivElement,
+		$previewLoader: HTMLDivElement,
 		$main: HTMLCanvasElement,
 		$screen: HTMLCanvasElement,
 		$overlay: HTMLCanvasElement,
@@ -122,6 +123,7 @@ export class MemoryService {
 		this.renderer.element.dropArea = $dropArea;
 		this.renderer.element.screenCanvasWrapper = $screenCanvasWrapper;
 		this.renderer.element.previewWrapper = $previewWrapper;
+		this.renderer.element.previewLoader = $previewLoader;
 		this.renderer.element.main = $main;
 		this.renderer.element.screen = $screen;
 		this.renderer.element.overlay = $overlay;
@@ -222,6 +224,7 @@ interface Element {
 	dropArea: HTMLDivElement;
 	screenCanvasWrapper: HTMLDivElement;
 	previewWrapper: HTMLDivElement;
+	previewLoader: HTMLDivElement;
 	// canvas
 	main: HTMLCanvasElement;
 	screen: HTMLCanvasElement;

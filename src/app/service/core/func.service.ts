@@ -189,10 +189,12 @@ export class FuncService {
 
 		const wrapper: HTMLDivElement = this.memory.renderer.element.previewWrapper;
 		const c: HTMLCanvasElement = this.memory.renderer.element.preview;
+		const loader: HTMLDivElement = this.memory.renderer.element.previewLoader;
 
 		if (wrapper.classList.contains('active')) {
 			wrapper.classList.remove('active');
 			c.classList.remove('active');
+			loader.classList.remove('disable');
 			return;
 		} else {
 			wrapper.classList.add('active');
@@ -204,6 +206,7 @@ export class FuncService {
 		} else {
 			setTimeout(() => {
 				c.classList.add('active');
+				loader.classList.add('disable');
 			}, 500);
 			return;
 		}
@@ -221,6 +224,7 @@ export class FuncService {
 			ctx.drawImage(buffer, 0, 0, c.width, c.height);
 
 			c.classList.add('active');
+			loader.classList.add('disable');
 			this.memory.state.isLayerSwitched = false;
 		}, 500);
 	}

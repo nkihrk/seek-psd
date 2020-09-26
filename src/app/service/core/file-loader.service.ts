@@ -126,7 +126,32 @@ export class FileLoaderService {
 	private _psdReader($arrayBuffer: ArrayBuffer, $fileName: string): void {
 		try {
 			const psd: Psd = readPsd($arrayBuffer);
-			this.memory.psdData$.next({ psd, fileName: $fileName });
+
+			if (!!psd?.children) {
+				this.memory.psdData$.next({ psd, fileName: $fileName });
+			} else {
+				const fixedPsd: Psd = {
+					canvas: psd.canvas,
+					children: [
+						{
+							canvas: psd.canvas,
+							top: 0,
+							bottom: psd.height,
+							left: 0,
+							right: psd.width,
+							blendMode: 'normal',
+							hidden: false,
+							opacity: 1,
+							clipping: false,
+							name: $fileName
+						}
+					],
+					width: psd.width,
+					height: psd.height
+				};
+
+				this.memory.psdData$.next({ psd: fixedPsd, fileName: $fileName });
+			}
 		} catch ($error) {
 			this.memory.updateIsLoading(false);
 			this.notifier.notify('error', 'ファイルの読み込みに失敗しました');

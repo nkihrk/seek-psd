@@ -665,6 +665,11 @@ footer {
 	top: 50%;
 	left: 50%;
 	-webkit-transform: translateY(-50%) translateX(-50%);
+	transition: opacity $transition;
+
+	&.disable {
+		opacity: 0;
+	}
 
 	> div {
 		height: 100%;
