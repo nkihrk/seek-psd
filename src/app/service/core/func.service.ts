@@ -150,6 +150,10 @@ export class FuncService {
 	garbage(): void {
 		this.memory.refreshData();
 
+		const cLayerDetail: HTMLCanvasElement = this.memory.renderer.element.layerDetail;
+		cLayerDetail.width = 1;
+		cLayerDetail.height = 1;
+
 		// Initialize reservedByFuncs
 		this.memory.updateReservedByFunc({
 			name: '',
@@ -200,7 +204,7 @@ export class FuncService {
 			wrapper.classList.add('active');
 		}
 
-		if (this.memory.state.isLayerSwitched) {
+		if (this.memory.states.isLayerSwitched) {
 			this.memory.renderer.element.preview.width = 1;
 			this.memory.renderer.element.preview.height = 1;
 		} else {
@@ -225,7 +229,42 @@ export class FuncService {
 
 			c.classList.add('active');
 			loader.classList.add('disable');
-			this.memory.state.isLayerSwitched = false;
+			this.memory.states.isLayerSwitched = false;
+		}, 500);
+	}
+
+	togglePreviewLayerDetail(): boolean {
+		const layerDetailC: HTMLCanvasElement = this.memory.layerDetailBlendMode$.getValue().canvas;
+
+		if (!!this.memory.reservedByFunc$.getValue().current.name || !layerDetailC) return;
+
+		const wrapper: HTMLDivElement = this.memory.renderer.element.previewWrapper;
+		const c: HTMLCanvasElement = this.memory.renderer.element.preview;
+		const loader: HTMLDivElement = this.memory.renderer.element.previewLoader;
+
+		if (wrapper.classList.contains('active')) {
+			wrapper.classList.remove('active');
+			c.classList.remove('active');
+			loader.classList.remove('disable');
+			return;
+		} else {
+			wrapper.classList.add('active');
+		}
+
+		setTimeout(() => {
+			const buffer: HTMLCanvasElement = layerDetailC;
+			const w: number = wrapper.getBoundingClientRect().width;
+			const h: number = wrapper.getBoundingClientRect().height;
+			const aspect: number = buffer.width / buffer.height;
+
+			c.width = h * aspect;
+			c.height = h;
+			const ctx: CanvasRenderingContext2D = c.getContext('2d');
+
+			ctx.drawImage(buffer, 0, 0, c.width, c.height);
+
+			c.classList.add('active');
+			loader.classList.add('disable');
 		}, 500);
 	}
 }

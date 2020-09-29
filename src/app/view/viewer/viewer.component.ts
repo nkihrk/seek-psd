@@ -60,6 +60,7 @@ export class ViewerComponent implements OnInit, OnDestroy {
 	@ViewChild('screenCanvas', { static: true }) screenCanvasRef: ElementRef<HTMLCanvasElement>;
 	@ViewChild('overlayCanvas', { static: true }) overlayCanvasRef: ElementRef<HTMLCanvasElement>;
 	@ViewChild('previewCanvas', { static: true }) previewCanvasRef: ElementRef<HTMLCanvasElement>;
+	@ViewChild('layerDetailCanvas', { static: true }) layerDetailCanvasRef: ElementRef<HTMLCanvasElement>;
 
 	cropConf: FormGroup;
 
@@ -112,7 +113,8 @@ export class ViewerComponent implements OnInit, OnDestroy {
 			this.mainCanvasRef.nativeElement,
 			this.screenCanvasRef.nativeElement,
 			this.overlayCanvasRef.nativeElement,
-			this.previewCanvasRef.nativeElement
+			this.previewCanvasRef.nativeElement,
+			this.layerDetailCanvasRef.nativeElement
 		);
 
 		// Detect window size changes
@@ -213,7 +215,7 @@ export class ViewerComponent implements OnInit, OnDestroy {
 	// https://stackoverflow.com/questions/40659090/element-height-and-width-change-detection-in-angular-2
 	private _elementObserver(): void {
 		const ro: any = new ResizeObserver(() => {
-			this.memory.state.isLayerSwitched = true;
+			this.memory.states.isLayerSwitched = true;
 		});
 
 		ro.observe(this.memory.renderer.element.previewWrapper);
@@ -249,7 +251,12 @@ export class ViewerComponent implements OnInit, OnDestroy {
 		this.gpu.render();
 
 		// Update state
-		this.memory.state.isLayerSwitched = true;
+		this.memory.states.isLayerSwitched = true;
+	}
+
+	toggleLayerDetail($name: string, $uniqueId: string): void {
+		this.gpu.toggleLayerDetail($name, $uniqueId);
+		this.changeDetectorRef.detectChanges();
 	}
 
 	execFunc($name: string): void {
@@ -306,12 +313,12 @@ export class ViewerComponent implements OnInit, OnDestroy {
 
 			case 'grayscale':
 				this.func.grayscale();
-				this.memory.state.isLayerSwitched = true;
+				this.memory.states.isLayerSwitched = true;
 				break;
 
 			case 'flip':
 				this.func.flip();
-				this.memory.state.isLayerSwitched = true;
+				this.memory.states.isLayerSwitched = true;
 				break;
 
 			case 'download':
@@ -320,6 +327,11 @@ export class ViewerComponent implements OnInit, OnDestroy {
 
 			case 'preview':
 				this.func.togglePreview();
+				break;
+
+			case 'preview-layer-detail':
+				this.func.togglePreviewLayerDetail();
+				this.memory.states.isLayerSwitched = true;
 				break;
 
 			default:

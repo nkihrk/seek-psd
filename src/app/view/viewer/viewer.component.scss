@@ -331,11 +331,44 @@ footer {
 		padding: 15px 0;
 	}
 
+	.layer-detail {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		width: 100%;
+		padding: 5px 20px;
+
+		canvas {
+			width: 50px;
+			height: 50px;
+			background-image: url('../../../assets/Transparency10.png');
+			border-radius: 2px;
+
+			&.cursor-pointer {
+				cursor: pointer;
+			}
+		}
+
+		.layer-detail-skelton {
+			width: calc(100% - 70px);
+			height: 30px;
+			border-radius: 5px;
+			background-color: $gray;
+		}
+	}
+
+	.layer-info-separator {
+		width: calc(100% - 40px);
+		height: 1px;
+		margin: 15px auto;
+		border-bottom: solid 1px $thin-black;
+	}
+
 	.layer-panel {
 		width: 100%;
-		padding: 5px 20px 5px 20px;
+		padding: 5px 20px;
 		user-select: none;
-		max-height: 80vh;
+		max-height: calc(80vh - 100px);
 
 		overflow-x: hidden;
 		overscroll-behavior-y: none;
@@ -392,7 +425,8 @@ footer {
 				padding: 5px;
 				border-radius: 5px;
 
-				&.active {
+				&.active,
+				&.active-layer-detail {
 					background-color: $thin-black;
 				}
 

@@ -308,6 +308,69 @@ export class GpuService {
 		});
 	}
 
+	toggleLayerDetail($name: string, $uniqueId: string): void {
+		const root: LayerInfo[] = this.memory.layerInfos$.getValue();
+		this.recursiveCheck(root, ($layer: LayerInfo) => {
+			if ($name === $layer.name && $uniqueId === $layer.uniqueId) {
+				const psd: Layer = $layer.psd;
+
+				if (!!psd?.canvas) {
+					const c: HTMLCanvasElement = this.memory.renderer.element.layerDetail;
+					c.width = c.getBoundingClientRect().width;
+					c.height = c.getBoundingClientRect().height;
+					const ctx: CanvasRenderingContext2D = c.getContext('2d');
+
+					const aspect: number = psd.canvas.height / psd.canvas.width;
+					const isLarger: boolean = psd.canvas.height > psd.canvas.width;
+
+					const fixedW: number = isLarger ? c.height / aspect : c.width;
+					const fixedH: number = isLarger ? c.height : c.width * aspect;
+
+					ctx.translate(c.width / 2, c.height / 2);
+					ctx.drawImage(psd.canvas, -fixedW / 2, -fixedH / 2, fixedW, fixedH);
+				} else {
+					// Initialize the canvas to clean up previous rendered result if none
+					const c: HTMLCanvasElement = this.memory.renderer.element.layerDetail;
+					c.width = 1;
+					c.height = 1;
+				}
+
+				// Blend mode
+				let blendMode = '';
+				if (psd.blendMode === 'overlay') {
+					blendMode = 'オーバーレイ';
+				} else if (psd.blendMode === 'screen') {
+					blendMode = 'スクリーン';
+				} else if (psd.blendMode === 'multiply') {
+					blendMode = '乗算';
+				} else if (psd.blendMode === 'linear dodge') {
+					blendMode = '加算';
+				} else if (psd.blendMode === 'soft light') {
+					blendMode = 'ソフトライト';
+				} else if (psd.blendMode === 'hard light') {
+					blendMode = 'ハードライト';
+				} else if (psd.blendMode === 'color burn') {
+					blendMode = '焼き込みカラー';
+				} else if (psd.blendMode === 'saturation') {
+					blendMode = '彩度';
+				} else if (psd.blendMode === 'hue') {
+					blendMode = '色相';
+				} else if (psd.blendMode === 'color') {
+					blendMode = 'カラー';
+				} else if (psd.blendMode === 'color dodge') {
+					blendMode = '覆い焼きカラー';
+				} else {
+					blendMode = '通常';
+				}
+
+				this.memory.updateLayerDetailBlendMode(blendMode, $name, $uniqueId, psd.canvas);
+
+				// To get rid of loop
+				return 0;
+			}
+		});
+	}
+
 	private recursiveCheck(
 		$root: LayerInfo[],
 		$callback: Function,

@@ -248,6 +248,18 @@
 			</h2>
 
 			<div class="outer-layer-panel">
+				<div class="layer-detail">
+					<canvas
+						#layerDetailCanvas
+						(click)="execExplicitFunc('preview-layer-detail')"
+						[ngClass]="{ 'cursor-pointer': (memory.reservedByFunc$ | async)?.current.name === '' }"
+					></canvas>
+					<span *ngIf="memory.isLoaded$ | async">{{ (memory.layerDetailBlendMode$ | async)?.blendMode }}</span>
+					<span *ngIf="!(memory.isLoaded$ | async)" class="layer-detail-skelton"></span>
+				</div>
+
+				<div class="layer-info-separator"></div>
+
 				<nav class="layer-panel">
 					<ul>
 						<li *ngIf="!(memory.isLoaded$ | async)" class="layer-skelton-list">
@@ -262,24 +274,21 @@
 
 						<ng-template #recursiveList let-list>
 							<li *ngFor="let item of list; let i = index" style="position: relative">
-								<div class="eye-icon" (click)="toggleVisibility(item.name, item.uniqueId)">
+								<div (click)="toggleVisibility(item.name, item.uniqueId)" class="eye-icon">
 									<fa-icon *ngIf="!item.hidden.current" [icon]="faEye" [fixedWidth]="true" size="sm"></fa-icon>
 									<fa-icon *ngIf="item.hidden.current" [icon]="faEyeSlash" [fixedWidth]="true" size="sm"></fa-icon>
 								</div>
 
 								<input attr.id="{{ item.name + '_seek_psd_' + item.uniqueId + '_' + i }}" type="checkbox" hidden />
+
 								<label
+									*ngIf="item.children.length > 0"
 									attr.for="{{ item.name + '_seek_psd_' + item.uniqueId + '_' + i }}"
 									appPreventHoverPropagation
 									class="ellipsis"
 								>
 									<div class="arrow-icon">
-										<fa-icon
-											*ngIf="item.children.length > 0"
-											[icon]="faAngleRight"
-											[fixedWidth]="true"
-											size="sm"
-										></fa-icon>
+										<fa-icon [icon]="faAngleRight" [fixedWidth]="true" size="sm"></fa-icon>
 									</div>
 									<fa-icon
 										*ngIf="item.psd.clipping"
@@ -289,14 +298,39 @@
 										flip="horizontal"
 										[styles]="{ color: '#a8a8a8' }"
 									></fa-icon>
-									<fa-icon *ngIf="item.children.length > 0" [icon]="faFolder" [fixedWidth]="true" size="sm"></fa-icon>
+									<fa-icon [icon]="faFolder" [fixedWidth]="true" size="sm"></fa-icon>
 									{{ item.name }}
 								</label>
+
+								<label
+									*ngIf="item.children.length === 0"
+									(click)="toggleLayerDetail(item.name, item.uniqueId)"
+									[ngClass]="{
+										'active-layer-detail':
+											item.name === (memory.layerDetailBlendMode$ | async).layerName &&
+											item.uniqueId === (memory.layerDetailBlendMode$ | async).uniqueId
+									}"
+									attr.for="{{ item.name + '_seek_psd_' + item.uniqueId + '_' + i }}"
+									appPreventHoverPropagation
+									class="ellipsis"
+								>
+									<fa-icon
+										*ngIf="item.psd.clipping"
+										[icon]="faLevelDownAlt"
+										[fixedWidth]="true"
+										size="sm"
+										flip="horizontal"
+										[styles]="{ color: '#a8a8a8' }"
+									></fa-icon>
+									{{ item.name }}
+								</label>
+
 								<ul *ngIf="item.children.length > 0" class="ul-prefix sub-group-list">
 									<ng-container *ngTemplateOutlet="recursiveList; context: { $implicit: item.children }"></ng-container>
 								</ul>
 							</li>
 						</ng-template>
+
 						<div *ngIf="memory.layerInfos$ | async; $implicit as list">
 							<ng-container *ngTemplateOutlet="recursiveList; context: { $implicit: list }"></ng-container>
 						</div>

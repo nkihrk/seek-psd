@@ -12,7 +12,12 @@ import { Crop } from '../../model/crop.model';
 export class MemoryService {
 	constructor() {}
 
-	// Data stream
+	///////////////////////////////////////////////////////////////////////////
+	//
+	//	Data stream
+	//
+	///////////////////////////////////////////////////////////////////////////
+
 	psdData$: Subject<{ psd: Psd; fileName: string }> = new Subject();
 	layerInfos$: BehaviorSubject<LayerInfo[]> = new BehaviorSubject([]);
 	fileName$: BehaviorSubject<string> = new BehaviorSubject('');
@@ -34,6 +39,7 @@ export class MemoryService {
 			group: ''
 		}
 	});
+
 	crop$: BehaviorSubject<Crop> = new BehaviorSubject({
 		offset: {
 			current: {
@@ -50,10 +56,29 @@ export class MemoryService {
 			height: 500
 		}
 	});
+
 	resizeCanvas$: BehaviorSubject<{ type: number; ratio: number }> = new BehaviorSubject({
 		type: 0,
 		ratio: 1
 	});
+
+	layerDetailBlendMode$: BehaviorSubject<{
+		blendMode: string;
+		layerName: string;
+		uniqueId: string;
+		canvas: HTMLCanvasElement;
+	}> = new BehaviorSubject({
+		blendMode: '',
+		layerName: '',
+		uniqueId: '',
+		canvas: null
+	});
+
+	///////////////////////////////////////////////////////////////////////////
+	//
+	//	Global variables
+	//
+	///////////////////////////////////////////////////////////////////////////
 
 	// Renderer
 	renderer = { element: {} as Element, size: {} as Size } as Renderer;
@@ -95,14 +120,14 @@ export class MemoryService {
 		}
 	};
 
-	// Check if the layer state is changed (switched)
-	state = {
+	// Global shared states
+	states = {
 		isLayerSwitched: true
 	};
 
 	///////////////////////////////////////////////////////////////////////////
 	//
-	//	Public methods
+	//	Utility
 	//
 	///////////////////////////////////////////////////////////////////////////
 
@@ -116,7 +141,8 @@ export class MemoryService {
 		$main: HTMLCanvasElement,
 		$screen: HTMLCanvasElement,
 		$overlay: HTMLCanvasElement,
-		$preview: HTMLCanvasElement
+		$preview: HTMLCanvasElement,
+		$layerDetail: HTMLCanvasElement
 	): void {
 		this.renderer.element.container = $container;
 		this.renderer.element.psdViewer = $psdViewer;
@@ -128,10 +154,32 @@ export class MemoryService {
 		this.renderer.element.screen = $screen;
 		this.renderer.element.overlay = $overlay;
 		this.renderer.element.preview = $preview;
+		this.renderer.element.layerDetail = $layerDetail;
 
 		// Create buffer for psd
 		this.renderer.element.buffer = document.createElement('canvas');
 	}
+
+	refreshData(): void {
+		this.updateRenderer(null, null);
+		this.updateLayerInfos([]);
+		this.updateFileName('');
+		this.updateIsLoaded(false);
+		this.updateLayerDetailBlendMode('', '', '', null);
+
+		this.updateIsGrayScale(false);
+		this.updateIsFlip(false);
+		this.updateResizeCanvas(0, 1);
+		this.updateIsFixedCropResolution(false);
+
+		this.states.isLayerSwitched = true;
+	}
+
+	///////////////////////////////////////////////////////////////////////////
+	//
+	//	Update data streams
+	//
+	///////////////////////////////////////////////////////////////////////////
 
 	updateRenderer($size: { width: number; height: number }, $psd: Psd): void {
 		this.renderer.size = $size;
@@ -152,20 +200,6 @@ export class MemoryService {
 
 	updateIsLoading($flg): void {
 		this.isLoading$.next($flg);
-	}
-
-	refreshData(): void {
-		this.updateRenderer(null, null);
-		this.updateLayerInfos([]);
-		this.updateFileName('');
-		this.updateIsLoaded(false);
-
-		this.updateIsGrayScale(false);
-		this.updateIsFlip(false);
-		this.updateResizeCanvas(0, 1);
-		this.updateIsFixedCropResolution(false);
-
-		this.state.isLayerSwitched = true;
 	}
 
 	updateReservedByFunc($reserved: Reserved): void {
@@ -198,7 +232,27 @@ export class MemoryService {
 	updateIsFixedCropResolution($flg: boolean): void {
 		this.isFixedCropResolution$.next($flg);
 	}
+
+	updateLayerDetailBlendMode(
+		$blendMode: string,
+		$layerName: string,
+		$uniqueId: string,
+		$canvas: HTMLCanvasElement
+	): void {
+		this.layerDetailBlendMode$.next({
+			blendMode: $blendMode,
+			layerName: $layerName,
+			uniqueId: $uniqueId,
+			canvas: $canvas
+		});
+	}
 }
+
+///////////////////////////////////////////////////////////////////////////
+//
+//	Interfaces
+//
+///////////////////////////////////////////////////////////////////////////
 
 interface ReservedByFunc {
 	current: Reserved;
@@ -231,6 +285,7 @@ interface Element {
 	overlay: HTMLCanvasElement;
 	buffer: HTMLCanvasElement;
 	preview: HTMLCanvasElement;
+	layerDetail: HTMLCanvasElement;
 }
 
 interface Size {
