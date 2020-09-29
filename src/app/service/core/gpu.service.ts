@@ -177,12 +177,10 @@ export class GpuService {
 						targetW *= $scale;
 						targetH *= $scale;
 
-						// If the target has no canvas, it is folder,
-						// which means folder clipping
-						if (!!target.canvas) {
+						if (!target?.children && !!target?.canvas) {
 							clipCtxBuffer.drawImage(target.canvas, target.left * $scale, target.top * $scale, targetW, targetH);
 						} else {
-							if ($layerInfos[i].hidden.current) break;
+							if ($layerInfos[i].hidden.current || !$layerInfos[i].folderCanvas) break;
 							clipCtxBuffer.drawImage($layerInfos[i].folderCanvas, 0, 0, clipCanvas.width, clipCanvas.height);
 						}
 
@@ -272,7 +270,7 @@ export class GpuService {
 				folderLayer?: LayerInfo;
 			} = $callback($root[i], $root, i, $folderCtx, $folderLayer);
 
-			if (!!$root[i].children?.length && !!payload?.folderCtx && !!payload?.folderLayer) {
+			if ($root[i].children.length > 0 && !!payload?.folderCtx && !!payload?.folderLayer) {
 				this.recursiveRender($root[i].children, $callback, payload.folderCtx, payload.folderLayer);
 				payload.folderLayer.folderCanvas = payload.folderCtx.canvas;
 				if (!!$folderCtx) $folderCtx.drawImage(payload.folderLayer.folderCanvas, 0, 0);
@@ -321,9 +319,7 @@ export class GpuService {
 
 			if (payload === 0) return;
 
-			if (!!$root[i].children?.length) {
-				this.recursiveCheck($root[i].children, $callback);
-			}
+			if ($root[i].children.length > 0) this.recursiveCheck($root[i].children, $callback);
 		}
 	}
 }
