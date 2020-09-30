@@ -23,7 +23,7 @@ export class GpuService {
 		const ctxBuffer: CanvasRenderingContext2D = cBuffer.getContext('2d');
 
 		const root: LayerInfo[] = this.memory.layerInfos$.getValue();
-		this.parseLayers(root, ctxBuffer, c.width, c.height, 1);
+		this.renderLayers(root, ctxBuffer, c.width, c.height, 1);
 
 		// Flip
 		if (this.memory.isFlip$.getValue()) {
@@ -60,7 +60,7 @@ export class GpuService {
 		const root: LayerInfo[] = this.memory.layerInfos$.getValue();
 		const scale: number =
 			this.memory.renderer.element.main.getBoundingClientRect().width / this.memory.renderer.psd.width;
-		this.parseLayers(root, ctxBuffer, c.width, c.height, scale);
+		this.renderLayers(root, ctxBuffer, c.width, c.height, scale);
 
 		// Flip
 		if (this.memory.isFlip$.getValue()) {
@@ -77,7 +77,7 @@ export class GpuService {
 		}
 	}
 
-	private parseLayers(
+	private renderLayers(
 		$root: LayerInfo[],
 		$ctx: CanvasRenderingContext2D,
 		$width: number, // the size of a canvas
@@ -95,7 +95,7 @@ export class GpuService {
 			) => {
 				const psd: Layer = $layer.psd;
 
-				if ($layer.hidden.current) return;
+				if ($layer.hidden.current || $layer.hidden.parent) return;
 
 				// Folder
 				if ($layer.children.length > 0) {
@@ -281,30 +281,22 @@ export class GpuService {
 	toggleVisibility($name: string, $uniqueId: string): void {
 		const root: LayerInfo[] = this.memory.layerInfos$.getValue();
 		this.recursiveCheck(root, ($layer: LayerInfo) => {
-			if ($name === $layer.name && $uniqueId === $layer.uniqueId) {
-				// Folder layer
-				if ($layer.children.length > 0) {
-					if ($layer.hidden.current) {
-						const root: LayerInfo[] = $layer.children;
-						this.recursiveCheck(root, ($subLayer: LayerInfo) => {
-							$subLayer.hidden.current = $subLayer.hidden.prev;
-						});
-					} else {
-						const root: LayerInfo[] = $layer.children;
-						this.recursiveCheck(root, ($subLayer: LayerInfo) => {
-							$subLayer.hidden.prev = $subLayer.hidden.current;
-							$subLayer.hidden.current = !$layer.hidden.current;
-						});
-					}
-				}
+			if ($name !== $layer.name || $uniqueId !== $layer.uniqueId) return;
 
-				$layer.hidden.current = !$layer.hidden.current;
-
-				//console.log($layer);
-
-				// To get rid of loop
-				return 0;
+			// Folder layer
+			if ($layer.children.length > 0) {
+				const root: LayerInfo[] = $layer.children;
+				this.recursiveCheck(root, ($subLayer: LayerInfo) => {
+					$subLayer.hidden.parent = !$layer.hidden.current;
+				});
 			}
+
+			$layer.hidden.current = !$layer.hidden.current;
+
+			//console.log($layer);
+
+			// To get rid of loop
+			return 0;
 		});
 	}
 
@@ -359,9 +351,13 @@ export class GpuService {
 					blendMode = 'カラー';
 				} else if (psd.blendMode === 'color dodge') {
 					blendMode = '覆い焼きカラー';
-				} else {
+				} else if (psd.blendMode === 'normal') {
 					blendMode = '通常';
+				} else {
+					blendMode = '未対応レイヤー';
 				}
+
+				if (!psd?.canvas) blendMode = '未対応レイヤー';
 
 				this.memory.updateLayerDetailBlendMode(blendMode, $name, $uniqueId, psd.canvas);
 

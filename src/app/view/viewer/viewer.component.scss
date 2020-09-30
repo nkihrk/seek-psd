@@ -337,6 +337,7 @@ footer {
 		align-items: center;
 		width: 100%;
 		padding: 5px 20px;
+		user-select: none;
 
 		canvas {
 			width: 50px;
@@ -416,6 +417,14 @@ footer {
 					background-color: $gray;
 					border-radius: 5px;
 					transform: translateY(-50%);
+				}
+			}
+
+			&.disable-sub-layers {
+				color: rgba($black, 0.5);
+
+				.pointer-events-none {
+					pointer-events: none;
 				}
 			}
 

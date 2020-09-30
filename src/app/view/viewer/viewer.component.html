@@ -254,7 +254,12 @@
 						(click)="execExplicitFunc('preview-layer-detail')"
 						[ngClass]="{ 'cursor-pointer': (memory.reservedByFunc$ | async)?.current.name === '' }"
 					></canvas>
-					<span *ngIf="memory.isLoaded$ | async">{{ (memory.layerDetailBlendMode$ | async)?.blendMode }}</span>
+					<span *ngIf="(memory.isLoaded$ | async) && !!(memory.layerDetailBlendMode$ | async)?.blendMode">{{
+						(memory.layerDetailBlendMode$ | async)?.blendMode
+					}}</span>
+					<span *ngIf="(memory.isLoaded$ | async) && !(memory.layerDetailBlendMode$ | async)?.blendMode"
+						>（レイヤー未選択）</span
+					>
 					<span *ngIf="!(memory.isLoaded$ | async)" class="layer-detail-skelton"></span>
 				</div>
 
@@ -273,8 +278,16 @@
 						</li>
 
 						<ng-template #recursiveList let-list>
-							<li *ngFor="let item of list; let i = index" style="position: relative">
-								<div (click)="toggleVisibility(item.name, item.uniqueId)" class="eye-icon">
+							<li
+								*ngFor="let item of list; let i = index"
+								[ngClass]="{ 'disable-sub-layers': item.hidden.parent }"
+								style="position: relative"
+							>
+								<div
+									(click)="toggleVisibility(item.name, item.uniqueId)"
+									[ngClass]="{ 'pointer-events-none': item.hidden.parent }"
+									class="eye-icon"
+								>
 									<fa-icon *ngIf="!item.hidden.current" [icon]="faEye" [fixedWidth]="true" size="sm"></fa-icon>
 									<fa-icon *ngIf="item.hidden.current" [icon]="faEyeSlash" [fixedWidth]="true" size="sm"></fa-icon>
 								</div>

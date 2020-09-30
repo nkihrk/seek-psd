@@ -6,6 +6,7 @@ export interface LayerInfo {
 	hidden: {
 		current: boolean;
 		prev: boolean;
+		parent: boolean;
 	};
 	folderCanvas: HTMLCanvasElement;
 	psd: Layer;

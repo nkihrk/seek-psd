@@ -405,7 +405,8 @@ export class ViewerComponent implements OnInit, OnDestroy {
 					uniqueId: Math.random().toString(36).substr(2, 9),
 					hidden: {
 						current: root[i].hidden,
-						prev: !root[i].hidden
+						prev: !root[i].hidden,
+						parent: false
 					},
 					folderCanvas: null,
 					psd: root[i],
@@ -421,7 +422,8 @@ export class ViewerComponent implements OnInit, OnDestroy {
 				uniqueId: Math.random().toString(36).substr(2, 9),
 				hidden: {
 					current: false,
-					prev: true
+					prev: true,
+					parent: false
 				},
 				folderCanvas: null,
 				psd: $psd,
@@ -442,8 +444,9 @@ export class ViewerComponent implements OnInit, OnDestroy {
 				name: $child.children[i].name,
 				uniqueId: Math.random().toString(36).substr(2, 9),
 				hidden: {
-					current: $isFolderHidden ? true : $child.children[i].hidden,
-					prev: $isFolderHidden ? false : !$child.children[i].hidden
+					current: $child.children[i].hidden,
+					prev: !$child.children[i].hidden,
+					parent: $isFolderHidden
 				},
 				folderCanvas: null,
 				psd: $child.children[i],
