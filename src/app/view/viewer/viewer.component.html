@@ -294,8 +294,15 @@
 
 								<input attr.id="{{ item.name + '_seek_psd_' + item.uniqueId + '_' + i }}" type="checkbox" hidden />
 
+								<!-- Folder layer -->
 								<label
 									*ngIf="item.children.length > 0"
+									(click)="toggleLayerDetail(item.name, item.uniqueId)"
+									[ngClass]="{
+										'active-layer-detail':
+											item.name === (memory.layerDetailBlendMode$ | async).layerName &&
+											item.uniqueId === (memory.layerDetailBlendMode$ | async).uniqueId
+									}"
 									attr.for="{{ item.name + '_seek_psd_' + item.uniqueId + '_' + i }}"
 									appPreventHoverPropagation
 									class="ellipsis"
@@ -315,6 +322,7 @@
 									{{ item.name }}
 								</label>
 
+								<!-- Normal layer -->
 								<label
 									*ngIf="item.children.length === 0"
 									(click)="toggleLayerDetail(item.name, item.uniqueId)"

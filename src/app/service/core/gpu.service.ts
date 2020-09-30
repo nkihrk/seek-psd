@@ -236,7 +236,12 @@ export class GpuService {
 				$ctx.restore();
 
 				const isRootDirectory = !$folderCtx;
-				if (!isRootDirectory) $folderCtx.drawImage(canvas, 0, 0);
+				if (!isRootDirectory) {
+					$folderCtx.save();
+					$folderCtx.globalCompositeOperation = blendMode;
+					$folderCtx.drawImage(canvas, 0, 0);
+					$folderCtx.restore();
+				}
 
 				return { folderCtx: $folderCtx, folderLayer: $folderLayer };
 			}
@@ -305,21 +310,22 @@ export class GpuService {
 		this.recursiveCheck(root, ($layer: LayerInfo) => {
 			if ($name === $layer.name && $uniqueId === $layer.uniqueId) {
 				const psd: Layer = $layer.psd;
+				const targetC: HTMLCanvasElement = !!psd?.canvas ? psd.canvas : $layer.folderCanvas;
 
-				if (!!psd?.canvas) {
+				if (!!psd?.canvas || $layer.folderCanvas) {
 					const c: HTMLCanvasElement = this.memory.renderer.element.layerDetail;
 					c.width = c.getBoundingClientRect().width;
 					c.height = c.getBoundingClientRect().height;
 					const ctx: CanvasRenderingContext2D = c.getContext('2d');
 
-					const aspect: number = psd.canvas.height / psd.canvas.width;
-					const isLarger: boolean = psd.canvas.height > psd.canvas.width;
+					const aspect: number = targetC.height / targetC.width;
+					const isLarger: boolean = targetC.height > targetC.width;
 
 					const fixedW: number = isLarger ? c.height / aspect : c.width;
 					const fixedH: number = isLarger ? c.height : c.width * aspect;
 
 					ctx.translate(c.width / 2, c.height / 2);
-					ctx.drawImage(psd.canvas, -fixedW / 2, -fixedH / 2, fixedW, fixedH);
+					ctx.drawImage(targetC, -fixedW / 2, -fixedH / 2, fixedW, fixedH);
 				} else {
 					// Initialize the canvas to clean up previous rendered result if none
 					const c: HTMLCanvasElement = this.memory.renderer.element.layerDetail;
@@ -329,37 +335,44 @@ export class GpuService {
 
 				// Blend mode
 				let blendMode = '';
-				if (psd.blendMode === 'overlay') {
-					blendMode = 'オーバーレイ';
-				} else if (psd.blendMode === 'screen') {
-					blendMode = 'スクリーン';
-				} else if (psd.blendMode === 'multiply') {
-					blendMode = '乗算';
-				} else if (psd.blendMode === 'linear dodge') {
-					blendMode = '加算';
-				} else if (psd.blendMode === 'soft light') {
-					blendMode = 'ソフトライト';
-				} else if (psd.blendMode === 'hard light') {
-					blendMode = 'ハードライト';
-				} else if (psd.blendMode === 'color burn') {
-					blendMode = '焼き込みカラー';
-				} else if (psd.blendMode === 'saturation') {
-					blendMode = '彩度';
-				} else if (psd.blendMode === 'hue') {
-					blendMode = '色相';
-				} else if (psd.blendMode === 'color') {
-					blendMode = 'カラー';
-				} else if (psd.blendMode === 'color dodge') {
-					blendMode = '覆い焼きカラー';
-				} else if (psd.blendMode === 'normal') {
-					blendMode = '通常';
+
+				if (!psd?.canvas) {
+					if ($layer.children.length > 0) {
+						blendMode = 'フォルダーレイヤー';
+					} else {
+						blendMode = '未対応レイヤー';
+					}
 				} else {
-					blendMode = '未対応レイヤー';
+					if (psd.blendMode === 'overlay') {
+						blendMode = 'オーバーレイ';
+					} else if (psd.blendMode === 'screen') {
+						blendMode = 'スクリーン';
+					} else if (psd.blendMode === 'multiply') {
+						blendMode = '乗算';
+					} else if (psd.blendMode === 'linear dodge') {
+						blendMode = '加算';
+					} else if (psd.blendMode === 'soft light') {
+						blendMode = 'ソフトライト';
+					} else if (psd.blendMode === 'hard light') {
+						blendMode = 'ハードライト';
+					} else if (psd.blendMode === 'color burn') {
+						blendMode = '焼き込みカラー';
+					} else if (psd.blendMode === 'saturation') {
+						blendMode = '彩度';
+					} else if (psd.blendMode === 'hue') {
+						blendMode = '色相';
+					} else if (psd.blendMode === 'color') {
+						blendMode = 'カラー';
+					} else if (psd.blendMode === 'color dodge') {
+						blendMode = '覆い焼きカラー';
+					} else if (psd.blendMode === 'normal') {
+						blendMode = '通常';
+					} else {
+						blendMode = '未対応レイヤー';
+					}
 				}
 
-				if (!psd?.canvas) blendMode = '未対応レイヤー';
-
-				this.memory.updateLayerDetailBlendMode(blendMode, $name, $uniqueId, psd.canvas);
+				this.memory.updateLayerDetailBlendMode(blendMode, $name, $uniqueId, targetC);
 
 				// To get rid of loop
 				return 0;
