@@ -91,11 +91,12 @@ export class GpuService {
 				$layerInfos: LayerInfo[],
 				$index: number,
 				$folderCtx?: CanvasRenderingContext2D,
-				$folderLayer?: LayerInfo
+				$folderLayer?: LayerInfo,
+				$maskForFolderLayerC?: HTMLCanvasElement
 			) => {
-				const psd: Layer = $layer.psd;
-
 				if ($layer.hidden.current || $layer.hidden.parent) return;
+
+				const psd: Layer = $layer.psd;
 
 				// Folder
 				if ($layer.children.length > 0) {
@@ -104,7 +105,38 @@ export class GpuService {
 					folderC.height = $height;
 					const folderCtx: CanvasRenderingContext2D = folderC.getContext('2d');
 
-					return { folderCtx: folderCtx, folderLayer: $layer };
+					// Clipping folder layer
+					let maskForFolderLayerC: HTMLCanvasElement = null;
+					if (psd.clipping) {
+						for (let i = $index; i < $layerInfos.length; i++) {
+							if ($layerInfos[i].psd.clipping) continue;
+
+							const target: Layer = $layerInfos[i].psd;
+
+							if (!target?.children && !!target?.canvas) {
+								maskForFolderLayerC = document.createElement('canvas');
+								maskForFolderLayerC.width = $width;
+								maskForFolderLayerC.height = $height;
+								let x: number = target.left;
+								let y: number = target.top;
+								let w: number = target.right - target.left;
+								let h: number = target.bottom - target.top;
+								x *= $scale;
+								y *= $scale;
+								w *= $scale;
+								h *= $scale;
+								maskForFolderLayerC.getContext('2d').drawImage(target.canvas, x, y, w, h);
+							} else {
+								if ($layerInfos[i].hidden.current || !$layerInfos[i].folderCanvas) break;
+
+								maskForFolderLayerC = $layerInfos[i].folderCanvas;
+							}
+
+							break;
+						}
+					}
+
+					return { folderCtx: folderCtx, folderLayer: $layer, maskForFolderLayerC: maskForFolderLayerC };
 				}
 
 				if (!psd?.canvas) return;
@@ -121,39 +153,6 @@ export class GpuService {
 				w *= $scale;
 				h *= $scale;
 				canvas.getContext('2d').drawImage(psd.canvas, x, y, w, h);
-
-				$ctx.save();
-				// Set opacity
-				$ctx.globalAlpha = psd.opacity;
-
-				// Blend mode
-				let blendMode = '';
-				if (psd.blendMode === 'overlay') {
-					blendMode = 'overlay';
-				} else if (psd.blendMode === 'screen') {
-					blendMode = 'screen';
-				} else if (psd.blendMode === 'multiply') {
-					blendMode = 'multiply';
-				} else if (psd.blendMode === 'linear dodge') {
-					blendMode = 'lighter';
-				} else if (psd.blendMode === 'soft light') {
-					blendMode = 'soft-light';
-				} else if (psd.blendMode === 'hard light') {
-					blendMode = 'hard-light';
-				} else if (psd.blendMode === 'color burn') {
-					blendMode = 'color-burn';
-				} else if (psd.blendMode === 'saturation') {
-					blendMode = 'saturation';
-				} else if (psd.blendMode === 'hue') {
-					blendMode = 'hue';
-				} else if (psd.blendMode === 'color') {
-					blendMode = 'color';
-				} else if (psd.blendMode === 'color dodge') {
-					blendMode = 'color-dodge';
-				} else {
-					blendMode = 'source-over';
-				}
-				$ctx.globalCompositeOperation = blendMode;
 
 				// Clipping layer
 				if (psd.clipping) {
@@ -181,6 +180,7 @@ export class GpuService {
 							clipCtxBuffer.drawImage(target.canvas, target.left * $scale, target.top * $scale, targetW, targetH);
 						} else {
 							if ($layerInfos[i].hidden.current || !$layerInfos[i].folderCanvas) break;
+
 							clipCtxBuffer.drawImage($layerInfos[i].folderCanvas, 0, 0, clipCanvas.width, clipCanvas.height);
 						}
 
@@ -232,8 +232,39 @@ export class GpuService {
 					canvas = maskCanvas;
 				}
 
-				$ctx.drawImage(canvas, 0, 0);
-				$ctx.restore();
+				// Blend mode
+				let blendMode = '';
+				if (psd.blendMode === 'overlay') {
+					blendMode = 'overlay';
+				} else if (psd.blendMode === 'screen') {
+					blendMode = 'screen';
+				} else if (psd.blendMode === 'multiply') {
+					blendMode = 'multiply';
+				} else if (psd.blendMode === 'linear dodge') {
+					blendMode = 'lighter';
+				} else if (psd.blendMode === 'soft light') {
+					blendMode = 'soft-light';
+				} else if (psd.blendMode === 'hard light') {
+					blendMode = 'hard-light';
+				} else if (psd.blendMode === 'color burn') {
+					blendMode = 'color-burn';
+				} else if (psd.blendMode === 'saturation') {
+					blendMode = 'saturation';
+				} else if (psd.blendMode === 'hue') {
+					blendMode = 'hue';
+				} else if (psd.blendMode === 'color') {
+					blendMode = 'color';
+				} else if (psd.blendMode === 'color dodge') {
+					blendMode = 'color-dodge';
+				} else {
+					blendMode = 'source-over';
+				}
+
+				if (!!$maskForFolderLayerC) {
+					const ctx: CanvasRenderingContext2D = canvas.getContext('2d');
+					ctx.globalCompositeOperation = 'destination-in';
+					ctx.drawImage($maskForFolderLayerC, 0, 0);
+				}
 
 				const isRootDirectory = !$folderCtx;
 				if (!isRootDirectory) {
@@ -243,7 +274,14 @@ export class GpuService {
 					$folderCtx.restore();
 				}
 
-				return { folderCtx: $folderCtx, folderLayer: $folderLayer };
+				$ctx.save();
+				$ctx.globalAlpha = psd.opacity;
+				$ctx.globalCompositeOperation = blendMode;
+				$ctx.drawImage(canvas, 0, 0);
+
+				$ctx.restore();
+
+				return { folderCtx: $folderCtx, folderLayer: $folderLayer, maskForFolderLayerC: $maskForFolderLayerC };
 			}
 		);
 	}
@@ -267,18 +305,42 @@ export class GpuService {
 		$root: LayerInfo[],
 		$callback: Function,
 		$folderCtx?: CanvasRenderingContext2D,
-		$folderLayer?: LayerInfo
+		$folderLayer?: LayerInfo,
+		$maskForFolderLayerC?: HTMLCanvasElement
 	): void {
 		for (let i = $root.length - 1; i > -1; i--) {
 			const payload: {
 				folderCtx?: CanvasRenderingContext2D;
 				folderLayer?: LayerInfo;
-			} = $callback($root[i], $root, i, $folderCtx, $folderLayer);
+				maskForFolderLayerC?: HTMLCanvasElement;
+			} = $callback($root[i], $root, i, $folderCtx, $folderLayer, $maskForFolderLayerC);
 
 			if ($root[i].children.length > 0 && !!payload?.folderCtx && !!payload?.folderLayer) {
-				this.recursiveRender($root[i].children, $callback, payload.folderCtx, payload.folderLayer);
+				this.recursiveRender(
+					$root[i].children,
+					$callback,
+					payload.folderCtx,
+					payload.folderLayer,
+					payload.maskForFolderLayerC
+				);
+
 				payload.folderLayer.folderCanvas = payload.folderCtx.canvas;
-				if (!!$folderCtx) $folderCtx.drawImage(payload.folderLayer.folderCanvas, 0, 0);
+
+				if (!$folderCtx) continue;
+
+				if (!!$maskForFolderLayerC) {
+					const tmpC: HTMLCanvasElement = document.createElement('canvas');
+					tmpC.width = $folderCtx.canvas.width;
+					tmpC.height = $folderCtx.canvas.height;
+					const tmpCtx: CanvasRenderingContext2D = tmpC.getContext('2d');
+					tmpCtx.drawImage(payload.folderLayer.folderCanvas, 0, 0);
+					tmpCtx.globalCompositeOperation = 'destination-in';
+					tmpCtx.drawImage($maskForFolderLayerC, 0, 0);
+
+					$folderCtx.drawImage(tmpC, 0, 0);
+				} else {
+					$folderCtx.drawImage(payload.folderLayer.folderCanvas, 0, 0);
+				}
 			}
 		}
 	}
