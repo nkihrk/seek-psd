@@ -307,9 +307,6 @@
 									appPreventHoverPropagation
 									class="ellipsis"
 								>
-									<div class="arrow-icon">
-										<fa-icon [icon]="faAngleRight" [fixedWidth]="true" size="sm"></fa-icon>
-									</div>
 									<fa-icon
 										*ngIf="item.psd.clipping"
 										[icon]="faLevelDownAlt"
@@ -318,6 +315,9 @@
 										flip="horizontal"
 										[styles]="{ color: '#a8a8a8' }"
 									></fa-icon>
+									<div class="arrow-icon">
+										<fa-icon [icon]="faAngleRight" [fixedWidth]="true" size="sm"></fa-icon>
+									</div>
 									<fa-icon [icon]="faFolder" [fixedWidth]="true" size="sm"></fa-icon>
 									{{ item.name }}
 								</label>
