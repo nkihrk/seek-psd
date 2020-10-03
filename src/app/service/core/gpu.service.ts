@@ -125,7 +125,13 @@ export class GpuService {
 								y *= $scale;
 								w *= $scale;
 								h *= $scale;
-								maskForFolderLayerC.getContext('2d').drawImage(target.canvas, x, y, w, h);
+								const maskForFolderLayerCtx: CanvasRenderingContext2D = maskForFolderLayerC.getContext('2d');
+								maskForFolderLayerCtx.drawImage(target.canvas, x, y, w, h);
+
+								if (!!$maskForFolderLayerC) {
+									maskForFolderLayerCtx.globalCompositeOperation = 'destination-in';
+									maskForFolderLayerCtx.drawImage($maskForFolderLayerC, 0, 0);
+								}
 							} else {
 								if ($layerInfos[i].hidden.current || !$layerInfos[i].folderCanvas) break;
 
@@ -134,12 +140,18 @@ export class GpuService {
 
 							break;
 						}
+					} else if (!!$maskForFolderLayerC) {
+						maskForFolderLayerC = $maskForFolderLayerC;
 					}
 
 					return { folderCtx: folderCtx, folderLayer: $layer, maskForFolderLayerC: maskForFolderLayerC };
 				}
 
 				if (!psd?.canvas) return;
+
+				// Blend mode
+				let blendMode: string = this._getBlendMode(psd.blendMode);
+				if (!blendMode) return;
 
 				let canvas: HTMLCanvasElement = document.createElement('canvas');
 				canvas.width = $width;
@@ -232,34 +244,6 @@ export class GpuService {
 					canvas = maskCanvas;
 				}
 
-				// Blend mode
-				let blendMode = '';
-				if (psd.blendMode === 'overlay') {
-					blendMode = 'overlay';
-				} else if (psd.blendMode === 'screen') {
-					blendMode = 'screen';
-				} else if (psd.blendMode === 'multiply') {
-					blendMode = 'multiply';
-				} else if (psd.blendMode === 'linear dodge') {
-					blendMode = 'lighter';
-				} else if (psd.blendMode === 'soft light') {
-					blendMode = 'soft-light';
-				} else if (psd.blendMode === 'hard light') {
-					blendMode = 'hard-light';
-				} else if (psd.blendMode === 'color burn') {
-					blendMode = 'color-burn';
-				} else if (psd.blendMode === 'saturation') {
-					blendMode = 'saturation';
-				} else if (psd.blendMode === 'hue') {
-					blendMode = 'hue';
-				} else if (psd.blendMode === 'color') {
-					blendMode = 'color';
-				} else if (psd.blendMode === 'color dodge') {
-					blendMode = 'color-dodge';
-				} else {
-					blendMode = 'source-over';
-				}
-
 				if (!!$maskForFolderLayerC) {
 					const ctx: CanvasRenderingContext2D = canvas.getContext('2d');
 					ctx.globalCompositeOperation = 'destination-in';
@@ -269,6 +253,7 @@ export class GpuService {
 				const isRootDirectory = !$folderCtx;
 				if (!isRootDirectory) {
 					$folderCtx.save();
+					$folderCtx.globalAlpha = psd.opacity;
 					$folderCtx.globalCompositeOperation = blendMode;
 					$folderCtx.drawImage(canvas, 0, 0);
 					$folderCtx.restore();
@@ -276,9 +261,14 @@ export class GpuService {
 
 				$ctx.save();
 				$ctx.globalAlpha = psd.opacity;
-				$ctx.globalCompositeOperation = blendMode;
-				$ctx.drawImage(canvas, 0, 0);
 
+				// Overwrite blendMode with parent blendMode
+				if (!!$folderLayer && $folderLayer.psd.blendMode !== 'normal') {
+					blendMode = this._getBlendMode($folderLayer.psd.blendMode);
+				}
+				$ctx.globalCompositeOperation = blendMode;
+
+				$ctx.drawImage(canvas, 0, 0);
 				$ctx.restore();
 
 				return { folderCtx: $folderCtx, folderLayer: $folderLayer, maskForFolderLayerC: $maskForFolderLayerC };
@@ -328,6 +318,13 @@ export class GpuService {
 
 				if (!$folderCtx) continue;
 
+				const psd: Layer = payload.folderLayer.psd;
+
+				// Blend mode
+				const blendMode = this._getBlendMode(psd.blendMode);
+				if (!blendMode) continue;
+				$folderCtx.globalCompositeOperation = blendMode;
+
 				if (!!$maskForFolderLayerC) {
 					const tmpC: HTMLCanvasElement = document.createElement('canvas');
 					tmpC.width = $folderCtx.canvas.width;
@@ -342,6 +339,36 @@ export class GpuService {
 					$folderCtx.drawImage(payload.folderLayer.folderCanvas, 0, 0);
 				}
 			}
+		}
+	}
+
+	private _getBlendMode($blendMode: string): string {
+		if ($blendMode === 'overlay') {
+			return 'overlay';
+		} else if ($blendMode === 'screen') {
+			return 'screen';
+		} else if ($blendMode === 'multiply') {
+			return 'multiply';
+		} else if ($blendMode === 'linear dodge') {
+			return 'lighter';
+		} else if ($blendMode == 'soft light') {
+			return 'soft-light';
+		} else if ($blendMode == 'hard light') {
+			return 'hard-light';
+		} else if ($blendMode == 'color burn') {
+			return 'color-burn';
+		} else if ($blendMode == 'saturation') {
+			return 'saturation';
+		} else if ($blendMode == 'hue') {
+			return 'hue';
+		} else if ($blendMode == 'color') {
+			return 'color';
+		} else if ($blendMode == 'color dodge') {
+			return 'color-dodge';
+		} else if ($blendMode == 'normal') {
+			return 'source-over';
+		} else {
+			return null;
 		}
 	}
 
@@ -398,40 +425,32 @@ export class GpuService {
 				// Blend mode
 				let blendMode = '';
 
-				if (!psd?.canvas) {
-					if ($layer.children.length > 0) {
-						blendMode = 'フォルダーレイヤー';
-					} else {
-						blendMode = '未対応レイヤー';
-					}
+				if (psd.blendMode === 'overlay') {
+					blendMode = 'オーバーレイ';
+				} else if (psd.blendMode === 'screen') {
+					blendMode = 'スクリーン';
+				} else if (psd.blendMode === 'multiply') {
+					blendMode = '乗算';
+				} else if (psd.blendMode === 'linear dodge') {
+					blendMode = '加算';
+				} else if (psd.blendMode === 'soft light') {
+					blendMode = 'ソフトライト';
+				} else if (psd.blendMode === 'hard light') {
+					blendMode = 'ハードライト';
+				} else if (psd.blendMode === 'color burn') {
+					blendMode = '焼き込みカラー';
+				} else if (psd.blendMode === 'saturation') {
+					blendMode = '彩度';
+				} else if (psd.blendMode === 'hue') {
+					blendMode = '色相';
+				} else if (psd.blendMode === 'color') {
+					blendMode = 'カラー';
+				} else if (psd.blendMode === 'color dodge') {
+					blendMode = '覆い焼きカラー';
+				} else if (psd.blendMode === 'normal') {
+					blendMode = '通常';
 				} else {
-					if (psd.blendMode === 'overlay') {
-						blendMode = 'オーバーレイ';
-					} else if (psd.blendMode === 'screen') {
-						blendMode = 'スクリーン';
-					} else if (psd.blendMode === 'multiply') {
-						blendMode = '乗算';
-					} else if (psd.blendMode === 'linear dodge') {
-						blendMode = '加算';
-					} else if (psd.blendMode === 'soft light') {
-						blendMode = 'ソフトライト';
-					} else if (psd.blendMode === 'hard light') {
-						blendMode = 'ハードライト';
-					} else if (psd.blendMode === 'color burn') {
-						blendMode = '焼き込みカラー';
-					} else if (psd.blendMode === 'saturation') {
-						blendMode = '彩度';
-					} else if (psd.blendMode === 'hue') {
-						blendMode = '色相';
-					} else if (psd.blendMode === 'color') {
-						blendMode = 'カラー';
-					} else if (psd.blendMode === 'color dodge') {
-						blendMode = '覆い焼きカラー';
-					} else if (psd.blendMode === 'normal') {
-						blendMode = '通常';
-					} else {
-						blendMode = '未対応レイヤー';
-					}
+					blendMode = '未対応レイヤー';
 				}
 
 				this.memory.updateLayerDetailBlendMode(blendMode, $name, $uniqueId, targetC);
