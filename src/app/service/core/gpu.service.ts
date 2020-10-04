@@ -399,9 +399,12 @@ export class GpuService {
 		this.recursiveCheck(root, ($layer: LayerInfo) => {
 			if ($name === $layer.name && $uniqueId === $layer.uniqueId) {
 				const psd: Layer = $layer.psd;
-				const targetC: HTMLCanvasElement = !!psd?.canvas ? psd.canvas : $layer.folderCanvas;
+				let targetC: HTMLCanvasElement;
+				let targetMaskC: HTMLCanvasElement;
 
 				if (!!psd?.canvas || $layer.folderCanvas) {
+					targetC = !!psd?.canvas ? psd.canvas : $layer.folderCanvas;
+
 					const c: HTMLCanvasElement = this.memory.renderer.element.layerDetail;
 					c.width = c.getBoundingClientRect().width;
 					c.height = c.getBoundingClientRect().height;
@@ -415,11 +418,32 @@ export class GpuService {
 
 					ctx.translate(c.width / 2, c.height / 2);
 					ctx.drawImage(targetC, -fixedW / 2, -fixedH / 2, fixedW, fixedH);
+
+					if (!!psd?.mask && !!psd.mask?.canvas) {
+						targetMaskC = psd.mask.canvas;
+
+						const maskC: HTMLCanvasElement = this.memory.renderer.element.layerDetailMask;
+						maskC.width = maskC.getBoundingClientRect().width;
+						maskC.height = maskC.getBoundingClientRect().height;
+						const maskCtx: CanvasRenderingContext2D = maskC.getContext('2d');
+
+						const aspect: number = targetMaskC.height / targetMaskC.width;
+						const isLarger: boolean = targetMaskC.height > targetMaskC.width;
+
+						const fixedW: number = isLarger ? maskC.height / aspect : maskC.width;
+						const fixedH: number = isLarger ? maskC.height : maskC.width * aspect;
+
+						maskCtx.translate(maskC.width / 2, maskC.height / 2);
+						maskCtx.drawImage(targetMaskC, -fixedW / 2, -fixedH / 2, fixedW, fixedH);
+					}
 				} else {
 					// Initialize the canvas to clean up previous rendered result if none
 					const c: HTMLCanvasElement = this.memory.renderer.element.layerDetail;
 					c.width = 1;
 					c.height = 1;
+					const maskC: HTMLCanvasElement = this.memory.renderer.element.layerDetailMask;
+					maskC.width = 1;
+					maskC.height = 1;
 				}
 
 				// Blend mode
@@ -453,7 +477,7 @@ export class GpuService {
 					blendMode = '未対応レイヤー';
 				}
 
-				this.memory.updateLayerDetailBlendMode(blendMode, $name, $uniqueId, targetC);
+				this.memory.updateLayerDetailBlendMode(blendMode, $name, $uniqueId, targetC, targetMaskC);
 
 				// To get rid of loop
 				return 0;

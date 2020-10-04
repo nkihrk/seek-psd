@@ -67,11 +67,13 @@ export class MemoryService {
 		layerName: string;
 		uniqueId: string;
 		canvas: HTMLCanvasElement;
+		mask: HTMLCanvasElement;
 	}> = new BehaviorSubject({
 		blendMode: '',
 		layerName: '',
 		uniqueId: '',
-		canvas: null
+		canvas: null,
+		mask: null
 	});
 
 	///////////////////////////////////////////////////////////////////////////
@@ -142,7 +144,8 @@ export class MemoryService {
 		$screen: HTMLCanvasElement,
 		$overlay: HTMLCanvasElement,
 		$preview: HTMLCanvasElement,
-		$layerDetail: HTMLCanvasElement
+		$layerDetail: HTMLCanvasElement,
+		$layerDetailMask: HTMLCanvasElement
 	): void {
 		this.renderer.element.container = $container;
 		this.renderer.element.psdViewer = $psdViewer;
@@ -155,6 +158,7 @@ export class MemoryService {
 		this.renderer.element.overlay = $overlay;
 		this.renderer.element.preview = $preview;
 		this.renderer.element.layerDetail = $layerDetail;
+		this.renderer.element.layerDetailMask = $layerDetailMask;
 
 		// Create buffer for psd
 		this.renderer.element.buffer = document.createElement('canvas');
@@ -165,7 +169,7 @@ export class MemoryService {
 		this.updateLayerInfos([]);
 		this.updateFileName('');
 		this.updateIsLoaded(false);
-		this.updateLayerDetailBlendMode('', '', '', null);
+		this.updateLayerDetailBlendMode('', '', '', null, null);
 
 		this.updateIsGrayScale(false);
 		this.updateIsFlip(false);
@@ -237,13 +241,15 @@ export class MemoryService {
 		$blendMode: string,
 		$layerName: string,
 		$uniqueId: string,
-		$canvas: HTMLCanvasElement
+		$canvas: HTMLCanvasElement,
+		$mask: HTMLCanvasElement
 	): void {
 		this.layerDetailBlendMode$.next({
 			blendMode: $blendMode,
 			layerName: $layerName,
 			uniqueId: $uniqueId,
-			canvas: $canvas
+			canvas: $canvas,
+			mask: $mask
 		});
 	}
 }
@@ -286,6 +292,7 @@ interface Element {
 	buffer: HTMLCanvasElement;
 	preview: HTMLCanvasElement;
 	layerDetail: HTMLCanvasElement;
+	layerDetailMask: HTMLCanvasElement;
 }
 
 interface Size {

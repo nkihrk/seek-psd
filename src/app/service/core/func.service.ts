@@ -233,8 +233,10 @@ export class FuncService {
 		}, 500);
 	}
 
-	togglePreviewLayerDetail(): boolean {
-		const layerDetailC: HTMLCanvasElement = this.memory.layerDetailBlendMode$.getValue().canvas;
+	togglePreviewLayerDetail($isMask: boolean): boolean {
+		const layerDetailC: HTMLCanvasElement = $isMask
+			? this.memory.layerDetailBlendMode$.getValue().mask
+			: this.memory.layerDetailBlendMode$.getValue().canvas;
 
 		if (!!this.memory.reservedByFunc$.getValue().current.name || !layerDetailC) return;
 

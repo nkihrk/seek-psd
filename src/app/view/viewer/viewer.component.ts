@@ -61,6 +61,7 @@ export class ViewerComponent implements OnInit, OnDestroy {
 	@ViewChild('overlayCanvas', { static: true }) overlayCanvasRef: ElementRef<HTMLCanvasElement>;
 	@ViewChild('previewCanvas', { static: true }) previewCanvasRef: ElementRef<HTMLCanvasElement>;
 	@ViewChild('layerDetailCanvas', { static: true }) layerDetailCanvasRef: ElementRef<HTMLCanvasElement>;
+	@ViewChild('layerDetailMaskCanvas', { static: true }) layerDetailMaskCanvasRef: ElementRef<HTMLCanvasElement>;
 
 	cropConf: FormGroup;
 
@@ -114,7 +115,8 @@ export class ViewerComponent implements OnInit, OnDestroy {
 			this.screenCanvasRef.nativeElement,
 			this.overlayCanvasRef.nativeElement,
 			this.previewCanvasRef.nativeElement,
-			this.layerDetailCanvasRef.nativeElement
+			this.layerDetailCanvasRef.nativeElement,
+			this.layerDetailMaskCanvasRef.nativeElement
 		);
 
 		// Detect window size changes
@@ -254,7 +256,7 @@ export class ViewerComponent implements OnInit, OnDestroy {
 		this.memory.states.isLayerSwitched = true;
 	}
 
-	toggleLayerDetail($name: string, $uniqueId: string): void {
+	switchLayerDetail($name: string, $uniqueId: string): void {
 		this.gpu.toggleLayerDetail($name, $uniqueId);
 		this.changeDetectorRef.detectChanges();
 	}
@@ -330,7 +332,12 @@ export class ViewerComponent implements OnInit, OnDestroy {
 				break;
 
 			case 'preview-layer-detail':
-				this.func.togglePreviewLayerDetail();
+				this.func.togglePreviewLayerDetail(false);
+				this.memory.states.isLayerSwitched = true;
+				break;
+
+			case 'preview-layer-detail-mask':
+				this.func.togglePreviewLayerDetail(true);
 				this.memory.states.isLayerSwitched = true;
 				break;
 

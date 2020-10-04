@@ -249,18 +249,26 @@
 
 			<div class="outer-layer-panel">
 				<div class="layer-detail">
-					<canvas
-						#layerDetailCanvas
-						(click)="execExplicitFunc('preview-layer-detail')"
-						[ngClass]="{ 'cursor-pointer': (memory.reservedByFunc$ | async)?.current.name === '' }"
-					></canvas>
+					<div class="preview-layer-wrapper">
+						<canvas
+							#layerDetailCanvas
+							(click)="execExplicitFunc('preview-layer-detail')"
+							[ngClass]="{ 'cursor-pointer': (memory.reservedByFunc$ | async)?.current.name === '' }"
+						></canvas>
+						<span *ngIf="!!(memory.layerDetailBlendMode$ | async)?.mask">・</span>
+						<canvas
+							#layerDetailMaskCanvas
+							(click)="execExplicitFunc('preview-layer-detail-mask')"
+							[ngClass]="{
+								disable: !(memory.layerDetailBlendMode$ | async)?.mask,
+								'cursor-pointer': (memory.reservedByFunc$ | async)?.current.name === ''
+							}"
+						></canvas>
+					</div>
 					<span *ngIf="(memory.isLoaded$ | async) && !!(memory.layerDetailBlendMode$ | async)?.blendMode">{{
 						(memory.layerDetailBlendMode$ | async)?.blendMode
 					}}</span>
-					<span *ngIf="(memory.isLoaded$ | async) && !(memory.layerDetailBlendMode$ | async)?.blendMode"
-						>（レイヤー未選択）</span
-					>
-					<span *ngIf="!(memory.isLoaded$ | async)" class="layer-detail-skelton"></span>
+					<span *ngIf="!(memory.layerDetailBlendMode$ | async)?.blendMode">（レイヤー未選択）</span>
 				</div>
 
 				<div class="layer-info-separator"></div>
@@ -297,7 +305,7 @@
 								<!-- Folder layer -->
 								<label
 									*ngIf="item.children.length > 0"
-									(click)="toggleLayerDetail(item.name, item.uniqueId)"
+									(click)="switchLayerDetail(item.name, item.uniqueId)"
 									[ngClass]="{
 										'active-layer-detail':
 											item.name === (memory.layerDetailBlendMode$ | async).layerName &&
@@ -325,7 +333,7 @@
 								<!-- Normal layer -->
 								<label
 									*ngIf="item.children.length === 0"
-									(click)="toggleLayerDetail(item.name, item.uniqueId)"
+									(click)="switchLayerDetail(item.name, item.uniqueId)"
 									[ngClass]="{
 										'active-layer-detail':
 											item.name === (memory.layerDetailBlendMode$ | async).layerName &&
