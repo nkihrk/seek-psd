@@ -92,7 +92,8 @@ export class GpuService {
 				$index: number,
 				$folderCtx?: CanvasRenderingContext2D,
 				$folderLayer?: LayerInfo,
-				$maskForFolderLayerC?: HTMLCanvasElement
+				$maskForFolderLayerC?: HTMLCanvasElement,
+				$processedMaskLayer?: HTMLCanvasElement
 			) => {
 				if ($layer.hidden.current || $layer.hidden.parent) return;
 
@@ -144,7 +145,91 @@ export class GpuService {
 						maskForFolderLayerC = $maskForFolderLayerC;
 					}
 
-					return { folderCtx: folderCtx, folderLayer: $layer, maskForFolderLayerC: maskForFolderLayerC };
+					// Folder mask layer
+					let processedMaskLayer: HTMLCanvasElement = null;
+					if (!!$layer.psd?.mask?.canvas) {
+						if (!!$processedMaskLayer) {
+							const source: LayerMaskData = $layer.psd.mask;
+
+							// Maybe I should escape this case for now
+							if (source.positionRelativeToLayer) return;
+
+							let sourceW: number = source.right - source.left;
+							let sourceH: number = source.bottom - source.top;
+							sourceW *= $scale;
+							sourceH *= $scale;
+
+							const maskCanvas: HTMLCanvasElement = document.createElement('canvas');
+							maskCanvas.width = $width;
+							maskCanvas.height = $height;
+							const maskCtxBuffer: CanvasRenderingContext2D = maskCanvas.getContext('2d');
+
+							maskCtxBuffer.globalCompositeOperation = 'source-over';
+							maskCtxBuffer.fillStyle = 'white';
+							maskCtxBuffer.fillRect(0, 0, maskCanvas.width, maskCanvas.height);
+							maskCtxBuffer.drawImage(source.canvas, source.left * $scale, source.top * $scale, sourceW, sourceH);
+
+							const imageData: ImageData = maskCtxBuffer.getImageData(0, 0, maskCanvas.width, maskCanvas.height);
+							const data: Uint8ClampedArray = imageData.data;
+
+							for (let i = 0; i < data.length; i += 4) {
+								if (data[i] === 255) continue;
+								data[i + 3] = data[i];
+							}
+
+							maskCtxBuffer.clearRect(0, 0, maskCanvas.width, maskCanvas.height);
+							maskCtxBuffer.putImageData(imageData, 0, 0);
+
+							maskCtxBuffer.globalCompositeOperation = 'destination-in';
+							maskCtxBuffer.drawImage($processedMaskLayer, 0, 0);
+
+							processedMaskLayer = maskCanvas;
+						} else {
+							const target: LayerMaskData = $layer.psd.mask;
+
+							// Maybe I should escape this case for now
+							if (target.positionRelativeToLayer) return;
+
+							let targetW: number = target.right - target.left;
+							let targetH: number = target.bottom - target.top;
+							targetW *= $scale;
+							targetH *= $scale;
+
+							const tmpCanvas: HTMLCanvasElement = document.createElement('canvas');
+							tmpCanvas.width = target.right - target.left;
+							tmpCanvas.height = target.bottom - target.top;
+							const tmpCtx: CanvasRenderingContext2D = tmpCanvas.getContext('2d');
+							tmpCtx.drawImage(target.canvas, 0, 0, tmpCanvas.width, tmpCanvas.height);
+
+							const imageData: ImageData = tmpCtx.getImageData(0, 0, tmpCanvas.width, tmpCanvas.height);
+							const data: Uint8ClampedArray = imageData.data;
+
+							for (let i = 0; i < data.length; i += 4) {
+								if (data[i] === 255) continue;
+								data[i + 3] = data[i];
+							}
+
+							tmpCtx.clearRect(0, 0, tmpCanvas.width, tmpCanvas.height);
+							tmpCtx.putImageData(imageData, 0, 0);
+
+							const maskCanvas: HTMLCanvasElement = document.createElement('canvas');
+							maskCanvas.width = $width;
+							maskCanvas.height = $height;
+							const maskCtxBuffer: CanvasRenderingContext2D = maskCanvas.getContext('2d');
+							maskCtxBuffer.drawImage(tmpCanvas, target.left * $scale, target.top * $scale, targetW, targetH);
+
+							processedMaskLayer = maskCanvas;
+						}
+					} else if (!!$processedMaskLayer) {
+						processedMaskLayer = $processedMaskLayer;
+					}
+
+					return {
+						folderCtx: folderCtx,
+						folderLayer: $layer,
+						maskForFolderLayerC: maskForFolderLayerC,
+						processedMaskLayer: processedMaskLayer
+					};
 				}
 
 				if (!psd?.canvas) return;
@@ -233,6 +318,7 @@ export class GpuService {
 					const data: Uint8ClampedArray = imageData.data;
 
 					for (let i = 0; i < data.length; i += 4) {
+						if (data[i] === 255) continue;
 						data[i + 3] = data[i];
 					}
 
@@ -242,6 +328,12 @@ export class GpuService {
 					maskCtxBuffer.drawImage(tmpCanvas, mask.left * $scale, mask.top * $scale, targetW, targetH);
 
 					canvas = maskCanvas;
+				}
+
+				if (!!$processedMaskLayer) {
+					const ctx: CanvasRenderingContext2D = canvas.getContext('2d');
+					ctx.globalCompositeOperation = 'destination-in';
+					ctx.drawImage($processedMaskLayer, 0, 0);
 				}
 
 				if (!!$maskForFolderLayerC) {
@@ -271,7 +363,12 @@ export class GpuService {
 				$ctx.drawImage(canvas, 0, 0);
 				$ctx.restore();
 
-				return { folderCtx: $folderCtx, folderLayer: $folderLayer, maskForFolderLayerC: $maskForFolderLayerC };
+				return {
+					folderCtx: $folderCtx,
+					folderLayer: $folderLayer,
+					maskForFolderLayerC: $maskForFolderLayerC,
+					processedMaskLayet: $processedMaskLayer
+				};
 			}
 		);
 	}
@@ -296,14 +393,16 @@ export class GpuService {
 		$callback: Function,
 		$folderCtx?: CanvasRenderingContext2D,
 		$folderLayer?: LayerInfo,
-		$maskForFolderLayerC?: HTMLCanvasElement
+		$maskForFolderLayerC?: HTMLCanvasElement,
+		$processedMaskLayer?: HTMLCanvasElement
 	): void {
 		for (let i = $root.length - 1; i > -1; i--) {
 			const payload: {
 				folderCtx?: CanvasRenderingContext2D;
 				folderLayer?: LayerInfo;
 				maskForFolderLayerC?: HTMLCanvasElement;
-			} = $callback($root[i], $root, i, $folderCtx, $folderLayer, $maskForFolderLayerC);
+				processedMaskLayer?: HTMLCanvasElement;
+			} = $callback($root[i], $root, i, $folderCtx, $folderLayer, $maskForFolderLayerC, $processedMaskLayer);
 
 			if ($root[i].children.length > 0 && !!payload?.folderCtx && !!payload?.folderLayer) {
 				this.recursiveRender(
@@ -311,7 +410,8 @@ export class GpuService {
 					$callback,
 					payload.folderCtx,
 					payload.folderLayer,
-					payload.maskForFolderLayerC
+					payload.maskForFolderLayerC,
+					payload.processedMaskLayer
 				);
 
 				payload.folderLayer.folderCanvas = payload.folderCtx.canvas;
