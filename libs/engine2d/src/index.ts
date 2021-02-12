@@ -1,1 +1,1 @@
-export * from './lib/engine2d.module';
+export * from './lib/engine2d';

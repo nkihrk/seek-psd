@@ -190,18 +190,14 @@
       }
     },
     "engine2d": {
-      "projectType": "library",
       "root": "libs/engine2d",
       "sourceRoot": "libs/engine2d/src",
-      "prefix": "seek-psd",
+      "projectType": "library",
       "architect": {
         "lint": {
           "builder": "@nrwl/linter:eslint",
           "options": {
-            "lintFilePatterns": [
-              "libs/engine2d/src/**/*.ts",
-              "libs/engine2d/src/**/*.html"
-            ]
+            "lintFilePatterns": ["libs/engine2d/**/*.ts"]
           }
         },
         "test": {
