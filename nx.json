@@ -1,0 +1,22 @@
+{
+  "npmScope": "seek-psd",
+  "affected": { "defaultBase": "master" },
+  "implicitDependencies": {
+    "angular.json": "*",
+    "package.json": { "dependencies": "*", "devDependencies": "*" },
+    "tsconfig.base.json": "*",
+    "tslint.json": "*",
+    ".eslintrc.json": "*",
+    "nx.json": "*"
+  },
+  "tasksRunnerOptions": {
+    "default": {
+      "runner": "@nrwl/workspace/tasks-runners/default",
+      "options": { "cacheableOperations": ["build", "lint", "test", "e2e"] }
+    }
+  },
+  "projects": {
+    "seek-psd": { "tags": [] },
+    "seek-psd-e2e": { "tags": [], "implicitDependencies": ["seek-psd"] }
+  }
+}

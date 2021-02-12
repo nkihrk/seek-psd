@@ -1,0 +1,150 @@
+{
+  "version": 1,
+  "cli": {
+    "defaultCollection": "@nrwl/angular"
+  },
+  "schematics": {
+    "@nrwl/angular": {
+      "application": {
+        "linter": "eslint"
+      },
+      "library": {
+        "linter": "eslint"
+      },
+      "storybook-configuration": {
+        "linter": "eslint"
+      }
+    },
+    "@nrwl/angular:application": {
+      "style": "scss",
+      "linter": "eslint",
+      "unitTestRunner": "jest",
+      "e2eTestRunner": "cypress"
+    },
+    "@nrwl/angular:library": {
+      "style": "scss",
+      "linter": "eslint",
+      "unitTestRunner": "jest"
+    },
+    "@nrwl/angular:component": {
+      "style": "scss"
+    }
+  },
+  "defaultProject": "seek-psd",
+  "projects": {
+    "seek-psd": {
+      "projectType": "application",
+      "root": "apps/seek-psd",
+      "sourceRoot": "apps/seek-psd/src",
+      "prefix": "seek-psd",
+      "architect": {
+        "build": {
+          "builder": "@angular-devkit/build-angular:browser",
+          "options": {
+            "outputPath": "dist/apps/seek-psd",
+            "index": "apps/seek-psd/src/index.html",
+            "main": "apps/seek-psd/src/main.ts",
+            "polyfills": "apps/seek-psd/src/polyfills.ts",
+            "tsConfig": "apps/seek-psd/tsconfig.app.json",
+            "aot": true,
+            "assets": [
+              "apps/seek-psd/src/favicon.ico",
+              "apps/seek-psd/src/assets"
+            ],
+            "styles": ["apps/seek-psd/src/styles.scss"],
+            "scripts": []
+          },
+          "configurations": {
+            "production": {
+              "fileReplacements": [
+                {
+                  "replace": "apps/seek-psd/src/environments/environment.ts",
+                  "with": "apps/seek-psd/src/environments/environment.prod.ts"
+                }
+              ],
+              "optimization": true,
+              "outputHashing": "all",
+              "sourceMap": false,
+              "namedChunks": false,
+              "extractLicenses": true,
+              "vendorChunk": false,
+              "buildOptimizer": true,
+              "budgets": [
+                {
+                  "type": "initial",
+                  "maximumWarning": "2mb",
+                  "maximumError": "5mb"
+                },
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "6kb",
+                  "maximumError": "10kb"
+                }
+              ]
+            }
+          }
+        },
+        "serve": {
+          "builder": "@angular-devkit/build-angular:dev-server",
+          "options": {
+            "browserTarget": "seek-psd:build"
+          },
+          "configurations": {
+            "production": {
+              "browserTarget": "seek-psd:build:production"
+            }
+          }
+        },
+        "extract-i18n": {
+          "builder": "@angular-devkit/build-angular:extract-i18n",
+          "options": {
+            "browserTarget": "seek-psd:build"
+          }
+        },
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": [
+              "apps/seek-psd/src/**/*.ts",
+              "apps/seek-psd/src/**/*.html"
+            ]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "outputs": ["coverage/apps/seek-psd"],
+          "options": {
+            "jestConfig": "apps/seek-psd/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
+    "seek-psd-e2e": {
+      "root": "apps/seek-psd-e2e",
+      "sourceRoot": "apps/seek-psd-e2e/src",
+      "projectType": "application",
+      "architect": {
+        "e2e": {
+          "builder": "@nrwl/cypress:cypress",
+          "options": {
+            "cypressConfig": "apps/seek-psd-e2e/cypress.json",
+            "tsConfig": "apps/seek-psd-e2e/tsconfig.e2e.json",
+            "devServerTarget": "seek-psd:serve"
+          },
+          "configurations": {
+            "production": {
+              "devServerTarget": "seek-psd:serve:production"
+            }
+          }
+        },
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": ["apps/seek-psd-e2e/**/*.{js,ts}"]
+          }
+        }
+      }
+    }
+  }
+}
