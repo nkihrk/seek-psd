@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
-import { ViewerPageComponent } from './components/viewer-page/viewer-page.component';
+import { ViewerPageComponent } from './pages/viewer-page/viewer-page.component';
 
 const routes: Routes = [{ path: '', component: ViewerPageComponent }];
 
