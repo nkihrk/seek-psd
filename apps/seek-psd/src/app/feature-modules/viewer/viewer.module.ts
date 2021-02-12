@@ -2,6 +2,7 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ViewerRoutingModule } from './viewer-routing.module';
 import { FlexLayoutModule } from '@angular/flex-layout';
+import { SharedModule } from '../../shared/shared.module';
 
 import { ViewerPageComponent } from './pages/viewer-page/viewer-page.component';
 import { ToolsComponent } from './components/tools/tools.component';
@@ -15,6 +16,6 @@ import { RendererComponent } from './components/renderer/renderer.component';
     LayersComponent,
     RendererComponent,
   ],
-  imports: [CommonModule, ViewerRoutingModule, FlexLayoutModule],
+  imports: [CommonModule, ViewerRoutingModule, FlexLayoutModule, SharedModule],
 })
 export class ViewerModule {}
