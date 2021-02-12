@@ -1,9 +1,14 @@
 {
   "npmScope": "seek-psd",
-  "affected": { "defaultBase": "master" },
+  "affected": {
+    "defaultBase": "master"
+  },
   "implicitDependencies": {
     "angular.json": "*",
-    "package.json": { "dependencies": "*", "devDependencies": "*" },
+    "package.json": {
+      "dependencies": "*",
+      "devDependencies": "*"
+    },
     "tsconfig.base.json": "*",
     "tslint.json": "*",
     ".eslintrc.json": "*",
@@ -11,12 +16,29 @@
   },
   "tasksRunnerOptions": {
     "default": {
-      "runner": "@nrwl/workspace/tasks-runners/default",
-      "options": { "cacheableOperations": ["build", "lint", "test", "e2e"] }
+      "runner": "@nrwl/nx-cloud",
+      "options": {
+        "accessToken": "ZTg0OWU3ZTgtMGZlNS00MTAyLTg3OTYtNTJhNGJjMDk1YTM0fHJlYWQtd3JpdGU=",
+        "cacheableOperations": [
+          "build",
+          "test",
+          "lint",
+          "e2e"
+        ],
+        "canTrackAnalytics": false,
+        "showUsageWarnings": true
+      }
     }
   },
   "projects": {
-    "seek-psd": { "tags": [] },
-    "seek-psd-e2e": { "tags": [], "implicitDependencies": ["seek-psd"] }
+    "seek-psd": {
+      "tags": []
+    },
+    "seek-psd-e2e": {
+      "tags": [],
+      "implicitDependencies": [
+        "seek-psd"
+      ]
+    }
   }
 }
