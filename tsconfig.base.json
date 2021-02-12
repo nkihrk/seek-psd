@@ -15,7 +15,8 @@
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
-      "@seek-psd/ui": ["libs/ui/src/index.ts"]
+      "@seek-psd/ui": ["libs/ui/src/index.ts"],
+      "@seek-psd/utility-functions": ["libs/utility-functions/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]

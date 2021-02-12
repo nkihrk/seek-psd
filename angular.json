@@ -167,6 +167,27 @@
           }
         }
       }
+    },
+    "utility-functions": {
+      "root": "libs/utility-functions",
+      "sourceRoot": "libs/utility-functions/src",
+      "projectType": "library",
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": ["libs/utility-functions/**/*.ts"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "outputs": ["coverage/libs/utility-functions"],
+          "options": {
+            "jestConfig": "libs/utility-functions/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
     }
   }
 }

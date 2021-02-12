@@ -23,6 +23,7 @@
   "projects": {
     "seek-psd": { "tags": [] },
     "seek-psd-e2e": { "tags": [], "implicitDependencies": ["seek-psd"] },
-    "ui": { "tags": [] }
+    "ui": { "tags": [] },
+    "utility-functions": { "tags": [] }
   }
 }
