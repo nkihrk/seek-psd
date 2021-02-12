@@ -188,6 +188,31 @@
           }
         }
       }
+    },
+    "engine2d": {
+      "projectType": "library",
+      "root": "libs/engine2d",
+      "sourceRoot": "libs/engine2d/src",
+      "prefix": "seek-psd",
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": [
+              "libs/engine2d/src/**/*.ts",
+              "libs/engine2d/src/**/*.html"
+            ]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "outputs": ["coverage/libs/engine2d"],
+          "options": {
+            "jestConfig": "libs/engine2d/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
     }
   }
 }
