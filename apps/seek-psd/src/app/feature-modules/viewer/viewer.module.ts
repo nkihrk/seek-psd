@@ -8,6 +8,7 @@ import { ViewerPageComponent } from './pages/viewer-page/viewer-page.component';
 import { ToolsComponent } from './components/tools/tools.component';
 import { LayersComponent } from './components/layers/layers.component';
 import { RendererComponent } from './components/renderer/renderer.component';
+import { CanvasComponent } from './components/renderer/components/canvas/canvas.component';
 
 @NgModule({
   declarations: [
@@ -15,6 +16,7 @@ import { RendererComponent } from './components/renderer/renderer.component';
     ToolsComponent,
     LayersComponent,
     RendererComponent,
+    CanvasComponent,
   ],
   imports: [CommonModule, ViewerRoutingModule, FlexLayoutModule, SharedModule],
 })
