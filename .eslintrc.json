@@ -4,21 +4,6 @@
   "plugins": ["@nrwl/nx"],
   "overrides": [
     {
-      "files": ["*.ts", "*.tsx", "*.js", "*.jsx"],
-      "rules": {
-        "@nrwl/nx/enforce-module-boundaries": [
-          "error",
-          {
-            "enforceBuildableLibDependency": true,
-            "allow": [],
-            "depConstraints": [
-              { "sourceTag": "*", "onlyDependOnLibsWithTags": ["*"] }
-            ]
-          }
-        ]
-      }
-    },
-    {
       "files": ["*.ts", "*.tsx"],
       "extends": ["plugin:@nrwl/nx/typescript"],
       "parserOptions": { "project": "./tsconfig.*?.json" },
@@ -29,5 +14,29 @@
       "extends": ["plugin:@nrwl/nx/javascript"],
       "rules": {}
     }
-  ]
+  ],
+  "env": {
+    "browser": true,
+    "es6": true,
+    "node": true
+  },
+  "parser": "@typescript-eslint/parser",
+  "plugins": ["@typescript-eslint"],
+  "extends": [
+    "eslint:recommended",
+    "plugin:@typescript-eslint/recommended",
+    "prettier/@typescript-eslint",
+    "plugin:prettier/recommended"
+  ],
+  "rules": {
+    "curly": ["error", "all"],
+    "no-confusing-arrow": ["error", { "allowParens": false }],
+    "no-mixed-operators": "error",
+    "no-tabs": ["error", { "allowIndentationTabs": true }],
+    "no-empty-function": "off",
+    "@typescript-eslint/no-empty-function": [
+      "error",
+      { "allow": ["constructors", "methods"] }
+    ]
+  }
 }

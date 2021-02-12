@@ -3,13 +3,10 @@ import { Component, OnInit } from '@angular/core';
 @Component({
   selector: 'seek-psd-tools',
   templateUrl: './tools.component.html',
-  styleUrls: ['./tools.component.scss']
+  styleUrls: ['./tools.component.scss'],
 })
 export class ToolsComponent implements OnInit {
+  constructor() {}
 
-  constructor() { }
-
-  ngOnInit(): void {
-  }
-
+  ngOnInit(): void {}
 }
