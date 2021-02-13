@@ -1,9 +1,9 @@
 .layer {
   position: relative;
   background-color: var(--bg-secondary);
-  width: 100vw;
+  width: 500px;
   max-width: 100%;
-  height: 100vh;
+  height: 500px;
 
   %common {
     position: absolute;

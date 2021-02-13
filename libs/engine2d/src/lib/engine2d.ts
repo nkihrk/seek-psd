@@ -1,3 +1,2 @@
-export function engine2d(): string {
-  return 'engine2d';
-}
+export * from './eventManager';
+export * from './coordManager';

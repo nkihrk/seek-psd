@@ -1,0 +1,3 @@
+export class CoordManager {
+  constructor() {}
+}
