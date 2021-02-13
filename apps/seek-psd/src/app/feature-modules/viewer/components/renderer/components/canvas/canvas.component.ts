@@ -6,7 +6,7 @@ import {
   Output,
   EventEmitter,
 } from '@angular/core';
-import { setPixelPerfect } from '@seek-psd/utility-functions';
+import { setPixelPerfect } from '@seek-psd/utils';
 import { EventManager } from '@seek-psd/engine2d';
 
 export interface Layers {

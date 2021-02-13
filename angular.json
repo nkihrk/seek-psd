@@ -168,27 +168,6 @@
         }
       }
     },
-    "utility-functions": {
-      "root": "libs/utility-functions",
-      "sourceRoot": "libs/utility-functions/src",
-      "projectType": "library",
-      "architect": {
-        "lint": {
-          "builder": "@nrwl/linter:eslint",
-          "options": {
-            "lintFilePatterns": ["libs/utility-functions/**/*.ts"]
-          }
-        },
-        "test": {
-          "builder": "@nrwl/jest:jest",
-          "outputs": ["coverage/libs/utility-functions"],
-          "options": {
-            "jestConfig": "libs/utility-functions/jest.config.js",
-            "passWithNoTests": true
-          }
-        }
-      }
-    },
     "engine2d": {
       "root": "libs/engine2d",
       "sourceRoot": "libs/engine2d/src",
@@ -205,6 +184,27 @@
           "outputs": ["coverage/libs/engine2d"],
           "options": {
             "jestConfig": "libs/engine2d/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
+    "utils": {
+      "root": "libs/utils",
+      "sourceRoot": "libs/utils/src",
+      "projectType": "library",
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": ["libs/utils/**/*.ts"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "outputs": ["coverage/libs/utils"],
+          "options": {
+            "jestConfig": "libs/utils/jest.config.js",
             "passWithNoTests": true
           }
         }
