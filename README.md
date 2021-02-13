@@ -12,11 +12,6 @@ This project focusses on people practicing illustration who's trying to understa
 
 ![seek-psd-preview](./src/assets/seek-psd.png)
 
-# Document
-
-Currently working on
-<br><br>
-
 # License
 
 MIT Licence
