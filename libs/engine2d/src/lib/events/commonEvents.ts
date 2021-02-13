@@ -4,7 +4,6 @@ import { WheelEvents } from './event/wheelEvents';
 import { PointerEvents } from './event/pointerEvents';
 import { DragEvents } from './event/dragEvents';
 import { ClipboardEvents } from './event/clipboardEvents';
-
 import { KeyboardEvents } from './event/keyboardEvents';
 
 export class CommonEvents {
