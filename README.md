@@ -2,7 +2,7 @@
 
 ## Notice
 
-SeekPSD v1 is now archived. The archived repository is <a href="">here</a>.
+SeekPSD v1 is now archived. The archived repository is <a href="https://github.com/nkihrk/seek-psd-archived">here</a>.
 
 ## Installation
 
