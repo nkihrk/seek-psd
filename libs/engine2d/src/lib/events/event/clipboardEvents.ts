@@ -1,21 +1,16 @@
+import type { EventNotifier } from '../../notifiers/eventNotifier';
 import { CommonEvent } from './CommonEvent.interface';
 
 export class ClipboardEvents implements CommonEvent {
-  readonly eventType: string;
+  readonly eventNotifier: EventNotifier;
 
-  constructor($eventType: string) {
-    this.eventType = $eventType;
+  constructor($eventNotifier: EventNotifier) {
+    this.eventNotifier = $eventNotifier;
   }
 
-  onCut($event: ClipboardEvent): void {
-    console.log(`${this.eventType}_cut : `, $event);
-  }
+  onCut($event: ClipboardEvent): void {}
 
-  onCopy($event: ClipboardEvent): void {
-    console.log(`${this.eventType}_copy : `, $event);
-  }
+  onCopy($event: ClipboardEvent): void {}
 
-  onPaste($event: ClipboardEvent): void {
-    console.log(`${this.eventType}_paste : `, $event);
-  }
+  onPaste($event: ClipboardEvent): void {}
 }

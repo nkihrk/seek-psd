@@ -1,9 +1,10 @@
 import { CommonEvents } from './commonEvents';
 import { addEventListeners } from '@seek-psd/utils';
+import type { EventNotifier } from '../notifiers/eventNotifier';
 
 export class GlobalEvents extends CommonEvents {
-  constructor() {
-    super('global');
+  constructor($eventNotifier: EventNotifier) {
+    super('global', $eventNotifier);
   }
 
   init(): void {

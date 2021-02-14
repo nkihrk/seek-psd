@@ -1,37 +1,24 @@
+import type { EventNotifier } from '../../notifiers/eventNotifier';
 import { CommonEvent } from './CommonEvent.interface';
 
 export class DragEvents implements CommonEvent {
-  readonly eventType: string;
+  readonly eventNotifier: EventNotifier;
 
-  constructor($eventType: string) {
-    this.eventType = $eventType;
+  constructor($eventNotifier: EventNotifier) {
+    this.eventNotifier = $eventNotifier;
   }
 
-  onDrag($event: DragEvent): void {
-    console.log(`${this.eventType}_drag : `, $event);
-  }
+  onDrag($event: DragEvent): void {}
 
-  onDragend($event: DragEvent): void {
-    console.log(`${this.eventType}_dragend : `, $event);
-  }
+  onDragend($event: DragEvent): void {}
 
-  onDragenter($event: DragEvent): void {
-    console.log(`${this.eventType}_dragenter : `, $event);
-  }
+  onDragenter($event: DragEvent): void {}
 
-  onDragstart($event: DragEvent): void {
-    console.log(`${this.eventType}_dragstart : `, $event);
-  }
+  onDragstart($event: DragEvent): void {}
 
-  onDragleave($event: DragEvent): void {
-    console.log(`${this.eventType}_dragleave : `, $event);
-  }
+  onDragleave($event: DragEvent): void {}
 
-  onDragover($event: DragEvent): void {
-    console.log(`${this.eventType}_dragover : `, $event);
-  }
+  onDragover($event: DragEvent): void {}
 
-  onDrop($event: DragEvent): void {
-    console.log(`${this.eventType}_drop : `, $event);
-  }
+  onDrop($event: DragEvent): void {}
 }

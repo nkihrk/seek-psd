@@ -1,9 +1,15 @@
+import type { EventNotifier } from '../notifiers/eventNotifier';
 import { CommonEvents } from './commonEvents';
 import { addEventListeners } from '@seek-psd/utils';
+import { CanvasEntity } from '../entities/entity.interface';
 
 export class UserEvents extends CommonEvents {
-  constructor() {
-    super('user');
+  private readonly canvasEntity: CanvasEntity;
+
+  constructor($eventNotifier: EventNotifier, $canvasEntity: CanvasEntity) {
+    super('user', $eventNotifier);
+
+    this.canvasEntity = $canvasEntity;
   }
 
   init(): void {
@@ -42,25 +48,25 @@ export class UserEvents extends CommonEvents {
       'pointerleave',
     ];
     const f = (e) => this.onPointerEvents(e);
-    addEventListeners(eventList, document, f);
+    addEventListeners(eventList, this.canvasEntity.element, f);
   }
 
   private _wheelEvents(): void {
     const eventList = ['wheel'];
     const f = (e) => this.onWheelEvents(e);
-    addEventListeners(eventList, document, f);
+    addEventListeners(eventList, this.canvasEntity.element, f);
   }
 
   private _clickEvents(): void {
     const eventList = ['click', 'dblclick'];
     const f = (e) => this.onMouseEvents(e);
-    addEventListeners(eventList, document, f);
+    addEventListeners(eventList, this.canvasEntity.element, f);
   }
 
   private _contextmenuEvents(): void {
     const eventList = ['contextmenu'];
     const f = (e) => this.onMouseEvents(e);
-    addEventListeners(eventList, document, f);
+    addEventListeners(eventList, this.canvasEntity.element, f);
   }
 
   private _dragEvents(): void {
@@ -74,12 +80,12 @@ export class UserEvents extends CommonEvents {
       'drop',
     ];
     const f = (e) => this.onDragEvents(e);
-    addEventListeners(eventList, document, f);
+    addEventListeners(eventList, this.canvasEntity.element, f);
   }
 
   private _clipboardEvents(): void {
     const eventList = ['cut', 'copy', 'paste'];
     const f = (e) => this.onClipboardEvents(e);
-    addEventListeners(eventList, document, f);
+    addEventListeners(eventList, this.canvasEntity.element, f);
   }
 }

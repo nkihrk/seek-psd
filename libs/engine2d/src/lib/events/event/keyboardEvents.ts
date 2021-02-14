@@ -1,21 +1,16 @@
+import type { EventNotifier } from '../../notifiers/eventNotifier';
 import { CommonEvent } from './CommonEvent.interface';
 
 export class KeyboardEvents implements CommonEvent {
-  readonly eventType: string;
+  readonly eventNotifier: EventNotifier;
 
-  constructor($eventType: string) {
-    this.eventType = $eventType;
+  constructor($eventNotifier: EventNotifier) {
+    this.eventNotifier = $eventNotifier;
   }
 
-  onKeydown($event: KeyboardEvent): void {
-    console.log(`${this.eventType}_keydown : `, $event);
-  }
+  onKeydown($event: KeyboardEvent): void {}
 
-  onKeyup($event: KeyboardEvent): void {
-    console.log(`${this.eventType}_keyup : `, $event);
-  }
+  onKeyup($event: KeyboardEvent): void {}
 
-  onKeypress($event: KeyboardEvent): void {
-    console.log(`${this.eventType}_keypress : `, $event);
-  }
+  onKeypress($event: KeyboardEvent): void {}
 }

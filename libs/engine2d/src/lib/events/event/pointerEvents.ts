@@ -1,41 +1,28 @@
+import type { EventNotifier } from '../../notifiers/eventNotifier';
 import { CommonEvent } from './CommonEvent.interface';
 
 export class PointerEvents implements CommonEvent {
-  readonly eventType: string;
+  readonly eventNotifier: EventNotifier;
 
-  constructor($eventType: string) {
-    this.eventType = $eventType;
+  constructor($eventNotifier: EventNotifier) {
+    this.eventNotifier = $eventNotifier;
   }
 
   onPointerdown($event: PointerEvent): void {
-    console.log(`${this.eventType}_pointerdown : `, $event);
+    this.eventNotifier.update($event);
   }
 
-  onPointerup($event: PointerEvent): void {
-    console.log(`${this.eventType}_pointerup : `, $event);
-  }
+  onPointerup($event: PointerEvent): void {}
 
-  onPointermove($event: PointerEvent): void {
-    console.log(`${this.eventType}_pointermove : `, $event);
-  }
+  onPointermove($event: PointerEvent): void {}
 
-  onPointerover($event: PointerEvent): void {
-    console.log(`${this.eventType}_pointerover : `, $event);
-  }
+  onPointerover($event: PointerEvent): void {}
 
-  onPointerenter($event: PointerEvent): void {
-    console.log(`${this.eventType}_pointerenter : `, $event);
-  }
+  onPointerenter($event: PointerEvent): void {}
 
-  onPointercancel($event: PointerEvent): void {
-    console.log(`${this.eventType}_pointercancel : `, $event);
-  }
+  onPointercancel($event: PointerEvent): void {}
 
-  onPointerout($event: PointerEvent): void {
-    console.log(`${this.eventType}_pointerout : `, $event);
-  }
+  onPointerout($event: PointerEvent): void {}
 
-  onPointerleave($event: PointerEvent): void {
-    console.log(`${this.eventType}_pointerleave : `, $event);
-  }
+  onPointerleave($event: PointerEvent): void {}
 }

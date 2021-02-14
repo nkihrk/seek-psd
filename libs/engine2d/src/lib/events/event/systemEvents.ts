@@ -1,25 +1,18 @@
+import type { EventNotifier } from '../../notifiers/eventNotifier';
 import { CommonEvent } from './CommonEvent.interface';
 
 export class SystemEvents implements CommonEvent {
-  readonly eventType: string;
+  readonly eventNotifier: EventNotifier;
 
-  constructor($eventType: string) {
-    this.eventType = $eventType;
+  constructor($eventNotifier: EventNotifier) {
+    this.eventNotifier = $eventNotifier;
   }
 
-  onFullscreenchange($event: Event): void {
-    console.log(`${this.eventType}_screenchange : `, $event);
-  }
+  onFullscreenchange($event: Event): void {}
 
-  onFullscreenerror($event: Event): void {
-    console.log(`${this.eventType}_screenerror: `, $event);
-  }
+  onFullscreenerror($event: Event): void {}
 
-  onOnline($event: Event): void {
-    console.log(`${this.eventType}_online : `, $event);
-  }
+  onOnline($event: Event): void {}
 
-  onOffline($event: Event): void {
-    console.log(`${this.eventType}_offline : `, $event);
-  }
+  onOffline($event: Event): void {}
 }

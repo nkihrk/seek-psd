@@ -1,13 +1,14 @@
+import type { EventNotifier } from '../../notifiers/eventNotifier';
 import { CommonEvent } from './CommonEvent.interface';
 
 export class WheelEvents implements CommonEvent {
-  readonly eventType: string;
+  readonly eventNotifier: EventNotifier;
 
-  constructor($eventType: string) {
-    this.eventType = $eventType;
+  constructor($eventNotifier: EventNotifier) {
+    this.eventNotifier = $eventNotifier;
   }
 
   onWheel($event: WheelEvent): void {
-    console.log(`${this.eventType}_wheel : `, $event);
+    this.eventNotifier.update($event);
   }
 }

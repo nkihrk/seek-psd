@@ -5,20 +5,18 @@ import { PointerEvents } from './event/pointerEvents';
 import { DragEvents } from './event/dragEvents';
 import { ClipboardEvents } from './event/clipboardEvents';
 import { KeyboardEvents } from './event/keyboardEvents';
+import { EventNotifier } from '../notifiers/eventNotifier';
 
 export class CommonEvents {
-  private _eventType: string;
+  private readonly eventNotifier: EventNotifier;
 
-  constructor($eventType: string) {
-    this._eventType = $eventType;
-  }
-
-  get eventType(): string {
-    return this._eventType;
+  constructor($eventType: string, $eventNotifier: EventNotifier) {
+    this.eventNotifier = $eventNotifier;
+    this.eventNotifier.eventType = $eventType;
   }
 
   protected onPointerEvents($event: PointerEvent): void {
-    const e = new PointerEvents(this.eventType);
+    const e = new PointerEvents(this.eventNotifier);
 
     switch ($event.type) {
       case 'pointerdown':
@@ -55,7 +53,7 @@ export class CommonEvents {
   }
 
   protected onWheelEvents($event: WheelEvent): void {
-    const e = new WheelEvents(this.eventType);
+    const e = new WheelEvents(this.eventNotifier);
 
     switch ($event.type) {
       case 'wheel':
@@ -65,7 +63,7 @@ export class CommonEvents {
   }
 
   protected onMouseEvents($event: MouseEvent): void {
-    const e = new MouseEvents(this.eventType);
+    const e = new MouseEvents(this.eventNotifier);
 
     switch ($event.type) {
       case 'click':
@@ -83,7 +81,7 @@ export class CommonEvents {
   }
 
   protected onSystemEvents($event: Event): void {
-    const e = new SystemEvents(this.eventType);
+    const e = new SystemEvents(this.eventNotifier);
 
     switch ($event.type) {
       case 'fullscreenchange':
@@ -105,7 +103,7 @@ export class CommonEvents {
   }
 
   protected onDragEvents($event: DragEvent): void {
-    const e = new DragEvents(this.eventType);
+    const e = new DragEvents(this.eventNotifier);
 
     switch ($event.type) {
       case 'drag':
@@ -139,7 +137,7 @@ export class CommonEvents {
   }
 
   protected onClipboardEvents($event: ClipboardEvent): void {
-    const e = new ClipboardEvents(this.eventType);
+    const e = new ClipboardEvents(this.eventNotifier);
 
     switch ($event.type) {
       case 'cut':
@@ -157,7 +155,7 @@ export class CommonEvents {
   }
 
   protected onKeyboardEvents($event: KeyboardEvent): void {
-    const e = new KeyboardEvents(this.eventType);
+    const e = new KeyboardEvents(this.eventNotifier);
 
     switch ($event.type) {
       case 'keydown':

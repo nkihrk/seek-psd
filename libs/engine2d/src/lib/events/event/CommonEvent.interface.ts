@@ -1,3 +1,5 @@
+import type { EventNotifier } from '../../notifiers/eventNotifier';
+
 export interface CommonEvent {
-  readonly eventType: string;
+  readonly eventNotifier: EventNotifier;
 }
