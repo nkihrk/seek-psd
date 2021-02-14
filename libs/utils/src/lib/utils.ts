@@ -18,6 +18,7 @@ export async function setPixelPerfect(
 }
 
 export function getPixelRatio($ctx: CanvasRenderingContext2D): number {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const ctx: any = $ctx;
   const dpr: number = window.devicePixelRatio || 1;
   const bsr: number =
@@ -29,4 +30,14 @@ export function getPixelRatio($ctx: CanvasRenderingContext2D): number {
     1;
 
   return dpr / bsr;
+}
+
+export function addEventListeners(
+  $eventList: string[],
+  $element: Window | Document | HTMLDocument,
+  $callback: (e) => void
+): void {
+  for (let i = 0; i < $eventList.length; i++) {
+    $element.addEventListener($eventList[i], (e) => $callback(e), false);
+  }
 }

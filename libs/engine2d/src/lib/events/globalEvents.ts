@@ -1,4 +1,5 @@
 import { CommonEvents } from './commonEvents';
+import { addEventListeners } from '@seek-psd/utils';
 
 export class GlobalEvents extends CommonEvents {
   constructor() {
@@ -50,37 +51,37 @@ export class GlobalEvents extends CommonEvents {
       'pointerleave',
     ];
     const f = (e) => this.onPointerEvents(e);
-    this._addEventListeners(eventList, document, f);
+    addEventListeners(eventList, document, f);
   }
 
   private _wheelEvents(): void {
     const eventList = ['wheel'];
     const f = (e) => this.onWheelEvents(e);
-    this._addEventListeners(eventList, document, f);
+    addEventListeners(eventList, document, f);
   }
 
   private _clickEvents(): void {
     const eventList = ['click', 'dblclick'];
     const f = (e) => this.onMouseEvents(e);
-    this._addEventListeners(eventList, document, f);
+    addEventListeners(eventList, document, f);
   }
 
   private _contextmenuEvents(): void {
     const eventList = ['contextmenu'];
     const f = (e) => this.onMouseEvents(e);
-    this._addEventListeners(eventList, document, f);
+    addEventListeners(eventList, document, f);
   }
 
   private _viewEvents(): void {
     const eventList = ['fullscreenchange, fullscreenerror'];
     const f = (e) => this.onSystemEvents(e);
-    this._addEventListeners(eventList, window, f);
+    addEventListeners(eventList, window, f);
   }
 
   private _networkEvents(): void {
     const eventList = ['online', 'offline'];
     const f = (e) => this.onSystemEvents(e);
-    this._addEventListeners(eventList, window, f);
+    addEventListeners(eventList, window, f);
   }
 
   private _dragEvents(): void {
@@ -94,32 +95,18 @@ export class GlobalEvents extends CommonEvents {
       'drop',
     ];
     const f = (e) => this.onDragEvents(e);
-    this._addEventListeners(eventList, document, f);
+    addEventListeners(eventList, document, f);
   }
 
   private _clipboardEvents(): void {
     const eventList = ['cut', 'copy', 'paste'];
     const f = (e) => this.onClipboardEvents(e);
-    this._addEventListeners(eventList, document, f);
+    addEventListeners(eventList, document, f);
   }
 
   private _keyboardEvents(): void {
     const eventList = ['keydown', 'keyup', 'keypress'];
     const f = (e) => this.onKeyboardEvents(e);
-    this._addEventListeners(eventList, document, f);
-  }
-
-  private _addEventListeners(
-    $eventList: string[],
-    $element: Window | Document | HTMLDocument,
-    $callback: (e, self?: this) => void
-  ): void {
-    for (let i = 0; i < $eventList.length; i++) {
-      $element.addEventListener(
-        $eventList[i],
-        (e) => $callback(e, this),
-        false
-      );
-    }
+    addEventListeners(eventList, document, f);
   }
 }
