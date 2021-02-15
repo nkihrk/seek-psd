@@ -1,7 +1,7 @@
 import type { EventNotifier } from '../../notifiers/eventNotifier';
-import { EgCommonEvent } from './egCommonEvent';
+import { CommonEvent } from './commonEvent';
 
-export class EgEvent extends EgCommonEvent {
+export class OnEvent extends CommonEvent {
   protected readonly eventNotifier: EventNotifier;
 
   constructor($eventNotifier: EventNotifier) {

@@ -1,7 +1,7 @@
 import type { EventNotifier } from '../../notifiers/eventNotifier';
-import { EgCommonEvent } from './egCommonEvent';
+import { CommonEvent } from './commonEvent';
 
-export class EgWheelEvent extends EgCommonEvent {
+export class OnMouseEvent extends CommonEvent {
   protected readonly eventNotifier: EventNotifier;
 
   constructor($eventNotifier: EventNotifier) {
@@ -9,7 +9,9 @@ export class EgWheelEvent extends EgCommonEvent {
     this.eventNotifier = $eventNotifier;
   }
 
-  onWheel($event: WheelEvent): void {
-    this.eventNotifier.update($event);
-  }
+  onClick($event: MouseEvent): void {}
+
+  onDblClick($event: MouseEvent): void {}
+
+  onContextmenu($event: MouseEvent): void {}
 }

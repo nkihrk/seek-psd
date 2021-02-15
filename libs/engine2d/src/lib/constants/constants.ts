@@ -8,6 +8,16 @@ export enum BUTTON_STATES {
   FORWARD = 4, // X2 (forward) Mouse
   ERASER = 5, // Pen eraser button
 }
+export enum POINTER {
+  DOWN = 'pointerdown',
+  UP = 'pointerup',
+  MOVE = 'pointermove',
+  OVER = 'pointerover',
+  ENTER = 'pointerenter',
+  CANCEL = 'pointercancel',
+  OUT = 'pointerout',
+  LEAVE = 'pointerleave',
+}
 
 export const POINTER_EVENT = [
   'pointerdown',

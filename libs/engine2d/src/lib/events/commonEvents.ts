@@ -1,11 +1,23 @@
 import type { EventNotifier } from '../notifiers/eventNotifier';
-import { EgEvent } from './event/egEvent';
-import { EgMouseEvent } from './event/egMouseEvent';
-import { EgWheelEvent } from './event/egWheelEvent';
-import { EgPointerEvent } from './event/egPointerEvent';
-import { EgDragEvent } from './event/egDragEvent';
-import { EgClipboardEvent } from './event/egClipboardEvent';
-import { EgKeyboardEvent } from './event/egKeyboardEvent';
+import { addEventListeners } from '@seek-psd/utils';
+import { OnEvent } from './event/onEvent';
+import { OnMouseEvent } from './event/onMouseEvent';
+import { OnWheelEvent } from './event/onWheelEvent';
+import { OnPointerEvent } from './event/onPointerEvent';
+import { OnDragEvent } from './event/onDragEvent';
+import { OnClipboardEvent } from './event/onClipboardEvent';
+import { OnKeyboardEvent } from './event/onKeyboardEvent';
+import {
+  POINTER_EVENT,
+  WHEEL_EVENT,
+  CLICK_EVENT,
+  CONTEXTMENU_EVENT,
+  VIEW_EVENT,
+  NETWORK_EVENT,
+  DRAG_EVENT,
+  CLIPBOARD_EVENT,
+  KEYBOARD_EVENT,
+} from '../constants/constants';
 
 export abstract class CommonEvents {
   private readonly eventNotifier: EventNotifier;
@@ -17,8 +29,63 @@ export abstract class CommonEvents {
 
   abstract start(): void;
 
-  protected onPointerEvent($event: PointerEvent): void {
-    const e = new EgPointerEvent(this.eventNotifier);
+  protected pointerEvent(
+    $element: Window | Document | HTMLCanvasElement
+  ): void {
+    const f = (e) => this._onPointerEvent(e);
+    addEventListeners(POINTER_EVENT, $element, f);
+  }
+
+  protected wheelEvent($element: Window | Document | HTMLCanvasElement): void {
+    const f = (e) => this._onWheelEvent(e);
+    addEventListeners(WHEEL_EVENT, $element, f);
+  }
+
+  protected clickEvent($element: Window | Document | HTMLCanvasElement): void {
+    const f = (e) => this._onMouseEvent(e);
+    addEventListeners(CLICK_EVENT, $element, f);
+  }
+
+  protected contextmenuEvent(
+    $element: Window | Document | HTMLCanvasElement
+  ): void {
+    const f = (e) => this._onMouseEvent(e);
+    addEventListeners(CONTEXTMENU_EVENT, $element, f);
+  }
+
+  protected viewEvent($element: Window | Document | HTMLCanvasElement): void {
+    const f = (e) => this._onSystemEvent(e);
+    addEventListeners(VIEW_EVENT, $element, f);
+  }
+
+  protected networkEvent(
+    $element: Window | Document | HTMLCanvasElement
+  ): void {
+    const f = (e) => this._onSystemEvent(e);
+    addEventListeners(NETWORK_EVENT, $element, f);
+  }
+
+  protected dragEvent($element: Window | Document | HTMLCanvasElement): void {
+    const f = (e) => this._onDragEvent(e);
+    addEventListeners(DRAG_EVENT, $element, f);
+  }
+
+  protected clipboardEvent(
+    $element: Window | Document | HTMLCanvasElement
+  ): void {
+    const f = (e) => this._onClipboardEvent(e);
+    addEventListeners(CLIPBOARD_EVENT, $element, f);
+  }
+
+  protected keyboardEvent(
+    $element: Window | Document | HTMLCanvasElement
+  ): void {
+    const f = (e) => this._onKeyboardEvent(e);
+    addEventListeners(KEYBOARD_EVENT, $element, f);
+  }
+
+  private _onPointerEvent($event: PointerEvent): void {
+    const e = new OnPointerEvent(this.eventNotifier);
 
     switch ($event.type) {
       case 'pointerdown':
@@ -54,8 +121,8 @@ export abstract class CommonEvents {
     }
   }
 
-  protected onWheelEvent($event: WheelEvent): void {
-    const e = new EgWheelEvent(this.eventNotifier);
+  private _onWheelEvent($event: WheelEvent): void {
+    const e = new OnWheelEvent(this.eventNotifier);
 
     switch ($event.type) {
       case 'wheel':
@@ -64,8 +131,8 @@ export abstract class CommonEvents {
     }
   }
 
-  protected onMouseEvent($event: MouseEvent): void {
-    const e = new EgMouseEvent(this.eventNotifier);
+  private _onMouseEvent($event: MouseEvent): void {
+    const e = new OnMouseEvent(this.eventNotifier);
 
     switch ($event.type) {
       case 'click':
@@ -82,8 +149,8 @@ export abstract class CommonEvents {
     }
   }
 
-  protected onSystemEvent($event: Event): void {
-    const e = new EgEvent(this.eventNotifier);
+  private _onSystemEvent($event: Event): void {
+    const e = new OnEvent(this.eventNotifier);
 
     switch ($event.type) {
       case 'fullscreenchange':
@@ -104,8 +171,8 @@ export abstract class CommonEvents {
     }
   }
 
-  protected onDragEvent($event: DragEvent): void {
-    const e = new EgDragEvent(this.eventNotifier);
+  private _onDragEvent($event: DragEvent): void {
+    const e = new OnDragEvent(this.eventNotifier);
 
     switch ($event.type) {
       case 'drag':
@@ -138,8 +205,8 @@ export abstract class CommonEvents {
     }
   }
 
-  protected onClipboardEvent($event: ClipboardEvent): void {
-    const e = new EgClipboardEvent(this.eventNotifier);
+  private _onClipboardEvent($event: ClipboardEvent): void {
+    const e = new OnClipboardEvent(this.eventNotifier);
 
     switch ($event.type) {
       case 'cut':
@@ -156,8 +223,8 @@ export abstract class CommonEvents {
     }
   }
 
-  protected onKeyboardEvent($event: KeyboardEvent): void {
-    const e = new EgKeyboardEvent(this.eventNotifier);
+  private _onKeyboardEvent($event: KeyboardEvent): void {
+    const e = new OnKeyboardEvent(this.eventNotifier);
 
     switch ($event.type) {
       case 'keydown':
