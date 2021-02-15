@@ -1,2 +1,2 @@
 export * from './eventManager';
-export * from './coordManager';
+export * from './entities/canvas';

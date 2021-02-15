@@ -1,10 +1,11 @@
 import type { EventNotifier } from '../../notifiers/eventNotifier';
-import { CommonEvent } from './CommonEvent.interface';
+import { EgCommonEvent } from './egCommonEvent';
 
-export class SystemEvents implements CommonEvent {
-  readonly eventNotifier: EventNotifier;
+export class EgEvent extends EgCommonEvent {
+  protected readonly eventNotifier: EventNotifier;
 
   constructor($eventNotifier: EventNotifier) {
+    super();
     this.eventNotifier = $eventNotifier;
   }
 

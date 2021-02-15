@@ -8,6 +8,7 @@ import {
 } from '@angular/core';
 import { setPixelPerfect } from '@seek-psd/utils';
 import { EventManager } from '@seek-psd/engine2d';
+import { Canvas } from '@seek-psd/engine2d';
 
 export interface Layers {
   psdLayer: ElementRef<HTMLCanvasElement>;
@@ -36,7 +37,9 @@ export class CanvasComponent implements OnInit {
     // init canvas sizes with a appropriate pixel ratio
     this._initCanvas();
 
-    const eventManager = new EventManager(this.uiLayer.nativeElement);
+    const canvasEntity = new Canvas(this.uiLayer.nativeElement);
+    const eventManager = new EventManager(canvasEntity);
+    eventManager.start();
   }
 
   private _emitLayers(): void {

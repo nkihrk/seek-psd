@@ -1,4 +1,3 @@
-import { Canvas } from './entities/canvas';
 import { CanvasEntity } from './entities/entity.interface';
 import { GlobalEvents } from './events/globalEvents';
 import { UserEvents } from './events/userEvents';
@@ -7,13 +6,15 @@ import { EventNotifier } from './notifiers/eventNotifier';
 export class EventManager {
   private canvasEntity: CanvasEntity;
 
-  constructor($element: HTMLCanvasElement) {
-    this.canvasEntity = new Canvas($element);
-
-    this._initEvents();
+  constructor($canvasEntity: CanvasEntity) {
+    this.canvasEntity = $canvasEntity;
   }
 
-  private _initEvents(): void {
+  start(): void {
+    this._startEvents();
+  }
+
+  private _startEvents(): void {
     const globalEventNotifier = new EventNotifier();
     const globalEvents = new GlobalEvents(globalEventNotifier);
 
@@ -21,8 +22,8 @@ export class EventManager {
     const userEvents = new UserEvents(userEventNotifier, this.canvasEntity);
 
     // start eventListeners
-    globalEvents.init();
-    userEvents.init();
+    globalEvents.start();
+    userEvents.start();
 
     // observe events data
     this._observe(globalEventNotifier);

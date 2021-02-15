@@ -1,14 +1,17 @@
 import type { EventNotifier } from '../../notifiers/eventNotifier';
-import { CommonEvent } from './CommonEvent.interface';
+import { PointerValidator } from '../validators/pointerValidator';
+import { EgCommonEvent } from './egCommonEvent';
 
-export class PointerEvents implements CommonEvent {
-  readonly eventNotifier: EventNotifier;
+export class EgPointerEvent extends EgCommonEvent {
+  protected readonly eventNotifier: EventNotifier;
 
   constructor($eventNotifier: EventNotifier) {
+    super();
     this.eventNotifier = $eventNotifier;
   }
 
   onPointerdown($event: PointerEvent): void {
+    const e = new PointerValidator($event);
     this.eventNotifier.update($event);
   }
 
