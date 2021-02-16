@@ -1,2 +1,4 @@
-export * from './event/addEventListeners';
-export * from './canvas/pixel';
+export * from './event';
+export * from './canvas';
+export * from './array';
+export * from './math';
