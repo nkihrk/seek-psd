@@ -1,3 +1,5 @@
+/* eslint @typescript-eslint/no-explicit-any: 0 */
+
 export interface FilterResult {
   default: any;
   flags: any;
