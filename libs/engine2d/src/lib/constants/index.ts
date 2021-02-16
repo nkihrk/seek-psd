@@ -8,6 +8,19 @@ export enum BUTTON_STATES {
   FORWARD = 4, // X2 (forward) Mouse
   ERASER = 5, // Pen eraser button
 }
+export enum BUTTONS_STATES {
+  NO_BUTTON = 0,
+  LEFT_RIGHT = 3,
+  LEFT_MIDDLE = 5,
+  LEFT_BACK = 7,
+  LEFT_FORWARD = 17,
+  RIGHT_MIDDLE = 6,
+  RIGHT_BACK = 10,
+  RIGHT_FORWARD = 18,
+  MIDDLE_BACK = 12,
+  MIDDLE_FORWARD = 20,
+  BACK_FORWARD = 24,
+}
 export enum POINTER {
   DOWN = 'pointerdown',
   UP = 'pointerup',
