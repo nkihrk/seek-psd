@@ -7,8 +7,7 @@ import {
   EventEmitter,
 } from '@angular/core';
 import { setPixelPerfect } from '@seek-psd/utils';
-import { EventManager } from '@seek-psd/engine2d';
-import { Canvas } from '@seek-psd/engine2d';
+import { EventManager, Canvas } from '@seek-psd/engine2d';
 
 export interface Layers {
   psdLayer: ElementRef<HTMLCanvasElement>;
