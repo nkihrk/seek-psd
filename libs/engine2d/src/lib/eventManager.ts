@@ -1,4 +1,5 @@
-import { CanvasEntity } from './entities/entity.interface';
+import type { CanvasEntity } from './entities/entity.interface';
+import type { NotifiedEvent } from './notifiers/eventNotifier';
 import { GlobalEvents } from './events/globalEvents';
 import { UserEvents } from './events/userEvents';
 import { EventNotifier } from './notifiers/eventNotifier';
@@ -31,7 +32,7 @@ export class EventManager {
   }
 
   private _observe($eventNotifier: EventNotifier): void {
-    $eventNotifier.observer().subscribe((e) => {
+    $eventNotifier.observer().subscribe((e: NotifiedEvent) => {
       console.log(e);
     });
   }

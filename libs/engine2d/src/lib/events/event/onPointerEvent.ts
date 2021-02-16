@@ -55,15 +55,35 @@ export class OnPointerEvent extends Event {
     this.eventNotifier.update({ flags, values, default: $event });
   }
 
-  onPointerover($event: PointerEvent): void {}
+  onPointerover($event: PointerEvent): void {
+    const { flags, values } = this._getFilterContent($event);
 
-  onPointerenter($event: PointerEvent): void {}
+    this.eventNotifier.update({ flags, values, default: $event });
+  }
 
-  onPointercancel($event: PointerEvent): void {}
+  onPointerenter($event: PointerEvent): void {
+    const { flags, values } = this._getFilterContent($event);
 
-  onPointerout($event: PointerEvent): void {}
+    this.eventNotifier.update({ flags, values, default: $event });
+  }
 
-  onPointerleave($event: PointerEvent): void {}
+  onPointercancel($event: PointerEvent): void {
+    const { flags, values } = this._getFilterContent($event);
+
+    this.eventNotifier.update({ flags, values, default: $event });
+  }
+
+  onPointerout($event: PointerEvent): void {
+    const { flags, values } = this._getFilterContent($event);
+
+    this.eventNotifier.update({ flags, values, default: $event });
+  }
+
+  onPointerleave($event: PointerEvent): void {
+    const { flags, values } = this._getFilterContent($event);
+
+    this.eventNotifier.update({ flags, values, default: $event });
+  }
 
   private _getFilterContent($event: PointerEvent): FilterContent {
     const filter = new PointerMetaFilter();

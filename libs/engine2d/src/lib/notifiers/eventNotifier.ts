@@ -1,8 +1,14 @@
+import type { FilterResult } from '../events/meta-filters/metaFilter';
 import { BehaviorSubject, NextObserver, Observable } from 'rxjs';
+
+export interface NotifiedEvent {
+  type: string;
+  event: FilterResult;
+}
 
 export class EventNotifier {
   private _eventType: string;
-  private notifyEvent = new BehaviorSubject({});
+  private notifyEvent = new BehaviorSubject({} as FilterResult);
 
   constructor() {}
 
@@ -14,20 +20,22 @@ export class EventNotifier {
     this._eventType = $eventType;
   }
 
-  update($event: any): void {
+  update($event: FilterResult): void {
     this.notifyEvent.next($event);
   }
 
-  get(): any {
+  get(): FilterResult {
     return this.notifyEvent.getValue();
   }
 
-  observer(): Observable<any> {
-    const observable = new Observable<any>((observer: NextObserver<any>) => {
-      this.notifyEvent.subscribe((e) => {
-        observer.next({ eventType: this.eventType, e });
-      });
-    });
+  observer(): Observable<NotifiedEvent> {
+    const observable = new Observable<NotifiedEvent>(
+      (observer: NextObserver<NotifiedEvent>) => {
+        this.notifyEvent.subscribe((e: FilterResult) => {
+          observer.next({ type: this.eventType, event: e });
+        });
+      }
+    );
 
     return observable;
   }
