@@ -24,7 +24,7 @@ export class EventNotifier {
     this.notifyEvent.next($event);
   }
 
-  get(): FilterResult {
+  getValue(): FilterResult {
     return this.notifyEvent.getValue();
   }
 

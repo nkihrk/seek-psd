@@ -30,9 +30,6 @@ export class OnMouseEvent extends Event {
   }
 
   onContextmenu($event: MouseEvent): void {
-    // prevent contextmenu as default
-    $event.preventDefault();
-
     const { flags, values } = this._getFilterContent($event);
 
     this.eventNotifier.update({ flags, values, default: $event });
