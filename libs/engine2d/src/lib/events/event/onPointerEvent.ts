@@ -15,7 +15,10 @@ export class OnPointerEvent extends Event {
     this.eventNotifier.update(meta);
   }
 
-  onPointerup($event: PointerEvent): void {}
+  onPointerup($event: PointerEvent): void {
+    const meta = new PointerMetaFilter($event);
+    this.eventNotifier.update(meta);
+  }
 
   onPointermove($event: PointerEvent): void {}
 

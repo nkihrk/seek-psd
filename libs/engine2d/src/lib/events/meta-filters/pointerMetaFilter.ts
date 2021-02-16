@@ -43,7 +43,8 @@ export interface PointerValues {
   pressure: PointerPressureValues;
   tilt: Coord;
   twist: number;
-  coord: PointerCoordValues;
+  client: Coord;
+  movement: Coord;
 }
 
 export interface Coord {
@@ -60,11 +61,6 @@ export interface PointerMetaValues {
 export interface PointerPressureValues {
   normal: number;
   tangential: number;
-}
-
-export interface PointerCoordValues {
-  client: Coord;
-  movement: Coord;
 }
 
 export class PointerMetaFilter extends MetaFilter {
@@ -133,33 +129,36 @@ export class PointerMetaFilter extends MetaFilter {
   }
 
   private _generateStateFlags($event: PointerEvent): PointerStateFlags {
+    let buttonType: string;
     const state = {} as PointerStateFlags;
 
     switch ($event.button) {
       case BUTTON_STATES.LEFT:
-        this._generateDownUpMoveFlags($event.type, 'left', state);
+        buttonType = 'left';
         break;
 
       case BUTTON_STATES.MIDDLE:
-        this._generateDownUpMoveFlags($event.type, 'middle', state);
+        buttonType = 'middle';
         break;
 
       case BUTTON_STATES.RIGHT:
-        this._generateDownUpMoveFlags($event.type, 'right', state);
+        buttonType = 'right';
         break;
 
       case BUTTON_STATES.BACK:
-        this._generateDownUpMoveFlags($event.type, 'back', state);
+        buttonType = 'back';
         break;
 
       case BUTTON_STATES.FORWARD:
-        this._generateDownUpMoveFlags($event.type, 'forward', state);
+        buttonType = 'forward';
         break;
 
       case BUTTON_STATES.ERASER:
-        this._generateDownUpMoveFlags($event.type, 'eraser', state);
+        buttonType = 'eraser';
         break;
     }
+
+    this._generateDownUpMoveFlags($event.type, buttonType, state);
 
     return state;
   }
@@ -192,7 +191,17 @@ export class PointerMetaFilter extends MetaFilter {
     };
     const tilt: Coord = { x: $event.clientX, y: $event.clientY };
     const twist: number = $event.twist;
+    const client: Coord = { x: $event.clientX, y: $event.clientY };
+    const movement: Coord = { x: $event.movementX, y: $event.movementY };
 
-    return Object.assign({}, { meta }, { pressure }, { tilt }, { twist });
+    return Object.assign(
+      {},
+      { meta },
+      { pressure },
+      { tilt },
+      { twist },
+      { client },
+      { movement }
+    );
   }
 }
