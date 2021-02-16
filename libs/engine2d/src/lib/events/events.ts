@@ -17,9 +17,11 @@ import {
   DRAG_EVENT,
   CLIPBOARD_EVENT,
   KEYBOARD_EVENT,
-} from '../constants/constants';
+} from '../constants/index';
 
-export abstract class CommonEvents {
+type Elements = Window | Document | HTMLElement;
+
+export abstract class Events {
   private readonly eventNotifier: EventNotifier;
 
   constructor($eventType: string, $eventNotifier: EventNotifier) {
@@ -29,57 +31,47 @@ export abstract class CommonEvents {
 
   abstract start(): void;
 
-  protected pointerEvent(
-    $element: Window | Document | HTMLCanvasElement
-  ): void {
+  protected pointerEvent($element: Elements): void {
     const f = (e) => this._onPointerEvent(e);
     addEventListeners(POINTER_EVENT, $element, f);
   }
 
-  protected wheelEvent($element: Window | Document | HTMLCanvasElement): void {
+  protected wheelEvent($element: Elements): void {
     const f = (e) => this._onWheelEvent(e);
     addEventListeners(WHEEL_EVENT, $element, f);
   }
 
-  protected clickEvent($element: Window | Document | HTMLCanvasElement): void {
+  protected clickEvent($element: Elements): void {
     const f = (e) => this._onMouseEvent(e);
     addEventListeners(CLICK_EVENT, $element, f);
   }
 
-  protected contextmenuEvent(
-    $element: Window | Document | HTMLCanvasElement
-  ): void {
+  protected contextmenuEvent($element: Elements): void {
     const f = (e) => this._onMouseEvent(e);
     addEventListeners(CONTEXTMENU_EVENT, $element, f);
   }
 
-  protected viewEvent($element: Window | Document | HTMLCanvasElement): void {
+  protected viewEvent($element: Elements): void {
     const f = (e) => this._onSystemEvent(e);
     addEventListeners(VIEW_EVENT, $element, f);
   }
 
-  protected networkEvent(
-    $element: Window | Document | HTMLCanvasElement
-  ): void {
+  protected networkEvent($element: Elements): void {
     const f = (e) => this._onSystemEvent(e);
     addEventListeners(NETWORK_EVENT, $element, f);
   }
 
-  protected dragEvent($element: Window | Document | HTMLCanvasElement): void {
+  protected dragEvent($element: Elements): void {
     const f = (e) => this._onDragEvent(e);
     addEventListeners(DRAG_EVENT, $element, f);
   }
 
-  protected clipboardEvent(
-    $element: Window | Document | HTMLCanvasElement
-  ): void {
+  protected clipboardEvent($element: Elements): void {
     const f = (e) => this._onClipboardEvent(e);
     addEventListeners(CLIPBOARD_EVENT, $element, f);
   }
 
-  protected keyboardEvent(
-    $element: Window | Document | HTMLCanvasElement
-  ): void {
+  protected keyboardEvent($element: Elements): void {
     const f = (e) => this._onKeyboardEvent(e);
     addEventListeners(KEYBOARD_EVENT, $element, f);
   }

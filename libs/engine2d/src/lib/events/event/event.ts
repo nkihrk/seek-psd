@@ -1,5 +1,5 @@
 import type { EventNotifier } from '../../notifiers/eventNotifier';
 
-export abstract class CommonEvent {
+export abstract class Event {
   protected abstract readonly eventNotifier: EventNotifier;
 }

@@ -1,7 +1,7 @@
 import type { EventNotifier } from '../../notifiers/eventNotifier';
-import { CommonEvent } from './commonEvent';
+import { Event } from './event';
 
-export class OnWheelEvent extends CommonEvent {
+export class OnWheelEvent extends Event {
   protected readonly eventNotifier: EventNotifier;
 
   constructor($eventNotifier: EventNotifier) {
@@ -9,7 +9,5 @@ export class OnWheelEvent extends CommonEvent {
     this.eventNotifier = $eventNotifier;
   }
 
-  onWheel($event: WheelEvent): void {
-    this.eventNotifier.update($event);
-  }
+  onWheel($event: WheelEvent): void {}
 }

@@ -1,8 +1,8 @@
 import type { EventNotifier } from '../../notifiers/eventNotifier';
-import { PointerValidator } from '../validators/pointerValidator';
-import { CommonEvent } from './commonEvent';
+import { PointerMetaFilter } from '../meta-filters/pointerMetaFilter';
+import { Event } from './event';
 
-export class OnPointerEvent extends CommonEvent {
+export class OnPointerEvent extends Event {
   protected readonly eventNotifier: EventNotifier;
 
   constructor($eventNotifier: EventNotifier) {
@@ -11,8 +11,8 @@ export class OnPointerEvent extends CommonEvent {
   }
 
   onPointerdown($event: PointerEvent): void {
-    const e = new PointerValidator($event);
-    this.eventNotifier.update($event);
+    const meta = new PointerMetaFilter($event);
+    this.eventNotifier.update(meta);
   }
 
   onPointerup($event: PointerEvent): void {}

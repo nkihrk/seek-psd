@@ -1,7 +1,7 @@
 import type { EventNotifier } from '../../notifiers/eventNotifier';
-import { CommonEvent } from './commonEvent';
+import { Event } from './event';
 
-export class OnKeyboardEvent extends CommonEvent {
+export class OnKeyboardEvent extends Event {
   protected readonly eventNotifier: EventNotifier;
 
   constructor($eventNotifier: EventNotifier) {

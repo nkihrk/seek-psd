@@ -1,7 +1,7 @@
 import type { EventNotifier } from '../notifiers/eventNotifier';
-import { CommonEvents } from './commonEvents';
+import { Events } from './events';
 
-export class GlobalEvents extends CommonEvents {
+export class GlobalEvents extends Events {
   constructor($eventNotifier: EventNotifier) {
     super('global', $eventNotifier);
   }

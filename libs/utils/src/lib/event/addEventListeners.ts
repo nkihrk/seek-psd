@@ -1,6 +1,6 @@
 export function addEventListeners(
   $eventList: string[],
-  $element: Window | Document | HTMLCanvasElement,
+  $element: Window | Document | HTMLElement,
   $callback: (e) => void
 ): void {
   for (let i = 0; i < $eventList.length; i++) {

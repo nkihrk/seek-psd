@@ -1,8 +1,8 @@
 import type { EventNotifier } from '../notifiers/eventNotifier';
-import { CommonEvents } from './commonEvents';
+import { Events } from './events';
 import { CanvasEntity } from '../entities/entity.interface';
 
-export class UserEvents extends CommonEvents {
+export class UserEvents extends Events {
   private readonly canvasEntity: CanvasEntity;
 
   constructor($eventNotifier: EventNotifier, $canvasEntity: CanvasEntity) {
