@@ -2,8 +2,15 @@ import { MetaFilter } from './metaFilter';
 import { BUTTON_STATES, POINTER } from '../../constants/index';
 
 export interface PointerFlags {
+  meta: PointerMetaFlags;
   base: PointerBaseFlags;
   state: PointerStateFlags;
+}
+
+export interface PointerMetaFlags {
+  isPrimary: boolean;
+  isTouch: boolean;
+  isMultiTouch?: boolean;
 }
 
 export interface PointerBaseFlags {
@@ -45,6 +52,7 @@ export interface PointerValues {
   twist: number;
   client: Coord;
   movement: Coord;
+  touch: Coord; // a center coordinate of two clients
 }
 
 export interface Coord {
@@ -55,7 +63,6 @@ export interface Coord {
 export interface PointerMetaValues {
   id: number;
   type: string;
-  isPrimary: boolean;
 }
 
 export interface PointerPressureValues {
@@ -67,10 +74,8 @@ export class PointerMetaFilter extends MetaFilter {
   private _flags = {} as PointerFlags;
   private _values = {} as PointerValues;
 
-  constructor($event: PointerEvent) {
+  constructor() {
     super();
-    this._flags = this._generateFlags($event);
-    this._values = this._generateValues($event);
   }
 
   get flags(): PointerFlags {
@@ -81,11 +86,26 @@ export class PointerMetaFilter extends MetaFilter {
     return this._values;
   }
 
+  init($event: PointerEvent): void {
+    this._flags = this._generateFlags($event);
+    this._values = this._generateValues($event);
+  }
+
   private _generateFlags($event: PointerEvent): PointerFlags {
+    const meta: PointerMetaFlags = this._generateMetaFlags($event);
     const base: PointerBaseFlags = this._generateBaseFlags($event);
     const state: PointerStateFlags = this._generateStateFlags($event);
 
-    return Object.assign({}, { base }, { state });
+    return Object.assign({}, { meta }, { base }, { state });
+  }
+
+  private _generateMetaFlags($event: PointerEvent): PointerMetaFlags {
+    const meta: PointerMetaFlags = {
+      isPrimary: $event.isPrimary,
+      isTouch: $event.pointerType === 'touch',
+    };
+
+    return meta;
   }
 
   private _generateBaseFlags($event: PointerEvent): PointerBaseFlags {
@@ -158,7 +178,8 @@ export class PointerMetaFilter extends MetaFilter {
         break;
     }
 
-    this._generateDownUpMoveFlags($event.type, buttonType, state);
+    if (buttonType)
+      this._generateDownUpMoveFlags($event.type, buttonType, state);
 
     return state;
   }
@@ -183,7 +204,6 @@ export class PointerMetaFilter extends MetaFilter {
     const meta: PointerMetaValues = {
       id: $event.pointerId,
       type: $event.pointerType,
-      isPrimary: $event.isPrimary,
     };
     const pressure: PointerPressureValues = {
       normal: $event.pressure,
