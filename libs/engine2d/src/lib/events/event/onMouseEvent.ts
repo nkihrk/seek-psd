@@ -13,5 +13,7 @@ export class OnMouseEvent extends Event {
 
   onDblClick($event: MouseEvent): void {}
 
-  onContextmenu($event: MouseEvent): void {}
+  onContextmenu($event: MouseEvent): void {
+    $event.preventDefault();
+  }
 }
