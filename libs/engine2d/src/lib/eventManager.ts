@@ -1,14 +1,16 @@
-import type { CanvasEntity } from './entities/entity.interface';
+import type { Entity } from './entities/entity.interface';
 import type { NotifiedEvent } from './notifiers/eventNotifier';
 import { GlobalEvents } from './events/globalEvents';
 import { UserEvents } from './events/userEvents';
 import { EventNotifier } from './notifiers/eventNotifier';
 
 export class EventManager {
-  private canvasEntity: CanvasEntity;
+  private entities: Entity[] = [];
 
-  constructor($canvasEntity: CanvasEntity) {
-    this.canvasEntity = $canvasEntity;
+  constructor() {}
+
+  addEntity($entity: Entity): void {
+    this.entities.push($entity);
   }
 
   start(): void {
@@ -18,17 +20,19 @@ export class EventManager {
   private _startEvents(): void {
     const globalEventNotifier = new EventNotifier();
     const globalEvents = new GlobalEvents(globalEventNotifier);
-
-    const userEventNotifier = new EventNotifier();
-    const userEvents = new UserEvents(userEventNotifier, this.canvasEntity);
-
-    // start eventListeners
+    // start eventListener
     globalEvents.start();
-    userEvents.start();
-
     // observe events data
     this._observe(globalEventNotifier);
-    this._observe(userEventNotifier);
+
+    if (this.entities) {
+      for (let i = 0; i < this.entities.length; i++) {
+        const userEventNotifier = new EventNotifier();
+        const userEvents = new UserEvents(userEventNotifier, this.entities[i]);
+        userEvents.start();
+        this._observe(userEventNotifier);
+      }
+    }
   }
 
   private _observe($eventNotifier: EventNotifier): void {

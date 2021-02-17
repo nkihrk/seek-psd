@@ -1,30 +1,30 @@
 import type { EventNotifier } from '../notifiers/eventNotifier';
+import type { Entity } from '../entities/entity.interface';
 import { Events } from './events';
-import { CanvasEntity } from '../entities/entity.interface';
 
 export class UserEvents extends Events {
-  private readonly canvasEntity: CanvasEntity;
+  private readonly entity: Entity;
 
-  constructor($eventNotifier: EventNotifier, $canvasEntity: CanvasEntity) {
+  constructor($eventNotifier: EventNotifier, $entity: Entity) {
     super('user', $eventNotifier);
 
-    this.canvasEntity = $canvasEntity;
+    this.entity = $entity;
   }
 
   start(): void {
     // pointer events
-    this.pointerEvent(this.canvasEntity.element);
+    this.pointerEvent(this.entity.element);
 
     // wheel event
-    this.wheelEvent(this.canvasEntity.element);
+    this.wheelEvent(this.entity.element);
 
     // click events
-    this.clickEvent(this.canvasEntity.element);
+    this.clickEvent(this.entity.element);
 
     // contextmenu event
-    this.contextmenuEvent(this.canvasEntity.element);
+    this.contextmenuEvent(this.entity.element);
 
     // drag&drop events
-    this.dragEvent(this.canvasEntity.element);
+    this.dragEvent(this.entity.element);
   }
 }

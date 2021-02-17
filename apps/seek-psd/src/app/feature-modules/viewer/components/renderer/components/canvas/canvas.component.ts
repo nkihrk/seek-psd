@@ -37,7 +37,10 @@ export class CanvasComponent implements OnInit {
     this._initCanvas();
 
     const canvasEntity = new Canvas(this.uiLayer.nativeElement);
-    const eventManager = new EventManager(canvasEntity);
+    const eventManager = new EventManager();
+    // add entity
+    eventManager.addEntity(canvasEntity);
+    // start listening events
     eventManager.start();
   }
 

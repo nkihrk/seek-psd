@@ -1,8 +1,8 @@
-export interface Entity {}
-
-export interface CanvasEntity extends Entity {
-  readonly element: HTMLCanvasElement;
+export interface Entity {
+  readonly element: HTMLElement;
 }
+
+export interface CanvasEntity extends Entity {}
 
 export interface ElementEntity extends Entity {}
 
