@@ -1,8 +1,14 @@
 import { MetaFilter } from './metaFilter';
 
-export interface WheelFlags {}
+export interface WheelFlags {
+  isWheelStart: boolean;
+}
 
-export interface WheelValues {}
+export interface WheelValues {
+  deltaX: number;
+  deltaY: number;
+  deltaZ: number;
+}
 
 export class WheelMetaFilter extends MetaFilter {
   private _flags = {} as WheelFlags;
@@ -21,15 +27,21 @@ export class WheelMetaFilter extends MetaFilter {
   }
 
   init($event: WheelEvent): void {
-    this._flags = this._generateFlags($event);
+    this._flags = this._generateFlags();
     this._values = this._generateValues($event);
   }
 
-  private _generateFlags($event: WheelEvent): WheelFlags {
-    return undefined;
+  private _generateFlags(): WheelFlags {
+    return { isWheelStart: false };
   }
 
   private _generateValues($event: WheelEvent): WheelValues {
-    return undefined;
+    const values: WheelValues = {
+      deltaX: $event.deltaX,
+      deltaY: $event.deltaY,
+      deltaZ: $event.deltaZ,
+    };
+
+    return values;
   }
 }

@@ -58,3 +58,4 @@ export const DRAG_EVENT = [
 ];
 export const CLIPBOARD_EVENT = ['cut', 'copy', 'paste'];
 export const KEYBOARD_EVENT = ['keydown', 'keyup', 'keypress'];
+export const WHEEL_INTERVAL = 500;
