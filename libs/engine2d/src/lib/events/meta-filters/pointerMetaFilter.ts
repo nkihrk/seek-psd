@@ -1,5 +1,6 @@
 import { MetaFilter } from './metaFilter';
 import { BUTTON_STATES, POINTER } from '../../constants/index';
+import { getButtonValue, getButtonsValue } from './utils/index';
 
 export interface PointerFlags {
   meta: PointerMetaFlags;
@@ -10,7 +11,11 @@ export interface PointerFlags {
 export interface PointerMetaFlags {
   isPrimary: boolean;
   isTouch: boolean;
-  isMultiTouch?: boolean;
+  isMultiTouch: boolean;
+  isAltKey: boolean;
+  isCtrlKey: boolean;
+  isMetaKey: boolean;
+  isShiftKey: boolean;
 }
 
 export interface PointerBaseFlags {
@@ -25,24 +30,18 @@ export interface PointerBaseFlags {
 }
 
 export interface PointerStateFlags {
-  isRightdown: boolean;
-  isRightup: boolean;
-  isRightmove: boolean;
-  isLeftdown: boolean;
-  isLeftup: boolean;
-  isLeftmove: boolean;
-  isMiddledown: boolean;
-  isMiddleup: boolean;
-  isMiddlemove: boolean;
-  isBackdown: boolean;
-  isBackup: boolean;
-  isBackmove: boolean;
-  isForwarddown: boolean;
-  isForwardup: boolean;
-  isForwardmove: boolean;
-  isEraserdown: boolean;
-  isEraserup: boolean;
-  isErasermove: boolean;
+  isRightDown: boolean;
+  isRightUp: boolean;
+  isLeftDown: boolean;
+  isLeftUp: boolean;
+  isMiddleDown: boolean;
+  isMiddleUp: boolean;
+  isBackDown: boolean;
+  isBackUp: boolean;
+  isForwardDown: boolean;
+  isForwardUp: boolean;
+  isEraserDown: boolean;
+  isEraserUp: boolean;
 }
 
 export interface PointerValues {
@@ -53,6 +52,8 @@ export interface PointerValues {
   client: Coord;
   movement: Coord;
   touch: Coord; // a center coordinate of two clients
+  button: string;
+  buttons: string[];
 }
 
 export interface Coord {
@@ -96,6 +97,8 @@ export class PointerMetaFilter extends MetaFilter<PointerFlags, PointerValues> {
     const twist: number = $event.twist;
     const client: Coord = { x: $event.clientX, y: $event.clientY };
     const movement: Coord = { x: $event.movementX, y: $event.movementY };
+    const button: string = getButtonValue($event.button);
+    const buttons: string[] = getButtonsValue($event.buttons);
 
     return Object.assign(
       {},
@@ -104,7 +107,9 @@ export class PointerMetaFilter extends MetaFilter<PointerFlags, PointerValues> {
       { tilt },
       { twist },
       { client },
-      { movement }
+      { movement },
+      { button },
+      { buttons }
     );
   }
 
@@ -112,6 +117,11 @@ export class PointerMetaFilter extends MetaFilter<PointerFlags, PointerValues> {
     const meta: PointerMetaFlags = {
       isPrimary: $event.isPrimary,
       isTouch: $event.pointerType === 'touch',
+      isMultiTouch: false, // will be changed at onPointerEvent
+      isAltKey: $event.altKey,
+      isCtrlKey: $event.ctrlKey,
+      isMetaKey: $event.metaKey,
+      isShiftKey: $event.shiftKey,
     };
 
     return meta;
@@ -122,35 +132,35 @@ export class PointerMetaFilter extends MetaFilter<PointerFlags, PointerValues> {
 
     switch ($event.type) {
       case POINTER.DOWN:
-        base['down'] = true;
+        base.isDown = true;
         break;
 
       case POINTER.UP:
-        base['up'] = true;
+        base.isUp = true;
         break;
 
       case POINTER.MOVE:
-        base['move'] = true;
+        base.isMove = true;
         break;
 
       case POINTER.OVER:
-        base['over'] = true;
+        base.isOver = true;
         break;
 
       case POINTER.ENTER:
-        base['enter'] = true;
+        base.isEnter = true;
         break;
 
       case POINTER.CANCEL:
-        base['cancel'] = true;
+        base.isCancel = true;
         break;
 
       case POINTER.OUT:
-        base['out'] = true;
+        base.isOut = true;
         break;
 
       case POINTER.LEAVE:
-        base['leave'] = true;
+        base.isLeave = true;
         break;
     }
 
@@ -158,37 +168,38 @@ export class PointerMetaFilter extends MetaFilter<PointerFlags, PointerValues> {
   }
 
   private _generateStateFlags($event: PointerEvent): PointerStateFlags {
-    let buttonType: string;
-    const state = {} as PointerStateFlags;
+    let buttonType = '';
+    let state = {} as PointerStateFlags;
 
     switch ($event.button) {
       case BUTTON_STATES.LEFT:
-        buttonType = 'left';
+        buttonType = 'Left';
         break;
 
       case BUTTON_STATES.MIDDLE:
-        buttonType = 'middle';
+        buttonType = 'Middle';
         break;
 
       case BUTTON_STATES.RIGHT:
-        buttonType = 'right';
+        buttonType = 'Right';
         break;
 
       case BUTTON_STATES.BACK:
-        buttonType = 'back';
+        buttonType = 'Back';
         break;
 
       case BUTTON_STATES.FORWARD:
-        buttonType = 'forward';
+        buttonType = 'Forward';
         break;
 
       case BUTTON_STATES.ERASER:
-        buttonType = 'eraser';
+        buttonType = 'Eraser';
         break;
     }
 
-    if (buttonType)
-      this._generateDownUpMoveFlags($event.type, buttonType, state);
+    if (buttonType) {
+      state = this._generateDownUpMoveFlags($event.type, buttonType, state);
+    }
 
     return state;
   }
@@ -198,14 +209,14 @@ export class PointerMetaFilter extends MetaFilter<PointerFlags, PointerValues> {
     $buttonType: string,
     $flags: PointerStateFlags
   ): PointerStateFlags {
+    const flags: PointerStateFlags = Object.assign({}, $flags);
+
     if ($type === POINTER.DOWN) {
-      $flags[`${$buttonType}down`] = true;
+      flags[`is${$buttonType}Down`] = true;
     } else if ($type === POINTER.UP) {
-      $flags[`${$buttonType}up`] = true;
-    } else if ($type === POINTER.MOVE) {
-      $flags[`${$buttonType}move`] = true;
+      flags[`is${$buttonType}Up`] = true;
     }
 
-    return $flags;
+    return flags;
   }
 }
