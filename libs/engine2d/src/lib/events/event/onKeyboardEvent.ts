@@ -6,11 +6,11 @@ import type {
 import { KeyboardMetaFilter } from '../meta-filters/keyboardMetaFilter';
 import { Event } from './event';
 
-type FilterContent = {
+interface FilterContent {
   flags: KeyboardFlags;
   values: KeyboardValues;
   filter: KeyboardMetaFilter;
-};
+}
 
 export class OnKeyboardEvent extends Event {
   constructor($eventNotifier: EventNotifier) {

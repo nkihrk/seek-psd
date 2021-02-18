@@ -7,11 +7,11 @@ import { PointerMetaFilter } from '../meta-filters/pointerMetaFilter';
 import { Event } from './event';
 import { removeItem, getCenterCoord } from '@seek-psd/utils';
 
-type FilterContent = {
+interface FilterContent {
   flags: PointerFlags;
   values: PointerValues;
   filter: PointerMetaFilter;
-};
+}
 
 export class OnPointerEvent extends Event {
   private ongoingTouches: PointerMetaFilter[] = [];
