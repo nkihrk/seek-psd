@@ -2,10 +2,10 @@ import { MetaFilter } from './metaFilter';
 import { BUTTON_STATES, BUTTONS_STATES } from '../../constants/index';
 
 export interface MouseFlags {
-  altKey: boolean;
-  ctrlKey: boolean;
-  metaKey: boolean;
-  shiftKey: boolean;
+  isAltKey: boolean;
+  isCtrlKey: boolean;
+  isMetaKey: boolean;
+  isShiftKey: boolean;
 }
 
 export interface MouseValues {
@@ -20,10 +20,10 @@ export class MouseMetaFilter extends MetaFilter<MouseFlags, MouseValues> {
 
   protected generateFlags($event: MouseEvent): MouseFlags {
     const flags: MouseFlags = {
-      altKey: $event.altKey,
-      ctrlKey: $event.ctrlKey,
-      metaKey: $event.metaKey,
-      shiftKey: $event.shiftKey,
+      isAltKey: $event.altKey,
+      isCtrlKey: $event.ctrlKey,
+      isMetaKey: $event.metaKey,
+      isShiftKey: $event.shiftKey,
     };
 
     return flags;

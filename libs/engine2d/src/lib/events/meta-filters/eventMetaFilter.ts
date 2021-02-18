@@ -1,7 +1,12 @@
 import { MetaFilter } from './metaFilter';
 
-export interface EventFlags {}
+export interface EventFlags {
+  isFullscreen: boolean;
+  isFullscreenSupported: boolean;
+  isOnline: boolean;
+}
 
+// eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface EventValues {}
 
 export class EventMetaFilter extends MetaFilter<EventFlags, EventValues> {
@@ -10,10 +15,14 @@ export class EventMetaFilter extends MetaFilter<EventFlags, EventValues> {
   }
 
   protected generateFlags(): EventFlags {
-    return undefined;
+    return {
+      isFullscreen: !!document.fullscreenElement,
+      isFullscreenSupported: document.fullscreenEnabled,
+      isOnline: navigator.onLine,
+    };
   }
 
-  protected generateValues($event: Event): EventValues {
-    return undefined;
+  protected generateValues(): EventValues {
+    return {};
   }
 }

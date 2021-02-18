@@ -2,13 +2,13 @@ import { MetaFilter } from './metaFilter';
 import { KEY_LOCATION } from '../../constants/index';
 
 export interface KeyboardFlags {
-  altKey: boolean;
-  ctrlKey: boolean;
-  metaKey: boolean;
-  shiftKey: boolean;
-  repeat: boolean;
-  keydown: boolean;
-  keyup: boolean;
+  isAltKey: boolean;
+  isCtrlKey: boolean;
+  isMetaKey: boolean;
+  isShiftKey: boolean;
+  isRepeat: boolean;
+  isKeydown: boolean;
+  isKeyup: boolean;
 }
 
 export interface KeyboardValues {
@@ -26,13 +26,13 @@ export class KeyboardMetaFilter extends MetaFilter<
 
   protected generateFlags($event: KeyboardEvent): KeyboardFlags {
     const flags: KeyboardFlags = {
-      altKey: $event.altKey,
-      ctrlKey: $event.ctrlKey,
-      metaKey: $event.metaKey,
-      shiftKey: $event.shiftKey,
-      repeat: $event.repeat,
-      keydown: false, // will be changed at onKeyboardEvent
-      keyup: false, // will be changed at onKeyboardEvent
+      isAltKey: $event.altKey,
+      isCtrlKey: $event.ctrlKey,
+      isMetaKey: $event.metaKey,
+      isShiftKey: $event.shiftKey,
+      isRepeat: $event.repeat,
+      isKeydown: false, // will be changed at onKeyboardEvent
+      isKeyup: false, // will be changed at onKeyboardEvent
     };
 
     return flags;

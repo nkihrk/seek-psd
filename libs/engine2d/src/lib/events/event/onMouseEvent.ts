@@ -3,11 +3,11 @@ import type { MouseFlags, MouseValues } from '../meta-filters/mouseMetaFilter';
 import { MouseMetaFilter } from '../meta-filters/mouseMetaFilter';
 import { Event } from './event';
 
-type FilterContent = {
+interface FilterContent {
   flags: MouseFlags;
   values: MouseValues;
   filter: MouseMetaFilter;
-};
+}
 
 export class OnMouseEvent extends Event {
   constructor($eventNotifier: EventNotifier) {

@@ -20,7 +20,7 @@ export class GlobalEvents extends Events {
     this.contextmenuEvent(document);
 
     // view events
-    this.viewEvent(window);
+    this.viewEvent(document);
 
     // network events
     this.networkEvent(window);

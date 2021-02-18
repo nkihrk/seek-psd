@@ -14,35 +14,35 @@ export interface PointerMetaFlags {
 }
 
 export interface PointerBaseFlags {
-  down: boolean;
-  up: boolean;
-  move: boolean;
-  over: boolean;
-  enter: boolean;
-  cancel: boolean;
-  out: boolean;
-  leave: boolean;
+  isDown: boolean;
+  isUp: boolean;
+  isMove: boolean;
+  isOver: boolean;
+  isEnter: boolean;
+  isCancel: boolean;
+  isOut: boolean;
+  isLeave: boolean;
 }
 
 export interface PointerStateFlags {
-  rightdown: boolean;
-  rightup: boolean;
-  rightmove: boolean;
-  leftdown: boolean;
-  leftup: boolean;
-  leftmove: boolean;
-  middledown: boolean;
-  middleup: boolean;
-  middlemove: boolean;
-  backdown: boolean;
-  backup: boolean;
-  backmove: boolean;
-  forwarddown: boolean;
-  forwardup: boolean;
-  forwardmove: boolean;
-  eraserdown: boolean;
-  eraserup: boolean;
-  erasermove: boolean;
+  isRightdown: boolean;
+  isRightup: boolean;
+  isRightmove: boolean;
+  isLeftdown: boolean;
+  isLeftup: boolean;
+  isLeftmove: boolean;
+  isMiddledown: boolean;
+  isMiddleup: boolean;
+  isMiddlemove: boolean;
+  isBackdown: boolean;
+  isBackup: boolean;
+  isBackmove: boolean;
+  isForwarddown: boolean;
+  isForwardup: boolean;
+  isForwardmove: boolean;
+  isEraserdown: boolean;
+  isEraserup: boolean;
+  isErasermove: boolean;
 }
 
 export interface PointerValues {

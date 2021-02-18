@@ -20,7 +20,7 @@ export class OnKeyboardEvent extends Event {
   onKeydown($event: KeyboardEvent): void {
     const { flags, values } = this._getFilterContent($event);
 
-    flags.keydown = true;
+    flags.isKeydown = true;
 
     // notify to the eventManager
     this.eventNotifier.update({ flags, values, default: $event });
@@ -29,7 +29,7 @@ export class OnKeyboardEvent extends Event {
   onKeyup($event: KeyboardEvent): void {
     const { flags, values } = this._getFilterContent($event);
 
-    flags.keyup = true;
+    flags.isKeyup = true;
 
     // notify to the eventManager
     this.eventNotifier.update({ flags, values, default: $event });
