@@ -1,8 +1,14 @@
 import { MetaFilter } from './metaFilter';
 
-export interface ClipboardFlags {}
+export interface ClipboardFlags {
+  isCut: boolean;
+  isCopy: boolean;
+  isPaste: boolean;
+}
 
-export interface ClipboardValues {}
+export interface ClipboardValues {
+  data: DataTransfer;
+}
 
 export class ClipboardMetaFilter extends MetaFilter<
   ClipboardFlags,
@@ -12,11 +18,17 @@ export class ClipboardMetaFilter extends MetaFilter<
     super();
   }
 
-  protected generateFlags($event: ClipboardEvent): ClipboardFlags {
-    return undefined;
+  protected generateFlags(): ClipboardFlags {
+    return {
+      isCut: false, // will be changed at onClipboardEvent
+      isCopy: false, // will be changed at onClipboardEvent
+      isPaste: false, // will be changed at onClipboardEvent
+    };
   }
 
   protected generateValues($event: ClipboardEvent): ClipboardValues {
-    return undefined;
+    return {
+      data: $event.clipboardData || null,
+    };
   }
 }
