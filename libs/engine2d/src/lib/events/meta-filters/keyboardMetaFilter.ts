@@ -16,28 +16,15 @@ export interface KeyboardValues {
   key: string;
 }
 
-export class KeyboardMetaFilter extends MetaFilter {
-  private _flags = {} as KeyboardFlags;
-  private _values = {} as KeyboardValues;
-
+export class KeyboardMetaFilter extends MetaFilter<
+  KeyboardFlags,
+  KeyboardValues
+> {
   constructor() {
     super();
   }
 
-  get flags(): KeyboardFlags {
-    return this._flags;
-  }
-
-  get values(): KeyboardValues {
-    return this._values;
-  }
-
-  init($event: KeyboardEvent): void {
-    this._flags = this._generateFlags($event);
-    this._values = this._generateValues($event);
-  }
-
-  private _generateFlags($event: KeyboardEvent): KeyboardFlags {
+  protected generateFlags($event: KeyboardEvent): KeyboardFlags {
     const flags: KeyboardFlags = {
       altKey: $event.altKey,
       ctrlKey: $event.ctrlKey,
@@ -51,7 +38,7 @@ export class KeyboardMetaFilter extends MetaFilter {
     return flags;
   }
 
-  private _generateValues($event: KeyboardEvent): KeyboardValues {
+  protected generateValues($event: KeyboardEvent): KeyboardValues {
     const values: KeyboardValues = {
       key: $event.key,
       location: this._getLocation($event.location),

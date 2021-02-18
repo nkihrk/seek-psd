@@ -2,11 +2,8 @@ import type { EventNotifier } from '../../notifiers/eventNotifier';
 import { Event } from './event';
 
 export class OnDragEvent extends Event {
-  protected readonly eventNotifier: EventNotifier;
-
   constructor($eventNotifier: EventNotifier) {
-    super();
-    this.eventNotifier = $eventNotifier;
+    super($eventNotifier);
   }
 
   onDrag($event: DragEvent): void {}

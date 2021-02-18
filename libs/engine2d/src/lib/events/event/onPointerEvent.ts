@@ -14,12 +14,10 @@ type FilterContent = {
 };
 
 export class OnPointerEvent extends Event {
-  protected readonly eventNotifier: EventNotifier;
   private ongoingTouches: PointerMetaFilter[] = [];
 
   constructor($eventNotifier: EventNotifier) {
-    super();
-    this.eventNotifier = $eventNotifier;
+    super($eventNotifier);
   }
 
   onPointerdown($event: PointerEvent): void {

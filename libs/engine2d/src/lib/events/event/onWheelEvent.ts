@@ -5,14 +5,12 @@ import { Event } from './event';
 import { WHEEL_INTERVAL } from '../../constants/index';
 
 export class OnWheelEvent extends Event {
-  protected readonly eventNotifier: EventNotifier;
   private wheelCounter1 = 0;
   private wheelCounter2 = 0;
   private wheelMaker = true;
 
   constructor($eventNotifier: EventNotifier) {
-    super();
-    this.eventNotifier = $eventNotifier;
+    super($eventNotifier);
   }
 
   onWheel($event: WheelEvent): void {

@@ -10,32 +10,16 @@ export interface WheelValues {
   deltaZ: number;
 }
 
-export class WheelMetaFilter extends MetaFilter {
-  private _flags = {} as WheelFlags;
-  private _values = {} as WheelValues;
-
+export class WheelMetaFilter extends MetaFilter<WheelFlags, WheelValues> {
   constructor() {
     super();
   }
 
-  get flags(): WheelFlags {
-    return this._flags;
-  }
-
-  get values(): WheelValues {
-    return this._values;
-  }
-
-  init($event: WheelEvent): void {
-    this._flags = this._generateFlags();
-    this._values = this._generateValues($event);
-  }
-
-  private _generateFlags(): WheelFlags {
+  protected generateFlags(): WheelFlags {
     return { isWheelStart: false };
   }
 
-  private _generateValues($event: WheelEvent): WheelValues {
+  protected generateValues($event: WheelEvent): WheelValues {
     const values: WheelValues = {
       deltaX: $event.deltaX,
       deltaY: $event.deltaY,

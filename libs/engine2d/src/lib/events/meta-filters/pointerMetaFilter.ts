@@ -70,33 +70,42 @@ export interface PointerPressureValues {
   tangential: number;
 }
 
-export class PointerMetaFilter extends MetaFilter {
-  private _flags = {} as PointerFlags;
-  private _values = {} as PointerValues;
-
+export class PointerMetaFilter extends MetaFilter<PointerFlags, PointerValues> {
   constructor() {
     super();
   }
 
-  get flags(): PointerFlags {
-    return this._flags;
-  }
-
-  get values(): PointerValues {
-    return this._values;
-  }
-
-  init($event: PointerEvent): void {
-    this._flags = this._generateFlags($event);
-    this._values = this._generateValues($event);
-  }
-
-  private _generateFlags($event: PointerEvent): PointerFlags {
+  protected generateFlags($event: PointerEvent): PointerFlags {
     const meta: PointerMetaFlags = this._generateMetaFlags($event);
     const base: PointerBaseFlags = this._generateBaseFlags($event);
     const state: PointerStateFlags = this._generateStateFlags($event);
 
     return Object.assign({}, { meta }, { base }, { state });
+  }
+
+  protected generateValues($event: PointerEvent): PointerValues {
+    const meta: PointerMetaValues = {
+      id: $event.pointerId,
+      type: $event.pointerType,
+    };
+    const pressure: PointerPressureValues = {
+      normal: $event.pressure,
+      tangential: $event.tangentialPressure,
+    };
+    const tilt: Coord = { x: $event.clientX, y: $event.clientY };
+    const twist: number = $event.twist;
+    const client: Coord = { x: $event.clientX, y: $event.clientY };
+    const movement: Coord = { x: $event.movementX, y: $event.movementY };
+
+    return Object.assign(
+      {},
+      { meta },
+      { pressure },
+      { tilt },
+      { twist },
+      { client },
+      { movement }
+    );
   }
 
   private _generateMetaFlags($event: PointerEvent): PointerMetaFlags {
@@ -198,30 +207,5 @@ export class PointerMetaFilter extends MetaFilter {
     }
 
     return $flags;
-  }
-
-  private _generateValues($event: PointerEvent): PointerValues {
-    const meta: PointerMetaValues = {
-      id: $event.pointerId,
-      type: $event.pointerType,
-    };
-    const pressure: PointerPressureValues = {
-      normal: $event.pressure,
-      tangential: $event.tangentialPressure,
-    };
-    const tilt: Coord = { x: $event.clientX, y: $event.clientY };
-    const twist: number = $event.twist;
-    const client: Coord = { x: $event.clientX, y: $event.clientY };
-    const movement: Coord = { x: $event.movementX, y: $event.movementY };
-
-    return Object.assign(
-      {},
-      { meta },
-      { pressure },
-      { tilt },
-      { twist },
-      { client },
-      { movement }
-    );
   }
 }

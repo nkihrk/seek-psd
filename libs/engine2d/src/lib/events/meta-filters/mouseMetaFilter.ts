@@ -13,28 +13,12 @@ export interface MouseValues {
   buttons: string[];
 }
 
-export class MouseMetaFilter extends MetaFilter {
-  private _flags = {} as MouseFlags;
-  private _values = {} as MouseValues;
-
+export class MouseMetaFilter extends MetaFilter<MouseFlags, MouseValues> {
   constructor() {
     super();
   }
 
-  get flags(): MouseFlags {
-    return this._flags;
-  }
-
-  get values(): MouseValues {
-    return this._values;
-  }
-
-  init($event: MouseEvent): void {
-    this._flags = this._generateFlags($event);
-    this._values = this._generateValues($event);
-  }
-
-  private _generateFlags($event: MouseEvent): MouseFlags {
+  protected generateFlags($event: MouseEvent): MouseFlags {
     const flags: MouseFlags = {
       altKey: $event.altKey,
       ctrlKey: $event.ctrlKey,
@@ -45,7 +29,7 @@ export class MouseMetaFilter extends MetaFilter {
     return flags;
   }
 
-  private _generateValues($event: MouseEvent): MouseValues {
+  protected generateValues($event: MouseEvent): MouseValues {
     const values: MouseValues = {
       button: this._getButtonValue($event.button),
       buttons: this._getButtonsValue($event.buttons),

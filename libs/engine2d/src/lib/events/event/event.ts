@@ -1,5 +1,9 @@
 import type { EventNotifier } from '../../notifiers/eventNotifier';
 
-export abstract class Event {
-  protected abstract readonly eventNotifier: EventNotifier;
+export class Event {
+  protected readonly eventNotifier: EventNotifier;
+
+  constructor($eventNotifier: EventNotifier) {
+    this.eventNotifier = $eventNotifier;
+  }
 }

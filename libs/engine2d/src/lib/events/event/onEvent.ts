@@ -2,11 +2,8 @@ import type { EventNotifier } from '../../notifiers/eventNotifier';
 import { Event as CommonEvent } from './event';
 
 export class OnEvent extends CommonEvent {
-  protected readonly eventNotifier: EventNotifier;
-
   constructor($eventNotifier: EventNotifier) {
-    super();
-    this.eventNotifier = $eventNotifier;
+    super($eventNotifier);
   }
 
   onFullscreenchange($event: Event): void {}

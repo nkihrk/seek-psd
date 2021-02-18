@@ -13,11 +13,8 @@ type FilterContent = {
 };
 
 export class OnKeyboardEvent extends Event {
-  protected readonly eventNotifier: EventNotifier;
-
   constructor($eventNotifier: EventNotifier) {
-    super();
-    this.eventNotifier = $eventNotifier;
+    super($eventNotifier);
   }
 
   onKeydown($event: KeyboardEvent): void {

@@ -10,11 +10,8 @@ type FilterContent = {
 };
 
 export class OnMouseEvent extends Event {
-  protected readonly eventNotifier: EventNotifier;
-
   constructor($eventNotifier: EventNotifier) {
-    super();
-    this.eventNotifier = $eventNotifier;
+    super($eventNotifier);
   }
 
   onClick($event: MouseEvent): void {
