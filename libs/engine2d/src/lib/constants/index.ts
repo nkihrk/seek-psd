@@ -31,6 +31,12 @@ export enum POINTER {
   OUT = 'pointerout',
   LEAVE = 'pointerleave',
 }
+export enum KEY_LOCATION {
+  STANDARD = 0x00,
+  LEFT = 0x01,
+  RIGHT = 0x02,
+  NUMPAD = 0x03,
+}
 
 export const POINTER_EVENT = [
   'pointerdown',

@@ -1,5 +1,16 @@
 import type { EventNotifier } from '../../notifiers/eventNotifier';
+import type {
+  KeyboardFlags,
+  KeyboardValues,
+} from '../meta-filters/keyboardMetaFilter';
+import { KeyboardMetaFilter } from '../meta-filters/keyboardMetaFilter';
 import { Event } from './event';
+
+type FilterContent = {
+  flags: KeyboardFlags;
+  values: KeyboardValues;
+  filter: KeyboardMetaFilter;
+};
 
 export class OnKeyboardEvent extends Event {
   protected readonly eventNotifier: EventNotifier;
@@ -9,9 +20,30 @@ export class OnKeyboardEvent extends Event {
     this.eventNotifier = $eventNotifier;
   }
 
-  onKeydown($event: KeyboardEvent): void {}
+  onKeydown($event: KeyboardEvent): void {
+    const { flags, values } = this._getFilterContent($event);
 
-  onKeyup($event: KeyboardEvent): void {}
+    flags.keydown = true;
 
-  onKeypress($event: KeyboardEvent): void {}
+    // notify to the eventManager
+    this.eventNotifier.update({ flags, values, default: $event });
+  }
+
+  onKeyup($event: KeyboardEvent): void {
+    const { flags, values } = this._getFilterContent($event);
+
+    flags.keyup = true;
+
+    // notify to the eventManager
+    this.eventNotifier.update({ flags, values, default: $event });
+  }
+
+  private _getFilterContent($event: KeyboardEvent): FilterContent {
+    const filter = new KeyboardMetaFilter();
+    filter.init($event);
+    const flags: KeyboardFlags = filter.flags;
+    const values: KeyboardValues = filter.values;
+
+    return { flags, values, filter };
+  }
 }

@@ -242,10 +242,6 @@ export abstract class Events {
       case 'keyup':
         e.onKeyup($event);
         break;
-
-      case 'keypress':
-        e.onKeypress($event);
-        break;
     }
   }
 }
