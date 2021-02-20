@@ -1,4 +1,5 @@
-import type { EventNotifier } from '../../notifiers/eventNotifier';
+import type { Notifier } from '../../notifiers/notifier';
+import type { FilterResult } from './event';
 import type {
   KeyboardFlags,
   KeyboardValues,
@@ -13,8 +14,8 @@ interface FilterContent {
 }
 
 export class OnKeyboardEvent extends Event {
-  constructor($eventNotifier: EventNotifier) {
-    super($eventNotifier);
+  constructor($notifier: Notifier<FilterResult>) {
+    super($notifier);
   }
 
   onKeydown($event: KeyboardEvent): void {
@@ -23,7 +24,7 @@ export class OnKeyboardEvent extends Event {
     flags.isKeydown = true;
 
     // notify to the eventManager
-    this.eventNotifier.update({
+    this.notifier.update({
       flags,
       values,
       eventType: 'keyboard',
@@ -37,7 +38,7 @@ export class OnKeyboardEvent extends Event {
     flags.isKeyup = true;
 
     // notify to the eventManager
-    this.eventNotifier.update({
+    this.notifier.update({
       flags,
       values,
       eventType: 'keyboard',

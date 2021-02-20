@@ -1,5 +1,6 @@
-import type { EventNotifier } from '../../notifiers/eventNotifier';
+import type { Notifier } from '../../notifiers/notifier';
 import type { WheelFlags, WheelValues } from '../meta-filters/wheelMetaFilter';
+import type { FilterResult } from './event';
 import { WheelMetaFilter } from '../meta-filters/wheelMetaFilter';
 import { Event } from './event';
 import { WHEEL_INTERVAL } from '../../constants/index';
@@ -9,8 +10,8 @@ export class OnWheelEvent extends Event {
   private wheelCounter2 = 0;
   private wheelMaker = true;
 
-  constructor($eventNotifier: EventNotifier) {
-    super($eventNotifier);
+  constructor($notifier: Notifier<FilterResult>) {
+    super($notifier);
   }
 
   onWheel($event: WheelEvent): void {
@@ -23,7 +24,7 @@ export class OnWheelEvent extends Event {
     if (this.wheelCounter1 === 0) flags.isWheelStart = true;
     this._detectWheelEnd();
 
-    this.eventNotifier.update({
+    this.notifier.update({
       flags,
       values,
       eventType: 'wheel',

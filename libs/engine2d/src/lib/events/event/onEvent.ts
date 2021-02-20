@@ -1,4 +1,5 @@
-import type { EventNotifier } from '../../notifiers/eventNotifier';
+import type { Notifier } from '../../notifiers/notifier';
+import type { FilterResult } from './event';
 import type { EventFlags, EventValues } from '../meta-filters/eventMetaFilter';
 import { EventMetaFilter } from '../meta-filters/eventMetaFilter';
 import { Event as CommonEvent } from './event';
@@ -10,14 +11,14 @@ interface FilterContent {
 }
 
 export class OnEvent extends CommonEvent {
-  constructor($eventNotifier: EventNotifier) {
-    super($eventNotifier);
+  constructor($notifier: Notifier<FilterResult>) {
+    super($notifier);
   }
 
   onFullscreenchange($event: Event): void {
     const { flags, values } = this._getFilterContent($event);
 
-    this.eventNotifier.update({
+    this.notifier.update({
       flags,
       values,
       eventType: 'event',
@@ -28,7 +29,7 @@ export class OnEvent extends CommonEvent {
   onFullscreenerror($event: Event): void {
     const { flags, values } = this._getFilterContent($event);
 
-    this.eventNotifier.update({
+    this.notifier.update({
       flags,
       values,
       eventType: 'event',
@@ -39,7 +40,7 @@ export class OnEvent extends CommonEvent {
   onOnline($event: Event): void {
     const { flags, values } = this._getFilterContent($event);
 
-    this.eventNotifier.update({
+    this.notifier.update({
       flags,
       values,
       eventType: 'event',
@@ -50,7 +51,7 @@ export class OnEvent extends CommonEvent {
   onOffline($event: Event): void {
     const { flags, values } = this._getFilterContent($event);
 
-    this.eventNotifier.update({
+    this.notifier.update({
       flags,
       values,
       eventType: 'event',

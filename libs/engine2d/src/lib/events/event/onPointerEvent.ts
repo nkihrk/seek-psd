@@ -1,12 +1,14 @@
-import type { EventNotifier } from '../../notifiers/eventNotifier';
+import type { Notifier } from '../../notifiers/notifier';
 import type {
   PointerValues,
   PointerFlags,
 } from '../meta-filters/pointerMetaFilter';
+import type { FilterResult } from './event';
 import { PointerMetaFilter } from '../meta-filters/pointerMetaFilter';
 import { Event } from './event';
 import { removeItem, getCenterCoord } from '@seek-psd/utils';
 import { getButtonValue } from '../meta-filters/utils';
+import { IDLE_INTERVAL } from '../../constants/index';
 
 interface FilterContent {
   flags: PointerFlags;
@@ -19,10 +21,9 @@ export class OnPointerEvent extends Event {
   private ongoingTouches: PointerMetaFilter[] = [];
   // Detect idling of pointer events
   private idleTimer: number;
-  private idleInterval = 1;
 
-  constructor($eventNotifier: EventNotifier) {
-    super($eventNotifier);
+  constructor($notifier: Notifier<FilterResult>) {
+    super($notifier);
   }
 
   onPointerdown($event: PointerEvent): void {
@@ -38,7 +39,7 @@ export class OnPointerEvent extends Event {
     this._manageMultiTouch(flags, values);
 
     // notify to the eventManager
-    this.eventNotifier.update({
+    this.notifier.update({
       flags,
       values,
       eventType: 'pointer',
@@ -56,7 +57,7 @@ export class OnPointerEvent extends Event {
     const currentId: number = values.meta.id;
     this._removeFilterFromList(currentId);
 
-    this.eventNotifier.update({
+    this.notifier.update({
       flags,
       values,
       eventType: 'pointer',
@@ -78,7 +79,7 @@ export class OnPointerEvent extends Event {
     this._manageMultiTouch(flags, values);
 
     // notify to the eventManager
-    this.eventNotifier.update({
+    this.notifier.update({
       flags,
       values,
       eventType: 'pointer',
@@ -89,7 +90,7 @@ export class OnPointerEvent extends Event {
   onPointerover($event: PointerEvent): void {
     const { flags, values } = this._getFilterContent($event);
 
-    this.eventNotifier.update({
+    this.notifier.update({
       flags,
       values,
       eventType: 'pointer',
@@ -100,7 +101,7 @@ export class OnPointerEvent extends Event {
   onPointerenter($event: PointerEvent): void {
     const { flags, values } = this._getFilterContent($event);
 
-    this.eventNotifier.update({
+    this.notifier.update({
       flags,
       values,
       eventType: 'pointer',
@@ -111,7 +112,7 @@ export class OnPointerEvent extends Event {
   onPointercancel($event: PointerEvent): void {
     const { flags, values } = this._getFilterContent($event);
 
-    this.eventNotifier.update({
+    this.notifier.update({
       flags,
       values,
       eventType: 'pointer',
@@ -122,7 +123,7 @@ export class OnPointerEvent extends Event {
   onPointerout($event: PointerEvent): void {
     const { flags, values } = this._getFilterContent($event);
 
-    this.eventNotifier.update({
+    this.notifier.update({
       flags,
       values,
       eventType: 'pointer',
@@ -133,7 +134,7 @@ export class OnPointerEvent extends Event {
   onPointerleave($event: PointerEvent): void {
     const { flags, values } = this._getFilterContent($event);
 
-    this.eventNotifier.update({
+    this.notifier.update({
       flags,
       values,
       eventType: 'pointer',
@@ -179,7 +180,7 @@ export class OnPointerEvent extends Event {
     this.idleTimer = setTimeout(() => {
       $values.tmpClient.x = $values.client.x;
       $values.tmpClient.y = $values.client.y;
-    }, this.idleInterval);
+    }, IDLE_INTERVAL);
   }
 
   private _manageMultiTouch(

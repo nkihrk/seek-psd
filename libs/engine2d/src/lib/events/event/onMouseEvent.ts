@@ -1,4 +1,5 @@
-import type { EventNotifier } from '../../notifiers/eventNotifier';
+import type { Notifier } from '../../notifiers/notifier';
+import type { FilterResult } from './event';
 import type { MouseFlags, MouseValues } from '../meta-filters/mouseMetaFilter';
 import { MouseMetaFilter } from '../meta-filters/mouseMetaFilter';
 import { Event } from './event';
@@ -10,14 +11,14 @@ interface FilterContent {
 }
 
 export class OnMouseEvent extends Event {
-  constructor($eventNotifier: EventNotifier) {
-    super($eventNotifier);
+  constructor($notifier: Notifier<FilterResult>) {
+    super($notifier);
   }
 
   onClick($event: MouseEvent): void {
     const { flags, values } = this._getFilterContent($event);
 
-    this.eventNotifier.update({
+    this.notifier.update({
       flags,
       values,
       eventType: 'mouse',
@@ -28,7 +29,7 @@ export class OnMouseEvent extends Event {
   onDblClick($event: MouseEvent): void {
     const { flags, values } = this._getFilterContent($event);
 
-    this.eventNotifier.update({
+    this.notifier.update({
       flags,
       values,
       eventType: 'mouse',
@@ -39,7 +40,7 @@ export class OnMouseEvent extends Event {
   onContextmenu($event: MouseEvent): void {
     const { flags, values } = this._getFilterContent($event);
 
-    this.eventNotifier.update({
+    this.notifier.update({
       flags,
       values,
       eventType: 'mouse',

@@ -1,21 +1,26 @@
-import type { NotifiedEvent, FilterResult } from './notifiers/eventNotifier';
+import type { Notifier, NotifiedEvent } from './notifiers/notifier';
 import type { StoreManager } from './storeManager';
 
 export class EventProcessor {
+  private readonly notifier: Notifier<any>;
   private storeManager: StoreManager;
 
-  constructor($storeManager: StoreManager) {
+  constructor($notifier: Notifier<any>) {
+    this.notifier = $notifier;
+  }
+
+  init($storeManager: StoreManager): void {
     this.storeManager = $storeManager;
   }
 
   process($result: NotifiedEvent): void {
-    const eventType: string = $result.event.eventType;
+    const eventType: string = $result.content.eventType;
 
     if ($result.type === 'global') {
       if (eventType === 'clipboard') {
       } else if (eventType === 'keyboard') {
       } else if (eventType === 'pointer') {
-        this._pointer($result.event);
+        this._pointer($result.content);
       } else if (eventType === 'drag') {
       } else if (eventType === 'event') {
       } else if (eventType === 'mouse') {
@@ -30,8 +35,8 @@ export class EventProcessor {
     }
   }
 
-  private _pointer($result: FilterResult): void {
-    console.log($result);
+  private _pointer($result: any): void {
     this.storeManager.updatePointerOffset($result.flags, $result.values);
+    console.log(this.storeManager.pointerOffset);
   }
 }

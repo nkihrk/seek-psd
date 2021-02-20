@@ -1,9 +1,10 @@
 import type { Entity } from './entities/entity.interface';
-import type { NotifiedEvent } from './notifiers/eventNotifier';
 import type { StoreManager } from './storeManager';
+import type { FilterResult } from './events/event/event';
+import { NOTIFY_TYPE } from './constants/index';
+import { Notifier } from './notifiers/notifier';
 import { GlobalEvents } from './events/globalEvents';
 import { TargetEvents } from './events/targetEvents';
-import { EventNotifier } from './notifiers/eventNotifier';
 import { EventProcessor } from './eventProcessor';
 
 export class EventManager {
@@ -13,6 +14,13 @@ export class EventManager {
 
   constructor($storeManager: StoreManager) {
     this.storeManager = $storeManager;
+
+    // initialize eventProcessor
+    const storeNotifier = new Notifier<any>();
+    storeNotifier.notifyType = NOTIFY_TYPE.STORE;
+    const eventProcessor = new EventProcessor(storeNotifier);
+    eventProcessor.init(this.storeManager);
+    this.eventProcessor = eventProcessor;
   }
 
   addEntity($entity: Entity): void {
@@ -20,36 +28,33 @@ export class EventManager {
   }
 
   start(): void {
-    // initialize eventMixer
-    this.eventProcessor = new EventProcessor(this.storeManager);
-
     // start listening events
     this._startEvents();
   }
 
   private _startEvents(): void {
-    const globalEventNotifier = new EventNotifier();
-    const globalEvents = new GlobalEvents(globalEventNotifier);
+    const globalNotifier = new Notifier<FilterResult>();
+    globalNotifier.notifyType = NOTIFY_TYPE.GLOBAL;
+    const globalEvents = new GlobalEvents(globalNotifier);
     // start eventListener
     globalEvents.start();
     // observe events data
-    this._observe(globalEventNotifier);
+    this._observe(globalNotifier);
 
     if (this.entities) {
       for (let i = 0; i < this.entities.length; i++) {
-        const targetEventNotifier = new EventNotifier();
-        const targetEvents = new TargetEvents(
-          targetEventNotifier,
-          this.entities[i]
-        );
+        const targetNotifier = new Notifier<FilterResult>();
+        targetNotifier.notifyType = `${NOTIFY_TYPE.TARGET}:${i}`;
+        const targetEvents = new TargetEvents(targetNotifier);
+        targetEvents.init(this.entities[i]);
         targetEvents.start();
-        this._observe(targetEventNotifier);
+        this._observe(targetNotifier);
       }
     }
   }
 
-  private _observe($eventNotifier: EventNotifier): void {
-    $eventNotifier.observer().subscribe((e: NotifiedEvent) => {
+  private _observe($notifier: Notifier<FilterResult>): void {
+    $notifier.observer().subscribe((e) => {
       this.eventProcessor.process(e);
     });
   }

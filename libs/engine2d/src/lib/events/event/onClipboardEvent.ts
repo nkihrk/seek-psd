@@ -1,4 +1,5 @@
-import type { EventNotifier } from '../../notifiers/eventNotifier';
+import type { Notifier } from '../../notifiers/notifier';
+import type { FilterResult } from './event';
 import type {
   ClipboardFlags,
   ClipboardValues,
@@ -13,8 +14,8 @@ interface FilterContent {
 }
 
 export class OnClipboardEvent extends Event {
-  constructor($eventNotifier: EventNotifier) {
-    super($eventNotifier);
+  constructor($notifier: Notifier<FilterResult>) {
+    super($notifier);
   }
 
   onCut($event: ClipboardEvent): void {
@@ -22,7 +23,7 @@ export class OnClipboardEvent extends Event {
 
     flags.isCut = true;
 
-    this.eventNotifier.update({
+    this.notifier.update({
       flags,
       values,
       eventType: 'clipboard',
@@ -35,7 +36,7 @@ export class OnClipboardEvent extends Event {
 
     flags.isCopy = true;
 
-    this.eventNotifier.update({
+    this.notifier.update({
       flags,
       values,
       eventType: 'clipboard',
@@ -48,7 +49,7 @@ export class OnClipboardEvent extends Event {
 
     flags.isPaste = true;
 
-    this.eventNotifier.update({
+    this.notifier.update({
       flags,
       values,
       eventType: 'clipboard',

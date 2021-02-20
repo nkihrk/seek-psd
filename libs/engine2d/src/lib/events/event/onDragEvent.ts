@@ -1,4 +1,5 @@
-import type { EventNotifier } from '../../notifiers/eventNotifier';
+import type { Notifier } from '../../notifiers/notifier';
+import type { FilterResult } from './event';
 import type { DragFlags, DragValues } from '../meta-filters/dragMetaFilter';
 import { DragMetaFilter } from '../meta-filters/dragMetaFilter';
 import { Event } from './event';
@@ -10,8 +11,8 @@ interface FilterContent {
 }
 
 export class OnDragEvent extends Event {
-  constructor($eventNotifier: EventNotifier) {
-    super($eventNotifier);
+  constructor($notifier: Notifier<FilterResult>) {
+    super($notifier);
   }
 
   onDrag($event: DragEvent): void {
@@ -19,7 +20,7 @@ export class OnDragEvent extends Event {
 
     flags.isDrag = true;
 
-    this.eventNotifier.update({
+    this.notifier.update({
       flags,
       values,
       eventType: 'drag',
@@ -32,7 +33,7 @@ export class OnDragEvent extends Event {
 
     flags.isDragEnd = true;
 
-    this.eventNotifier.update({
+    this.notifier.update({
       flags,
       values,
       eventType: 'drag',
@@ -45,7 +46,7 @@ export class OnDragEvent extends Event {
 
     flags.isDragEnter = true;
 
-    this.eventNotifier.update({
+    this.notifier.update({
       flags,
       values,
       eventType: 'drag',
@@ -58,7 +59,7 @@ export class OnDragEvent extends Event {
 
     flags.isDragStart = true;
 
-    this.eventNotifier.update({
+    this.notifier.update({
       flags,
       values,
       eventType: 'drag',
@@ -71,7 +72,7 @@ export class OnDragEvent extends Event {
 
     flags.isDragLeave = true;
 
-    this.eventNotifier.update({
+    this.notifier.update({
       flags,
       values,
       eventType: 'drag',
@@ -84,7 +85,7 @@ export class OnDragEvent extends Event {
 
     flags.isDragOver = true;
 
-    this.eventNotifier.update({
+    this.notifier.update({
       flags,
       values,
       eventType: 'drag',
@@ -97,7 +98,7 @@ export class OnDragEvent extends Event {
 
     flags.isDrop = true;
 
-    this.eventNotifier.update({
+    this.notifier.update({
       flags,
       values,
       eventType: 'drag',

@@ -1,4 +1,5 @@
-import type { EventNotifier } from '../notifiers/eventNotifier';
+import type { Notifier } from '../notifiers/notifier';
+import type { FilterResult } from './event/event';
 import { addEventListeners } from '@seek-psd/utils';
 import { OnEvent } from './event/onEvent';
 import { OnMouseEvent } from './event/onMouseEvent';
@@ -22,7 +23,7 @@ import {
 type Elements = Window | Document | HTMLElement;
 
 export abstract class Events {
-  private readonly eventNotifier: EventNotifier;
+  private readonly notifier: Notifier<FilterResult>;
   private onPointerEvent: OnPointerEvent;
   private onWheelEvent: OnWheelEvent;
   private onMouseEvent: OnMouseEvent;
@@ -31,18 +32,17 @@ export abstract class Events {
   private onClipboardEvent: OnClipboardEvent;
   private onKeyboardEvent: OnKeyboardEvent;
 
-  constructor($eventType: string, $eventNotifier: EventNotifier) {
-    this.eventNotifier = $eventNotifier;
-    this.eventNotifier.eventType = $eventType;
+  constructor($notifier: Notifier<FilterResult>) {
+    this.notifier = $notifier;
 
     // initialize events
-    this.onPointerEvent = new OnPointerEvent($eventNotifier);
-    this.onWheelEvent = new OnWheelEvent($eventNotifier);
-    this.onMouseEvent = new OnMouseEvent($eventNotifier);
-    this.onEvent = new OnEvent($eventNotifier);
-    this.onDragEvent = new OnDragEvent($eventNotifier);
-    this.onClipboardEvent = new OnClipboardEvent($eventNotifier);
-    this.onKeyboardEvent = new OnKeyboardEvent($eventNotifier);
+    this.onPointerEvent = new OnPointerEvent($notifier);
+    this.onWheelEvent = new OnWheelEvent($notifier);
+    this.onMouseEvent = new OnMouseEvent($notifier);
+    this.onEvent = new OnEvent($notifier);
+    this.onDragEvent = new OnDragEvent($notifier);
+    this.onClipboardEvent = new OnClipboardEvent($notifier);
+    this.onKeyboardEvent = new OnKeyboardEvent($notifier);
   }
 
   abstract start(): void;

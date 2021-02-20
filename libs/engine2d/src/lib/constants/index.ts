@@ -37,6 +37,11 @@ export enum KEY_LOCATION {
   RIGHT = 0x02,
   NUMPAD = 0x03,
 }
+export enum NOTIFY_TYPE {
+  GLOBAL = 'global',
+  TARGET = 'target',
+  STORE = 'store',
+}
 
 export const POINTER_EVENT = [
   'pointerdown',
@@ -65,3 +70,4 @@ export const DRAG_EVENT = [
 export const CLIPBOARD_EVENT = ['cut', 'copy', 'paste'];
 export const KEYBOARD_EVENT = ['keydown', 'keyup', 'keypress'];
 export const WHEEL_INTERVAL = 500;
+export const IDLE_INTERVAL = 1;

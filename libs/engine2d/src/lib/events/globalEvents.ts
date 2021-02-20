@@ -1,9 +1,10 @@
-import type { EventNotifier } from '../notifiers/eventNotifier';
+import type { Notifier } from '../notifiers/notifier';
+import type { FilterResult } from './event/event';
 import { Events } from './events';
 
 export class GlobalEvents extends Events {
-  constructor($eventNotifier: EventNotifier) {
-    super('global', $eventNotifier);
+  constructor($notifier: Notifier<FilterResult>) {
+    super($notifier);
   }
 
   start(): void {

@@ -1,9 +1,16 @@
-import type { EventNotifier } from '../../notifiers/eventNotifier';
+import type { Notifier } from '../../notifiers/notifier';
+
+export interface FilterResult {
+  flags: any;
+  values: any;
+  eventType: string;
+  default: any;
+}
 
 export class Event {
-  protected readonly eventNotifier: EventNotifier;
+  protected readonly notifier: Notifier<FilterResult>;
 
-  constructor($eventNotifier: EventNotifier) {
-    this.eventNotifier = $eventNotifier;
+  constructor($notifier: Notifier<FilterResult>) {
+    this.notifier = $notifier;
   }
 }

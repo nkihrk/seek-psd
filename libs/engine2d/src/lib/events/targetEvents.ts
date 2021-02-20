@@ -1,13 +1,16 @@
-import type { EventNotifier } from '../notifiers/eventNotifier';
+import type { Notifier } from '../notifiers/notifier';
 import type { Entity } from '../entities/entity.interface';
+import type { FilterResult } from './event/event';
 import { Events } from './events';
 
 export class TargetEvents extends Events {
-  private readonly entity: Entity;
+  private entity: Entity;
 
-  constructor($eventNotifier: EventNotifier, $entity: Entity) {
-    super('target', $eventNotifier);
+  constructor($notifier: Notifier<FilterResult>) {
+    super($notifier);
+  }
 
+  init($entity: Entity): void {
     this.entity = $entity;
   }
 
