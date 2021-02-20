@@ -25,13 +25,13 @@ export function getButtonValue($buttonType: number): string {
       break;
   }
 
-  return buttonType;
+  return buttonType || null;
 }
 
-export function getButtonsValue($buttonType: number): string[] {
+export function getButtonsValue($buttonsType: number): string[] {
   let buttonsType: string[] = [];
 
-  switch ($buttonType) {
+  switch ($buttonsType) {
     case BUTTONS_STATES.LEFT_RIGHT:
       buttonsType = ['left', 'right'];
       break;

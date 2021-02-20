@@ -1,9 +1,15 @@
-import type { FilterResult } from '../events/meta-filters/metaFilter';
 import { BehaviorSubject, NextObserver, Observable } from 'rxjs';
 
 export interface NotifiedEvent {
   type: string;
   event: FilterResult;
+}
+
+export interface FilterResult {
+  flags: any;
+  values: any;
+  eventType: string;
+  default: any;
 }
 
 export class EventNotifier {

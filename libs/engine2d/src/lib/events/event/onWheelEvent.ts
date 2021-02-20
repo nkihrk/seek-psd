@@ -23,7 +23,12 @@ export class OnWheelEvent extends Event {
     if (this.wheelCounter1 === 0) flags.isWheelStart = true;
     this._detectWheelEnd();
 
-    this.eventNotifier.update({ flags, values, default: $event });
+    this.eventNotifier.update({
+      flags,
+      values,
+      eventType: 'wheel',
+      default: $event,
+    });
   }
 
   // https://jsfiddle.net/rafaylik/sLjyyfox/

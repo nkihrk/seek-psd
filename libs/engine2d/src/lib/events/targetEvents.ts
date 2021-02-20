@@ -2,11 +2,11 @@ import type { EventNotifier } from '../notifiers/eventNotifier';
 import type { Entity } from '../entities/entity.interface';
 import { Events } from './events';
 
-export class UserEvents extends Events {
+export class TargetEvents extends Events {
   private readonly entity: Entity;
 
   constructor($eventNotifier: EventNotifier, $entity: Entity) {
-    super('user', $eventNotifier);
+    super('target', $eventNotifier);
 
     this.entity = $entity;
   }

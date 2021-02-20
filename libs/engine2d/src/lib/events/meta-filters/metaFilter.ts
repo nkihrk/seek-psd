@@ -1,11 +1,3 @@
-/* eslint @typescript-eslint/no-explicit-any: 0 */
-
-export interface FilterResult {
-  flags: any;
-  values: any;
-  default: any;
-}
-
 export abstract class MetaFilter<T, U> {
   private _flags = {} as T;
   private _values = {} as U;

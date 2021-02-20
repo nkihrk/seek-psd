@@ -17,25 +17,45 @@ export class OnEvent extends CommonEvent {
   onFullscreenchange($event: Event): void {
     const { flags, values } = this._getFilterContent($event);
 
-    this.eventNotifier.update({ flags, values, default: $event });
+    this.eventNotifier.update({
+      flags,
+      values,
+      eventType: 'event',
+      default: $event,
+    });
   }
 
   onFullscreenerror($event: Event): void {
     const { flags, values } = this._getFilterContent($event);
 
-    this.eventNotifier.update({ flags, values, default: $event });
+    this.eventNotifier.update({
+      flags,
+      values,
+      eventType: 'event',
+      default: $event,
+    });
   }
 
   onOnline($event: Event): void {
     const { flags, values } = this._getFilterContent($event);
 
-    this.eventNotifier.update({ flags, values, default: $event });
+    this.eventNotifier.update({
+      flags,
+      values,
+      eventType: 'event',
+      default: $event,
+    });
   }
 
   onOffline($event: Event): void {
     const { flags, values } = this._getFilterContent($event);
 
-    this.eventNotifier.update({ flags, values, default: $event });
+    this.eventNotifier.update({
+      flags,
+      values,
+      eventType: 'event',
+      default: $event,
+    });
   }
 
   private _getFilterContent($event: Event): FilterContent {

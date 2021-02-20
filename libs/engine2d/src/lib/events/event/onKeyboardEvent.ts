@@ -23,7 +23,12 @@ export class OnKeyboardEvent extends Event {
     flags.isKeydown = true;
 
     // notify to the eventManager
-    this.eventNotifier.update({ flags, values, default: $event });
+    this.eventNotifier.update({
+      flags,
+      values,
+      eventType: 'keyboard',
+      default: $event,
+    });
   }
 
   onKeyup($event: KeyboardEvent): void {
@@ -32,7 +37,12 @@ export class OnKeyboardEvent extends Event {
     flags.isKeyup = true;
 
     // notify to the eventManager
-    this.eventNotifier.update({ flags, values, default: $event });
+    this.eventNotifier.update({
+      flags,
+      values,
+      eventType: 'keyboard',
+      default: $event,
+    });
   }
 
   private _getFilterContent($event: KeyboardEvent): FilterContent {

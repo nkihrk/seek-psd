@@ -7,7 +7,7 @@ import {
   EventEmitter,
 } from '@angular/core';
 import { setPixelPerfect } from '@seek-psd/utils';
-import { EventManager, Canvas } from '@seek-psd/engine2d';
+import { EventManager, StoreManager, Canvas } from '@seek-psd/engine2d';
 
 export interface Layers {
   psdLayer: ElementRef<HTMLCanvasElement>;
@@ -37,7 +37,8 @@ export class CanvasComponent implements OnInit {
     this._initCanvas();
 
     const canvasEntity = new Canvas(this.uiLayer.nativeElement);
-    const eventManager = new EventManager();
+    const storeManager = new StoreManager(canvasEntity);
+    const eventManager = new EventManager(storeManager);
     // add entity
     eventManager.addEntity(canvasEntity);
     // start listening events

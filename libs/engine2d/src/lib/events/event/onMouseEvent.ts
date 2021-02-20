@@ -17,19 +17,34 @@ export class OnMouseEvent extends Event {
   onClick($event: MouseEvent): void {
     const { flags, values } = this._getFilterContent($event);
 
-    this.eventNotifier.update({ flags, values, default: $event });
+    this.eventNotifier.update({
+      flags,
+      values,
+      eventType: 'mouse',
+      default: $event,
+    });
   }
 
   onDblClick($event: MouseEvent): void {
     const { flags, values } = this._getFilterContent($event);
 
-    this.eventNotifier.update({ flags, values, default: $event });
+    this.eventNotifier.update({
+      flags,
+      values,
+      eventType: 'mouse',
+      default: $event,
+    });
   }
 
   onContextmenu($event: MouseEvent): void {
     const { flags, values } = this._getFilterContent($event);
 
-    this.eventNotifier.update({ flags, values, default: $event });
+    this.eventNotifier.update({
+      flags,
+      values,
+      eventType: 'mouse',
+      default: $event,
+    });
   }
 
   private _getFilterContent($event: MouseEvent): FilterContent {

@@ -32,16 +32,22 @@ export interface PointerBaseFlags {
 export interface PointerStateFlags {
   isRightDown: boolean;
   isRightUp: boolean;
+  isRightMove: boolean;
   isLeftDown: boolean;
   isLeftUp: boolean;
+  isLeftMove: boolean;
   isMiddleDown: boolean;
   isMiddleUp: boolean;
+  isMiddleMove: boolean;
   isBackDown: boolean;
   isBackUp: boolean;
+  isBackMove: boolean;
   isForwardDown: boolean;
   isForwardUp: boolean;
+  isForwardMove: boolean;
   isEraserDown: boolean;
   isEraserUp: boolean;
+  isEraserMove: boolean;
 }
 
 export interface PointerValues {
@@ -50,6 +56,7 @@ export interface PointerValues {
   tilt: Coord;
   twist: number;
   client: Coord;
+  tmpClient: Coord;
   movement: Coord;
   touch: Coord; // a center coordinate of two clients
   button: string;
@@ -81,7 +88,7 @@ export class PointerMetaFilter extends MetaFilter<PointerFlags, PointerValues> {
     const base: PointerBaseFlags = this._generateBaseFlags($event);
     const state: PointerStateFlags = this._generateStateFlags($event);
 
-    return Object.assign({}, { meta }, { base }, { state });
+    return { meta, base, state };
   }
 
   protected generateValues($event: PointerEvent): PointerValues {
@@ -96,21 +103,24 @@ export class PointerMetaFilter extends MetaFilter<PointerFlags, PointerValues> {
     const tilt: Coord = { x: $event.clientX, y: $event.clientY };
     const twist: number = $event.twist;
     const client: Coord = { x: $event.clientX, y: $event.clientY };
+    const tmpClient: Coord = { x: $event.clientX, y: $event.clientY };
     const movement: Coord = { x: $event.movementX, y: $event.movementY };
+    const touch = {} as Coord;
     const button: string = getButtonValue($event.button);
     const buttons: string[] = getButtonsValue($event.buttons);
 
-    return Object.assign(
-      {},
-      { meta },
-      { pressure },
-      { tilt },
-      { twist },
-      { client },
-      { movement },
-      { button },
-      { buttons }
-    );
+    return {
+      meta,
+      pressure,
+      tilt,
+      twist,
+      client,
+      tmpClient,
+      movement,
+      touch,
+      button,
+      buttons,
+    };
   }
 
   private _generateMetaFlags($event: PointerEvent): PointerMetaFlags {

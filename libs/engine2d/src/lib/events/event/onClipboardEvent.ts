@@ -22,7 +22,12 @@ export class OnClipboardEvent extends Event {
 
     flags.isCut = true;
 
-    this.eventNotifier.update({ flags, values, default: $event });
+    this.eventNotifier.update({
+      flags,
+      values,
+      eventType: 'clipboard',
+      default: $event,
+    });
   }
 
   onCopy($event: ClipboardEvent): void {
@@ -30,7 +35,12 @@ export class OnClipboardEvent extends Event {
 
     flags.isCopy = true;
 
-    this.eventNotifier.update({ flags, values, default: $event });
+    this.eventNotifier.update({
+      flags,
+      values,
+      eventType: 'clipboard',
+      default: $event,
+    });
   }
 
   onPaste($event: ClipboardEvent): void {
@@ -38,7 +48,12 @@ export class OnClipboardEvent extends Event {
 
     flags.isPaste = true;
 
-    this.eventNotifier.update({ flags, values, default: $event });
+    this.eventNotifier.update({
+      flags,
+      values,
+      eventType: 'clipboard',
+      default: $event,
+    });
   }
 
   private _getFilterContent($event: ClipboardEvent): FilterContent {

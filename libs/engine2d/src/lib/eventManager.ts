@@ -1,19 +1,29 @@
 import type { Entity } from './entities/entity.interface';
 import type { NotifiedEvent } from './notifiers/eventNotifier';
+import type { StoreManager } from './storeManager';
 import { GlobalEvents } from './events/globalEvents';
-import { UserEvents } from './events/userEvents';
+import { TargetEvents } from './events/targetEvents';
 import { EventNotifier } from './notifiers/eventNotifier';
+import { EventProcessor } from './eventProcessor';
 
 export class EventManager {
   private entities: Entity[] = [];
+  private storeManager: StoreManager;
+  private eventProcessor: EventProcessor;
 
-  constructor() {}
+  constructor($storeManager: StoreManager) {
+    this.storeManager = $storeManager;
+  }
 
   addEntity($entity: Entity): void {
     this.entities.push($entity);
   }
 
   start(): void {
+    // initialize eventMixer
+    this.eventProcessor = new EventProcessor(this.storeManager);
+
+    // start listening events
     this._startEvents();
   }
 
@@ -27,17 +37,20 @@ export class EventManager {
 
     if (this.entities) {
       for (let i = 0; i < this.entities.length; i++) {
-        const userEventNotifier = new EventNotifier();
-        const userEvents = new UserEvents(userEventNotifier, this.entities[i]);
-        userEvents.start();
-        this._observe(userEventNotifier);
+        const targetEventNotifier = new EventNotifier();
+        const targetEvents = new TargetEvents(
+          targetEventNotifier,
+          this.entities[i]
+        );
+        targetEvents.start();
+        this._observe(targetEventNotifier);
       }
     }
   }
 
   private _observe($eventNotifier: EventNotifier): void {
     $eventNotifier.observer().subscribe((e: NotifiedEvent) => {
-      console.log(e);
+      this.eventProcessor.process(e);
     });
   }
 }
