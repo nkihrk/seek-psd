@@ -6,6 +6,9 @@ export interface MouseFlags {
   isCtrlKey: boolean;
   isMetaKey: boolean;
   isShiftKey: boolean;
+  isClick: boolean;
+  isDblClick: boolean;
+  isContextmenu: boolean;
 }
 
 export interface MouseValues {
@@ -24,6 +27,9 @@ export class MouseMetaFilter extends MetaFilter<MouseFlags, MouseValues> {
       isCtrlKey: $event.ctrlKey,
       isMetaKey: $event.metaKey,
       isShiftKey: $event.shiftKey,
+      isClick: false, // will be changed at onMouseEvent
+      isDblClick: false, // will be changed at onMouseEvent
+      isContextmenu: false, // will be changed at onMouseEvent
     };
 
     return flags;

@@ -18,6 +18,8 @@ export class OnMouseEvent extends Event {
   onClick($event: MouseEvent): void {
     const { flags, values } = this._getFilterContent($event);
 
+    flags.isClick = true;
+
     this.notifier.update({
       flags,
       values,
@@ -29,6 +31,8 @@ export class OnMouseEvent extends Event {
   onDblClick($event: MouseEvent): void {
     const { flags, values } = this._getFilterContent($event);
 
+    flags.isDblClick = true;
+
     this.notifier.update({
       flags,
       values,
@@ -39,6 +43,8 @@ export class OnMouseEvent extends Event {
 
   onContextmenu($event: MouseEvent): void {
     const { flags, values } = this._getFilterContent($event);
+
+    flags.isContextmenu = true;
 
     this.notifier.update({
       flags,

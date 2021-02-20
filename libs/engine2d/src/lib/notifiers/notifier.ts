@@ -5,7 +5,7 @@ export interface NotifiedEvent {
   content: any;
 }
 
-// T stands for the content type
+// T is defined as a type of the content
 export class Notifier<T> {
   private _notifyType: string;
   private notifyEvent = new BehaviorSubject({} as T);
