@@ -28,7 +28,7 @@ import type {
   WheelFlags,
   WheelValues,
 } from './events/meta-filters/wheelMetaFilter';
-import { NOTIFY_TYPE } from './constants/index';
+import { NOTIFY_TYPE, EVENT_TYPE } from './constants/index';
 import { Notifier } from './notifiers/notifier';
 import { GlobalEvents } from './events/globalEvents';
 import { TargetEvents } from './events/targetEvents';
@@ -100,19 +100,19 @@ export class Engine2D {
       this.storeManager.updateNotifyType(e.type);
       console.log(this.storeManager.notifyType);
 
-      if (eventType === 'clipboard') {
+      if (eventType === EVENT_TYPE.CLIPBOARD) {
         this._clipboard(flags, values);
-      } else if (eventType === 'keyboard') {
+      } else if (eventType === EVENT_TYPE.KEYBOARD) {
         this._keyboard(flags, values);
-      } else if (eventType === 'pointer') {
+      } else if (eventType === EVENT_TYPE.POINTER) {
         this._pointer(flags, values);
-      } else if (eventType === 'drag') {
+      } else if (eventType === EVENT_TYPE.DRAG) {
         this._drag(flags, values);
-      } else if (eventType === 'event') {
+      } else if (eventType === EVENT_TYPE.EVENT) {
         this._event(flags, values);
-      } else if (eventType === 'mouse') {
+      } else if (eventType === EVENT_TYPE.MOUSE) {
         this._mouse(flags, values);
-      } else if (eventType === 'wheel') {
+      } else if (eventType === EVENT_TYPE.WHEEL) {
         this._wheel(flags, values);
       }
     });

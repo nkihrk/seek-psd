@@ -40,7 +40,15 @@ export enum KEY_LOCATION {
 export enum NOTIFY_TYPE {
   GLOBAL = 'global',
   TARGET = 'target',
-  STORE = 'store',
+}
+export enum EVENT_TYPE {
+  CLIPBOARD = 'clipboard',
+  KEYBOARD = 'keyboard',
+  POINTER = 'pointer',
+  DRAG = 'drag',
+  EVENT = 'event',
+  MOUSE = 'mouse',
+  WHEEL = 'wheel',
 }
 
 export const POINTER_EVENT = [
