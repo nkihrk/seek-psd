@@ -1,7 +1,10 @@
 import type { Entity } from './entities/entity.interface';
 import type { PointerOffset } from './store.interface';
+import type { PointerFlags } from './events/meta-filters/pointerMetaFilter';
+import { NOTIFY_TYPE } from './constants/index';
 
 export abstract class Store {
+  protected _notifyType: string = NOTIFY_TYPE.GLOBAL;
   protected _entity: Entity;
   protected _pointerOffset: PointerOffset = {
     current: {
@@ -21,9 +24,16 @@ export abstract class Store {
       y: -Infinity,
     },
   };
+  protected _pointerFlags = {} as PointerFlags;
 
-  constructor($entity: Entity) {
+  constructor() {}
+
+  init($entity: Entity): void {
     this._entity = $entity;
+  }
+
+  get notifyType(): string {
+    return this._notifyType;
   }
 
   get entity(): Entity {
@@ -32,5 +42,9 @@ export abstract class Store {
 
   get pointerOffset(): PointerOffset {
     return this._pointerOffset;
+  }
+
+  get pointerFlags(): PointerFlags {
+    return this._pointerFlags;
   }
 }

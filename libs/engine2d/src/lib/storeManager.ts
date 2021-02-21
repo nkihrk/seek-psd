@@ -1,14 +1,22 @@
-import type { Entity } from './entities/entity.interface';
 import type {
   Coord,
   PointerFlags,
   PointerValues,
 } from './events/meta-filters/pointerMetaFilter';
+import type { PointerOffset } from './store.interface';
 import { Store } from './store';
 
 export class StoreManager extends Store {
-  constructor($entity: Entity) {
-    super($entity);
+  constructor() {
+    super();
+  }
+
+  updateNotifyType($notifyType: string): void {
+    this._notifyType = $notifyType;
+  }
+
+  updatePointerFlags($flags: PointerFlags): void {
+    this._pointerFlags = $flags;
   }
 
   updatePointerOffset($flags: PointerFlags, $values: PointerValues): void {
@@ -31,18 +39,26 @@ export class StoreManager extends Store {
     };
 
     if (flags.base.isDown) {
-      this._pointerOffset = {
+      const pointerOffset: PointerOffset = {
         current: currentOffset,
         prev: currentOffset,
         raw: rawOffset,
         tmp: tmpOffset,
       };
+
+      this._pointerOffset = pointerOffset;
     } else {
-      this._pointerOffset = Object.assign({}, this.pointerOffset, {
-        current: currentOffset,
-        raw: rawOffset,
-        tmp: tmpOffset,
-      });
+      const pointerOffset: PointerOffset = Object.assign(
+        {},
+        this._pointerOffset,
+        {
+          current: currentOffset,
+          raw: rawOffset,
+          tmp: tmpOffset,
+        }
+      );
+
+      this._pointerOffset = pointerOffset;
     }
   }
 }

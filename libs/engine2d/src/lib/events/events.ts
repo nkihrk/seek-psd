@@ -18,12 +18,16 @@ import {
   DRAG_EVENT,
   CLIPBOARD_EVENT,
   KEYBOARD_EVENT,
+  NOTIFY_TYPE,
 } from '../constants/index';
+
+import { Entity } from '../entities/entity.interface';
 
 type Elements = Window | Document | HTMLElement;
 
 export abstract class Events {
   private readonly notifier: Notifier<FilterResult>;
+  protected entity: Entity;
   private onPointerEvent: OnPointerEvent;
   private onWheelEvent: OnWheelEvent;
   private onMouseEvent: OnMouseEvent;
@@ -43,6 +47,10 @@ export abstract class Events {
     this.onDragEvent = new OnDragEvent($notifier);
     this.onClipboardEvent = new OnClipboardEvent($notifier);
     this.onKeyboardEvent = new OnKeyboardEvent($notifier);
+  }
+
+  init($entity: Entity): void {
+    this.entity = $entity;
   }
 
   abstract start(): void;
@@ -93,6 +101,13 @@ export abstract class Events {
   }
 
   private _onPointerEvent($event: PointerEvent): void {
+    if (
+      this.notifier.notifyType === NOTIFY_TYPE.GLOBAL &&
+      this._isTargetArea($event)
+    ) {
+      return;
+    }
+
     const e = this.onPointerEvent;
 
     switch ($event.type) {
@@ -108,28 +123,35 @@ export abstract class Events {
         e.onPointermove($event);
         break;
 
-      case 'pointerover':
-        e.onPointerover($event);
-        break;
-
-      case 'pointerenter':
-        e.onPointerenter($event);
-        break;
-      case 'pointercancel':
-        e.onPointercancel($event);
-        break;
-
-      case 'pointerout':
-        e.onPointerout($event);
-        break;
-
-      case 'pointerleave':
-        e.onPointerleave($event);
-        break;
+      //      case 'pointerover':
+      //        e.onPointerover($event);
+      //        break;
+      //
+      //      case 'pointerenter':
+      //        e.onPointerenter($event);
+      //        break;
+      //      case 'pointercancel':
+      //        e.onPointercancel($event);
+      //        break;
+      //
+      //      case 'pointerout':
+      //        e.onPointerout($event);
+      //        break;
+      //
+      //      case 'pointerleave':
+      //        e.onPointerleave($event);
+      //        break;
     }
   }
 
   private _onWheelEvent($event: WheelEvent): void {
+    if (
+      this.notifier.notifyType === NOTIFY_TYPE.GLOBAL &&
+      this._isTargetArea($event)
+    ) {
+      return;
+    }
+
     const e = this.onWheelEvent;
 
     switch ($event.type) {
@@ -140,6 +162,13 @@ export abstract class Events {
   }
 
   private _onMouseEvent($event: MouseEvent): void {
+    if (
+      this.notifier.notifyType === NOTIFY_TYPE.GLOBAL &&
+      this._isTargetArea($event)
+    ) {
+      return;
+    }
+
     const e = this.onMouseEvent;
 
     switch ($event.type) {
@@ -180,6 +209,13 @@ export abstract class Events {
   }
 
   private _onDragEvent($event: DragEvent): void {
+    if (
+      this.notifier.notifyType === NOTIFY_TYPE.GLOBAL &&
+      this._isTargetArea($event)
+    ) {
+      return;
+    }
+
     const e = this.onDragEvent;
 
     switch ($event.type) {
@@ -243,5 +279,20 @@ export abstract class Events {
         e.onKeyup($event);
         break;
     }
+  }
+
+  private _isTargetArea($event: any): boolean {
+    const target: HTMLElement = this.entity.element;
+    const tRect: DOMRect = target.getBoundingClientRect();
+    const tOriginX: number = tRect.x;
+    const tOriginY: number = tRect.y;
+    const tWidth: number = tRect.width;
+    const tHeight: number = tRect.height;
+    const isAreaX: boolean =
+      tOriginX <= $event.clientX && $event.clientX <= tOriginX + tWidth;
+    const isAreaY: boolean =
+      tOriginY <= $event.clientY && $event.clientY <= tOriginY + tHeight;
+
+    return isAreaX && isAreaY;
   }
 }
