@@ -51,20 +51,20 @@ export class KeyboardMetaFilter extends MetaFilter<
     let location = '';
 
     switch ($location) {
-      case KEY_LOCATION.STANDARD:
-        location = 'standard';
+      case 0x00:
+        location = KEY_LOCATION.STANDARD;
         break;
 
-      case KEY_LOCATION.LEFT:
-        location = 'left';
+      case 0x01:
+        location = KEY_LOCATION.LEFT;
         break;
 
-      case KEY_LOCATION.RIGHT:
-        location = 'right';
+      case 0x02:
+        location = KEY_LOCATION.RIGHT;
         break;
 
-      case KEY_LOCATION.NUMPAD:
-        location = 'numpad';
+      case 0x03:
+        location = KEY_LOCATION.NUMPAD;
         break;
     }
 

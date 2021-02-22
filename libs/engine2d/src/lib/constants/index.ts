@@ -32,10 +32,10 @@ export enum POINTER {
   LEAVE = 'pointerleave',
 }
 export enum KEY_LOCATION {
-  STANDARD = 0x00,
-  LEFT = 0x01,
-  RIGHT = 0x02,
-  NUMPAD = 0x03,
+  STANDARD = 'standard',
+  LEFT = 'left',
+  RIGHT = 'right',
+  NUMPAD = 'numpad',
 }
 export enum NOTIFY_TYPE {
   GLOBAL = 'global',

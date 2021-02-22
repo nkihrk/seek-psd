@@ -29,7 +29,7 @@ import type {
   WheelValues,
 } from './events/meta-filters/wheelMetaFilter';
 import { NOTIFY_TYPE, EVENT_TYPE } from './constants/index';
-import { Notifier } from './notifiers/notifier';
+import { NotifiedEvent, Notifier } from './notifiers/notifier';
 import { GlobalEvents } from './events/globalEvents';
 import { TargetEvents } from './events/targetEvents';
 import { StoreManager } from './storeManager';
@@ -88,42 +88,68 @@ export class Engine2D {
 
   private _observe($notifier: Notifier<FilterResult>): void {
     $notifier.observer().subscribe((e) => {
-      const eventType: string = e.content.eventType;
-      const flags: any = e.content.flags; // eslint-disable-line @typescript-eslint/no-explicit-any
-      const values: any = e.content.values; // eslint-disable-line @typescript-eslint/no-explicit-any
-
-      // update notifyType
-      this.storeManager.updateNotifyType(e.type);
-      console.log(this.storeManager.notifyType);
-
-      if (eventType === EVENT_TYPE.CLIPBOARD) {
-        this._clipboard(flags, values);
-      } else if (eventType === EVENT_TYPE.KEYBOARD) {
-        this._keyboard(flags, values);
-      } else if (eventType === EVENT_TYPE.POINTER) {
-        this._pointer(flags, values);
-      } else if (eventType === EVENT_TYPE.DRAG) {
-        this._drag(flags, values);
-      } else if (eventType === EVENT_TYPE.EVENT) {
-        this._event(flags, values);
-      } else if (eventType === EVENT_TYPE.MOUSE) {
-        this._mouse(flags, values);
-      } else if (eventType === EVENT_TYPE.WHEEL) {
-        this._wheel(flags, values);
-      }
+      this._updateStore(e);
     });
   }
 
-  private _clipboard($flags: ClipboardFlags, $values: ClipboardValues): void {}
-  private _keyboard($flags: KeyboardFlags, $values: KeyboardValues): void {}
+  private _updateStore($e: NotifiedEvent) {
+    const eventType: string = $e.content.eventType;
+    const flags: any = $e.content.flags; // eslint-disable-line @typescript-eslint/no-explicit-any
+    const values: any = $e.content.values; // eslint-disable-line @typescript-eslint/no-explicit-any
+
+    // update notifyType
+    this.storeManager.updateNotifyType($e.type);
+    console.log(this.storeManager.notifyType);
+
+    if (eventType === EVENT_TYPE.CLIPBOARD) {
+      this._clipboard(flags, values);
+    } else if (eventType === EVENT_TYPE.KEYBOARD) {
+      this._keyboard(flags, values);
+    } else if (eventType === EVENT_TYPE.POINTER) {
+      this._pointer(flags, values);
+    } else if (eventType === EVENT_TYPE.DRAG) {
+      this._drag(flags, values);
+    } else if (eventType === EVENT_TYPE.EVENT) {
+      this._event(flags, values);
+    } else if (eventType === EVENT_TYPE.MOUSE) {
+      this._mouse(flags, values);
+    } else if (eventType === EVENT_TYPE.WHEEL) {
+      this._wheel(flags, values);
+    }
+  }
+
+  private _clipboard($flags: ClipboardFlags, $values: ClipboardValues): void {
+    this.storeManager.updateClipboardFlags($flags);
+    this.storeManager.updateClipboardValues($values);
+  }
+
+  private _keyboard($flags: KeyboardFlags, $values: KeyboardValues): void {
+    this.storeManager.updateKeyboardFlags($flags);
+    this.storeManager.updateKeyboardValues($values);
+  }
 
   private _pointer($flags: PointerFlags, $values: PointerValues): void {
     this.storeManager.updatePointerFlags($flags);
     this.storeManager.updatePointerOffset($flags, $values);
   }
 
-  private _drag($flags: DragFlags, $values: DragValues): void {}
-  private _event($flags: EventFlags, $values: EventValues): void {}
-  private _mouse($flags: MouseFlags, $values: MouseValues): void {}
-  private _wheel($flags: WheelFlags, $values: WheelValues): void {}
+  private _drag($flags: DragFlags, $values: DragValues): void {
+    this.storeManager.updateDragFlags($flags);
+    this.storeManager.updateDragValues($values);
+  }
+
+  private _event($flags: EventFlags, $values: EventValues): void {
+    this.storeManager.updateEventFlgas($flags);
+    this.storeManager.updateEventValues($values);
+  }
+
+  private _mouse($flags: MouseFlags, $values: MouseValues): void {
+    this.storeManager.updateMouseFlags($flags);
+    this.storeManager.updateMouseValues($values);
+  }
+
+  private _wheel($flags: WheelFlags, $values: WheelValues): void {
+    this.storeManager.updateWheelFlags($flags);
+    this.storeManager.updateWheelValues($values);
+  }
 }
