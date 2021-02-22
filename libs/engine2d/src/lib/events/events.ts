@@ -20,14 +20,13 @@ import {
   KEYBOARD_EVENT,
   NOTIFY_TYPE,
 } from '../constants/index';
-
 import { Entity } from '../entities/entity.interface';
 
 type Elements = Window | Document | HTMLElement;
 
 export abstract class Events {
-  private readonly notifier: Notifier<FilterResult>;
   protected entity: Entity;
+  private readonly notifier: Notifier<FilterResult>;
   private onPointerEvent: OnPointerEvent;
   private onWheelEvent: OnWheelEvent;
   private onMouseEvent: OnMouseEvent;
