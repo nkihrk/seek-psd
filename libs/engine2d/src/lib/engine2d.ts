@@ -33,15 +33,13 @@ import { NotifiedEvent, Notifier } from './notifiers/notifier';
 import { GlobalEvents } from './events/globalEvents';
 import { TargetEvents } from './events/targetEvents';
 import { StoreManager } from './storeManager';
-import { Canvas } from './entities/canvas';
 
 export class Engine2D {
   private entity: Entity;
   private storeManager: StoreManager;
 
-  constructor($element: HTMLCanvasElement) {
-    const canvasEntity = new Canvas($element);
-    this.entity = canvasEntity;
+  constructor($entity: Entity) {
+    this.entity = $entity;
   }
 
   start(): void {

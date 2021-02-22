@@ -7,7 +7,7 @@ import {
   EventEmitter,
 } from '@angular/core';
 import { setPixelPerfect } from '@seek-psd/utils';
-import { Engine2D } from '@seek-psd/engine2d';
+import { Engine2D, Canvas } from '@seek-psd/engine2d';
 
 export interface Layers {
   psdLayer: ElementRef<HTMLCanvasElement>;
@@ -37,7 +37,8 @@ export class CanvasComponent implements OnInit {
     this._initCanvas();
 
     // engine2d
-    const eg = new Engine2D(this.uiLayer.nativeElement);
+    const canvasEntity = new Canvas(this.uiLayer.nativeElement);
+    const eg = new Engine2D(canvasEntity);
     eg.start();
   }
 
