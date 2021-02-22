@@ -34,12 +34,58 @@ import { GlobalEvents } from './events/globalEvents';
 import { TargetEvents } from './events/targetEvents';
 import { StoreManager } from './storeManager';
 
+type Plugin = ($mainStore: any, $store: StoreManager) => void;
+
 export class Engine2D {
   private entity: Entity;
   private storeManager: StoreManager;
+  private static mainStore: any;
+  private static clipboards: Plugin[] = [];
+  private static keyboards: Plugin[] = [];
+  private static pointers: Plugin[] = [];
+  private static drags: Plugin[] = [];
+  private static events: Plugin[] = [];
+  private static mouses: Plugin[] = [];
+  private static wheels: Plugin[] = [];
 
   constructor($entity: Entity) {
     this.entity = $entity;
+  }
+
+  static registerPlugin($eventType: string, $callback: Plugin): void {
+    switch ($eventType) {
+      case EVENT_TYPE.CLIPBOARD:
+        this.clipboards.push($callback);
+        break;
+
+      case EVENT_TYPE.KEYBOARD:
+        this.keyboards.push($callback);
+        break;
+
+      case EVENT_TYPE.POINTER:
+        this.pointers.push($callback);
+        break;
+
+      case EVENT_TYPE.DRAG:
+        this.drags.push($callback);
+        break;
+
+      case EVENT_TYPE.EVENT:
+        this.events.push($callback);
+        break;
+
+      case EVENT_TYPE.MOUSE:
+        this.mouses.push($callback);
+        break;
+
+      case EVENT_TYPE.WHEEL:
+        this.wheels.push($callback);
+        break;
+
+      default:
+        throw new Error('Invalid plugin category is detected.');
+        break;
+    }
   }
 
   start(): void {
@@ -86,18 +132,17 @@ export class Engine2D {
 
   private _observe($notifier: Notifier<FilterResult>): void {
     $notifier.observer().subscribe((e) => {
-      this._updateStore(e);
+      this._updateBackendStore(e);
     });
   }
 
-  private _updateStore($e: NotifiedEvent) {
+  private _updateBackendStore($e: NotifiedEvent) {
     const eventType: string = $e.content.eventType;
     const flags: any = $e.content.flags; // eslint-disable-line @typescript-eslint/no-explicit-any
     const values: any = $e.content.values; // eslint-disable-line @typescript-eslint/no-explicit-any
 
     // update notifyType
     this.storeManager.updateNotifyType($e.type);
-    console.log(this.storeManager.notifyType);
 
     if (eventType === EVENT_TYPE.CLIPBOARD) {
       this._clipboard(flags, values);
@@ -119,35 +164,63 @@ export class Engine2D {
   private _clipboard($flags: ClipboardFlags, $values: ClipboardValues): void {
     this.storeManager.updateClipboardFlags($flags);
     this.storeManager.updateClipboardValues($values);
+
+    Engine2D.clipboards.forEach((f) => {
+      f(Engine2D.mainStore, this.storeManager);
+    });
   }
 
   private _keyboard($flags: KeyboardFlags, $values: KeyboardValues): void {
     this.storeManager.updateKeyboardFlags($flags);
     this.storeManager.updateKeyboardValues($values);
+
+    Engine2D.keyboards.forEach((f) => {
+      f(Engine2D.mainStore, this.storeManager);
+    });
   }
 
   private _pointer($flags: PointerFlags, $values: PointerValues): void {
     this.storeManager.updatePointerFlags($flags);
     this.storeManager.updatePointerOffset($flags, $values);
+
+    Engine2D.pointers.forEach((f) => {
+      f(Engine2D.mainStore, this.storeManager);
+    });
   }
 
   private _drag($flags: DragFlags, $values: DragValues): void {
     this.storeManager.updateDragFlags($flags);
     this.storeManager.updateDragValues($values);
+
+    Engine2D.drags.forEach((f) => {
+      f(Engine2D.mainStore, this.storeManager);
+    });
   }
 
   private _event($flags: EventFlags, $values: EventValues): void {
     this.storeManager.updateEventFlgas($flags);
     this.storeManager.updateEventValues($values);
+
+    Engine2D.events.forEach((f) => {
+      f(Engine2D.mainStore, this.storeManager);
+    });
   }
 
   private _mouse($flags: MouseFlags, $values: MouseValues): void {
     this.storeManager.updateMouseFlags($flags);
     this.storeManager.updateMouseValues($values);
+
+    Engine2D.mouses.forEach((f) => {
+      f(Engine2D.mainStore, this.storeManager);
+    });
   }
 
   private _wheel($flags: WheelFlags, $values: WheelValues): void {
     this.storeManager.updateWheelFlags($flags);
     this.storeManager.updateWheelValues($values);
+
+    Engine2D.wheels.forEach((f) => {
+      f(Engine2D.mainStore, this.storeManager);
+    });
   }
 }
