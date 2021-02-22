@@ -67,9 +67,7 @@ export class Engine2D {
     const globalNotifier = new Notifier<FilterResult>();
     globalNotifier.notifyType = NOTIFY_TYPE.GLOBAL;
     const globalEvents = new GlobalEvents(globalNotifier);
-    // start eventListener
     globalEvents.init(this.entity);
-    // start eventListener
     globalEvents.start();
 
     // subscribe a notifier's obeserver
@@ -81,9 +79,7 @@ export class Engine2D {
     const targetNotifier = new Notifier<FilterResult>();
     targetNotifier.notifyType = NOTIFY_TYPE.TARGET;
     const targetEvents = new TargetEvents(targetNotifier);
-    // start eventListener
     targetEvents.init(this.entity);
-    // observe events data
     targetEvents.start();
 
     // subscribe a notifier's obeserver

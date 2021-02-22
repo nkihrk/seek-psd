@@ -3,6 +3,7 @@ import type { FilterResult } from './event';
 import type { EventFlags, EventValues } from '../meta-filters/eventMetaFilter';
 import { EventMetaFilter } from '../meta-filters/eventMetaFilter';
 import { Event as CommonEvent } from './event';
+import { EVENT_TYPE } from '../../constants';
 
 interface FilterContent {
   flags: EventFlags;
@@ -17,46 +18,22 @@ export class OnEvent extends CommonEvent {
 
   onFullscreenchange($event: Event): void {
     const { flags, values } = this._getFilterContent($event);
-
-    this.notifier.update({
-      flags,
-      values,
-      eventType: 'event',
-      default: $event,
-    });
+    this._publish(flags, values, $event);
   }
 
   onFullscreenerror($event: Event): void {
     const { flags, values } = this._getFilterContent($event);
-
-    this.notifier.update({
-      flags,
-      values,
-      eventType: 'event',
-      default: $event,
-    });
+    this._publish(flags, values, $event);
   }
 
   onOnline($event: Event): void {
     const { flags, values } = this._getFilterContent($event);
-
-    this.notifier.update({
-      flags,
-      values,
-      eventType: 'event',
-      default: $event,
-    });
+    this._publish(flags, values, $event);
   }
 
   onOffline($event: Event): void {
     const { flags, values } = this._getFilterContent($event);
-
-    this.notifier.update({
-      flags,
-      values,
-      eventType: 'event',
-      default: $event,
-    });
+    this._publish(flags, values, $event);
   }
 
   private _getFilterContent($event: Event): FilterContent {
@@ -66,5 +43,18 @@ export class OnEvent extends CommonEvent {
     const values: EventValues = filter.values;
 
     return { flags, values, filter };
+  }
+
+  private _publish(
+    $flags: EventFlags,
+    $values: EventValues,
+    $event: Event
+  ): void {
+    this.notifier.update({
+      flags: $flags,
+      values: $values,
+      eventType: EVENT_TYPE.EVENT,
+      default: $event,
+    });
   }
 }

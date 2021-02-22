@@ -6,6 +6,7 @@ import type {
 } from '../meta-filters/keyboardMetaFilter';
 import { KeyboardMetaFilter } from '../meta-filters/keyboardMetaFilter';
 import { Event } from './event';
+import { EVENT_TYPE } from '../../constants';
 
 interface FilterContent {
   flags: KeyboardFlags;
@@ -24,12 +25,7 @@ export class OnKeyboardEvent extends Event {
     flags.isKeydown = true;
 
     // notify to the eventManager
-    this.notifier.update({
-      flags,
-      values,
-      eventType: 'keyboard',
-      default: $event,
-    });
+    this._publish(flags, values, $event);
   }
 
   onKeyup($event: KeyboardEvent): void {
@@ -38,12 +34,7 @@ export class OnKeyboardEvent extends Event {
     flags.isKeyup = true;
 
     // notify to the eventManager
-    this.notifier.update({
-      flags,
-      values,
-      eventType: 'keyboard',
-      default: $event,
-    });
+    this._publish(flags, values, $event);
   }
 
   private _getFilterContent($event: KeyboardEvent): FilterContent {
@@ -53,5 +44,17 @@ export class OnKeyboardEvent extends Event {
     const values: KeyboardValues = filter.values;
 
     return { flags, values, filter };
+  }
+  private _publish(
+    $flags: KeyboardFlags,
+    $values: KeyboardValues,
+    $event: KeyboardEvent
+  ): void {
+    this.notifier.update({
+      flags: $flags,
+      values: $values,
+      eventType: EVENT_TYPE.KEYBOARD,
+      default: $event,
+    });
   }
 }

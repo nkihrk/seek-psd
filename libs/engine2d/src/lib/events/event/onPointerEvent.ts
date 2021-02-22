@@ -8,7 +8,7 @@ import { PointerMetaFilter } from '../meta-filters/pointerMetaFilter';
 import { Event } from './event';
 import { removeItem, getCenterCoord } from '@seek-psd/utils';
 import { getButtonValue } from '../meta-filters/utils';
-import { IDLE_INTERVAL } from '../../constants/index';
+import { EVENT_TYPE, IDLE_INTERVAL } from '../../constants/index';
 
 interface FilterContent {
   flags: PointerFlags;
@@ -39,12 +39,7 @@ export class OnPointerEvent extends Event {
     this._manageMultiTouch(flags, values);
 
     // notify to the eventManager
-    this.notifier.update({
-      flags,
-      values,
-      eventType: 'pointer',
-      default: $event,
-    });
+    this._publish(flags, values, $event);
   }
 
   onPointerup($event: PointerEvent): void {
@@ -57,12 +52,8 @@ export class OnPointerEvent extends Event {
     const currentId: number = values.meta.id;
     this._removeFilterFromList(currentId);
 
-    this.notifier.update({
-      flags,
-      values,
-      eventType: 'pointer',
-      default: $event,
-    });
+    // notify to the eventManager
+    this._publish(flags, values, $event);
   }
 
   onPointermove($event: PointerEvent): void {
@@ -79,67 +70,32 @@ export class OnPointerEvent extends Event {
     this._manageMultiTouch(flags, values);
 
     // notify to the eventManager
-    this.notifier.update({
-      flags,
-      values,
-      eventType: 'pointer',
-      default: $event,
-    });
+    this._publish(flags, values, $event);
   }
 
   onPointerover($event: PointerEvent): void {
     const { flags, values } = this._getFilterContent($event);
-
-    this.notifier.update({
-      flags,
-      values,
-      eventType: 'pointer',
-      default: $event,
-    });
+    this._publish(flags, values, $event);
   }
 
   onPointerenter($event: PointerEvent): void {
     const { flags, values } = this._getFilterContent($event);
-
-    this.notifier.update({
-      flags,
-      values,
-      eventType: 'pointer',
-      default: $event,
-    });
+    this._publish(flags, values, $event);
   }
 
   onPointercancel($event: PointerEvent): void {
     const { flags, values } = this._getFilterContent($event);
-
-    this.notifier.update({
-      flags,
-      values,
-      eventType: 'pointer',
-      default: $event,
-    });
+    this._publish(flags, values, $event);
   }
 
   onPointerout($event: PointerEvent): void {
     const { flags, values } = this._getFilterContent($event);
-
-    this.notifier.update({
-      flags,
-      values,
-      eventType: 'pointer',
-      default: $event,
-    });
+    this._publish(flags, values, $event);
   }
 
   onPointerleave($event: PointerEvent): void {
     const { flags, values } = this._getFilterContent($event);
-
-    this.notifier.update({
-      flags,
-      values,
-      eventType: 'pointer',
-      default: $event,
-    });
+    this._publish(flags, values, $event);
   }
 
   private _getFilterContent($event: PointerEvent): FilterContent {
@@ -149,6 +105,19 @@ export class OnPointerEvent extends Event {
     const values: PointerValues = filter.values;
 
     return { flags, values, filter };
+  }
+
+  private _publish(
+    $flags: PointerFlags,
+    $values: PointerValues,
+    $event: PointerEvent
+  ): void {
+    this.notifier.update({
+      flags: $flags,
+      values: $values,
+      eventType: EVENT_TYPE.POINTER,
+      default: $event,
+    });
   }
 
   private _setMoveFlag($flags: PointerFlags): void {

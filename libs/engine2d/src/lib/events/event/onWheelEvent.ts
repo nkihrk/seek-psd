@@ -3,7 +3,7 @@ import type { WheelFlags, WheelValues } from '../meta-filters/wheelMetaFilter';
 import type { FilterResult } from './event';
 import { WheelMetaFilter } from '../meta-filters/wheelMetaFilter';
 import { Event } from './event';
-import { WHEEL_INTERVAL } from '../../constants/index';
+import { EVENT_TYPE, WHEEL_INTERVAL } from '../../constants/index';
 
 export class OnWheelEvent extends Event {
   private wheelCounter1 = 0;
@@ -27,7 +27,7 @@ export class OnWheelEvent extends Event {
     this.notifier.update({
       flags,
       values,
-      eventType: 'wheel',
+      eventType: EVENT_TYPE.WHEEL,
       default: $event,
     });
   }

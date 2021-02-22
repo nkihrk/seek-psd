@@ -6,6 +6,7 @@ import type {
 } from '../meta-filters/clipboardMetaFilter';
 import { ClipboardMetaFilter } from '../meta-filters/clipboardMetaFilter';
 import { Event } from './event';
+import { EVENT_TYPE } from '../../constants';
 
 interface FilterContent {
   flags: ClipboardFlags;
@@ -23,12 +24,7 @@ export class OnClipboardEvent extends Event {
 
     flags.isCut = true;
 
-    this.notifier.update({
-      flags,
-      values,
-      eventType: 'clipboard',
-      default: $event,
-    });
+    this._publish(flags, values, $event);
   }
 
   onCopy($event: ClipboardEvent): void {
@@ -36,12 +32,7 @@ export class OnClipboardEvent extends Event {
 
     flags.isCopy = true;
 
-    this.notifier.update({
-      flags,
-      values,
-      eventType: 'clipboard',
-      default: $event,
-    });
+    this._publish(flags, values, $event);
   }
 
   onPaste($event: ClipboardEvent): void {
@@ -49,12 +40,7 @@ export class OnClipboardEvent extends Event {
 
     flags.isPaste = true;
 
-    this.notifier.update({
-      flags,
-      values,
-      eventType: 'clipboard',
-      default: $event,
-    });
+    this._publish(flags, values, $event);
   }
 
   private _getFilterContent($event: ClipboardEvent): FilterContent {
@@ -64,5 +50,18 @@ export class OnClipboardEvent extends Event {
     const values: ClipboardValues = filter.values;
 
     return { flags, values, filter };
+  }
+
+  private _publish(
+    $flags: ClipboardFlags,
+    $values: ClipboardValues,
+    $event: ClipboardEvent
+  ): void {
+    this.notifier.update({
+      flags: $flags,
+      values: $values,
+      eventType: EVENT_TYPE.CLIPBOARD,
+      default: $event,
+    });
   }
 }

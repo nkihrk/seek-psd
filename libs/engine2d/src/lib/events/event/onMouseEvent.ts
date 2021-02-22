@@ -3,6 +3,7 @@ import type { FilterResult } from './event';
 import type { MouseFlags, MouseValues } from '../meta-filters/mouseMetaFilter';
 import { MouseMetaFilter } from '../meta-filters/mouseMetaFilter';
 import { Event } from './event';
+import { EVENT_TYPE } from '../../constants';
 
 interface FilterContent {
   flags: MouseFlags;
@@ -20,12 +21,7 @@ export class OnMouseEvent extends Event {
 
     flags.isClick = true;
 
-    this.notifier.update({
-      flags,
-      values,
-      eventType: 'mouse',
-      default: $event,
-    });
+    this._publish(flags, values, $event);
   }
 
   onDblClick($event: MouseEvent): void {
@@ -33,12 +29,7 @@ export class OnMouseEvent extends Event {
 
     flags.isDblClick = true;
 
-    this.notifier.update({
-      flags,
-      values,
-      eventType: 'mouse',
-      default: $event,
-    });
+    this._publish(flags, values, $event);
   }
 
   onContextmenu($event: MouseEvent): void {
@@ -46,12 +37,7 @@ export class OnMouseEvent extends Event {
 
     flags.isContextmenu = true;
 
-    this.notifier.update({
-      flags,
-      values,
-      eventType: 'mouse',
-      default: $event,
-    });
+    this._publish(flags, values, $event);
   }
 
   private _getFilterContent($event: MouseEvent): FilterContent {
@@ -61,5 +47,18 @@ export class OnMouseEvent extends Event {
     const values: MouseValues = filter.values;
 
     return { flags, values, filter };
+  }
+
+  private _publish(
+    $flags: MouseFlags,
+    $values: MouseValues,
+    $event: MouseEvent
+  ): void {
+    this.notifier.update({
+      flags: $flags,
+      values: $values,
+      eventType: EVENT_TYPE.MOUSE,
+      default: $event,
+    });
   }
 }

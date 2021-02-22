@@ -4,6 +4,8 @@ import type { DragFlags, DragValues } from '../meta-filters/dragMetaFilter';
 import { DragMetaFilter } from '../meta-filters/dragMetaFilter';
 import { Event } from './event';
 
+import { EVENT_TYPE } from '../../constants';
+
 interface FilterContent {
   flags: DragFlags;
   values: DragValues;
@@ -20,12 +22,7 @@ export class OnDragEvent extends Event {
 
     flags.isDrag = true;
 
-    this.notifier.update({
-      flags,
-      values,
-      eventType: 'drag',
-      default: $event,
-    });
+    this._publish(flags, values, $event);
   }
 
   onDragend($event: DragEvent): void {
@@ -33,12 +30,7 @@ export class OnDragEvent extends Event {
 
     flags.isDragEnd = true;
 
-    this.notifier.update({
-      flags,
-      values,
-      eventType: 'drag',
-      default: $event,
-    });
+    this._publish(flags, values, $event);
   }
 
   onDragenter($event: DragEvent): void {
@@ -46,12 +38,7 @@ export class OnDragEvent extends Event {
 
     flags.isDragEnter = true;
 
-    this.notifier.update({
-      flags,
-      values,
-      eventType: 'drag',
-      default: $event,
-    });
+    this._publish(flags, values, $event);
   }
 
   onDragstart($event: DragEvent): void {
@@ -59,12 +46,7 @@ export class OnDragEvent extends Event {
 
     flags.isDragStart = true;
 
-    this.notifier.update({
-      flags,
-      values,
-      eventType: 'drag',
-      default: $event,
-    });
+    this._publish(flags, values, $event);
   }
 
   onDragleave($event: DragEvent): void {
@@ -72,12 +54,7 @@ export class OnDragEvent extends Event {
 
     flags.isDragLeave = true;
 
-    this.notifier.update({
-      flags,
-      values,
-      eventType: 'drag',
-      default: $event,
-    });
+    this._publish(flags, values, $event);
   }
 
   onDragover($event: DragEvent): void {
@@ -85,12 +62,7 @@ export class OnDragEvent extends Event {
 
     flags.isDragOver = true;
 
-    this.notifier.update({
-      flags,
-      values,
-      eventType: 'drag',
-      default: $event,
-    });
+    this._publish(flags, values, $event);
   }
 
   onDrop($event: DragEvent): void {
@@ -98,12 +70,7 @@ export class OnDragEvent extends Event {
 
     flags.isDrop = true;
 
-    this.notifier.update({
-      flags,
-      values,
-      eventType: 'drag',
-      default: $event,
-    });
+    this._publish(flags, values, $event);
   }
 
   private _getFilterContent($event: DragEvent): FilterContent {
@@ -113,5 +80,18 @@ export class OnDragEvent extends Event {
     const values: DragValues = filter.values;
 
     return { flags, values, filter };
+  }
+
+  private _publish(
+    $flags: DragFlags,
+    $values: DragValues,
+    $event: DragEvent
+  ): void {
+    this.notifier.update({
+      flags: $flags,
+      values: $values,
+      eventType: EVENT_TYPE.DRAG,
+      default: $event,
+    });
   }
 }
