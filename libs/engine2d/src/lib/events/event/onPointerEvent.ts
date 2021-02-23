@@ -8,7 +8,7 @@ import { PointerMetaFilter } from '../meta-filters/pointerMetaFilter';
 import { Event } from './event';
 import { removeItem, getCenterCoord } from '@seek-psd/utils';
 import { getButtonValue } from '../meta-filters/utils';
-import { EVENT_TYPE, IDLE_INTERVAL } from '../../constants/index';
+import { BUTTON_NAME, EVENT_TYPE, IDLE_INTERVAL } from '../../constants/index';
 
 interface FilterContent {
   flags: PointerFlags;
@@ -45,8 +45,8 @@ export class OnPointerEvent extends Event {
   onPointerup($event: PointerEvent): void {
     const { flags, values } = this._getFilterContent($event);
 
-    // set current button value
-    this.prevButton = getButtonValue($event.button);
+    // reset current button value
+    this.prevButton = '';
 
     // always remove an item from the list
     const currentId: number = values.meta.id;
@@ -120,25 +120,28 @@ export class OnPointerEvent extends Event {
     });
   }
 
+  // *** this code should be fixed *** //
   private _setMoveFlag($flags: PointerFlags): void {
     switch (this.prevButton) {
-      case 'left':
+      case BUTTON_NAME.LEFT:
         $flags.state.isLeftMove = true;
+        console.log('leftmove', this.prevButton);
         break;
 
-      case 'middle':
+      case BUTTON_NAME.MIDDLE:
         $flags.state.isMiddleMove = true;
+        console.log('middlemove', this.prevButton);
         break;
 
-      case 'right':
+      case BUTTON_NAME.RIGHT:
         $flags.state.isRightMove = true;
         break;
 
-      case 'back':
+      case BUTTON_NAME.BACK:
         $flags.state.isBackMove = true;
         break;
 
-      case 'forward':
+      case BUTTON_NAME.FORWARD:
         $flags.state.isForwardMove = true;
         break;
     }

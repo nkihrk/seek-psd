@@ -1,5 +1,5 @@
 import { MetaFilter } from './metaFilter';
-import { BUTTON_STATES, POINTER } from '../../constants/index';
+import { BUTTON_NAME, BUTTON_STATES, POINTER } from '../../constants/index';
 import { getButtonValue, getButtonsValue } from './utils/index';
 
 export interface PointerFlags {
@@ -183,27 +183,27 @@ export class PointerMetaFilter extends MetaFilter<PointerFlags, PointerValues> {
 
     switch ($event.button) {
       case BUTTON_STATES.LEFT:
-        buttonType = 'Left';
+        buttonType = BUTTON_NAME.LEFT;
         break;
 
       case BUTTON_STATES.MIDDLE:
-        buttonType = 'Middle';
+        buttonType = BUTTON_NAME.MIDDLE;
         break;
 
       case BUTTON_STATES.RIGHT:
-        buttonType = 'Right';
+        buttonType = BUTTON_NAME.RIGHT;
         break;
 
       case BUTTON_STATES.BACK:
-        buttonType = 'Back';
+        buttonType = BUTTON_NAME.BACK;
         break;
 
       case BUTTON_STATES.FORWARD:
-        buttonType = 'Forward';
+        buttonType = BUTTON_NAME.FORWARD;
         break;
 
       case BUTTON_STATES.ERASER:
-        buttonType = 'Eraser';
+        buttonType = BUTTON_NAME.ERASER;
         break;
     }
 

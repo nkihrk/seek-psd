@@ -1,27 +1,31 @@
-import { BUTTON_STATES, BUTTONS_STATES } from '../../../constants/index';
+import {
+  BUTTON_STATES,
+  BUTTONS_STATES,
+  BUTTON_NAME,
+} from '../../../constants/index';
 
 export function getButtonValue($buttonType: number): string {
   let buttonType: string;
 
   switch ($buttonType) {
     case BUTTON_STATES.LEFT:
-      buttonType = 'left';
+      buttonType = BUTTON_NAME.LEFT;
       break;
 
     case BUTTON_STATES.MIDDLE:
-      buttonType = 'middle';
+      buttonType = BUTTON_NAME.MIDDLE;
       break;
 
     case BUTTON_STATES.RIGHT:
-      buttonType = 'right';
+      buttonType = BUTTON_NAME.RIGHT;
       break;
 
     case BUTTON_STATES.BACK:
-      buttonType = 'back';
+      buttonType = BUTTON_NAME.BACK;
       break;
 
     case BUTTON_STATES.FORWARD:
-      buttonType = 'forward';
+      buttonType = BUTTON_NAME.FORWARD;
       break;
   }
 
@@ -33,43 +37,43 @@ export function getButtonsValue($buttonsType: number): string[] {
 
   switch ($buttonsType) {
     case BUTTONS_STATES.LEFT_RIGHT:
-      buttonsType = ['left', 'right'];
+      buttonsType = [BUTTON_NAME.LEFT, BUTTON_NAME.RIGHT];
       break;
 
     case BUTTONS_STATES.LEFT_MIDDLE:
-      buttonsType = ['left', 'middle'];
+      buttonsType = [BUTTON_NAME.LEFT, BUTTON_NAME.MIDDLE];
       break;
 
     case BUTTONS_STATES.LEFT_BACK:
-      buttonsType = ['left', 'back'];
+      buttonsType = [BUTTON_NAME.LEFT, BUTTON_NAME.BACK];
       break;
 
     case BUTTONS_STATES.LEFT_FORWARD:
-      buttonsType = ['left', 'forward'];
+      buttonsType = [BUTTON_NAME.LEFT, BUTTON_NAME.FORWARD];
       break;
 
     case BUTTONS_STATES.RIGHT_MIDDLE:
-      buttonsType = ['right', 'middle'];
+      buttonsType = [BUTTON_NAME.RIGHT, BUTTON_NAME.MIDDLE];
       break;
 
     case BUTTONS_STATES.RIGHT_BACK:
-      buttonsType = ['right', 'back'];
+      buttonsType = [BUTTON_NAME.RIGHT, BUTTON_NAME.BACK];
       break;
 
     case BUTTONS_STATES.RIGHT_FORWARD:
-      buttonsType = ['right', 'forward'];
+      buttonsType = [BUTTON_NAME.RIGHT, BUTTON_NAME.FORWARD];
       break;
 
     case BUTTONS_STATES.MIDDLE_BACK:
-      buttonsType = ['middle', 'back'];
+      buttonsType = [BUTTON_NAME.MIDDLE, BUTTON_NAME.BACK];
       break;
 
     case BUTTONS_STATES.MIDDLE_FORWARD:
-      buttonsType = ['middle', 'forward'];
+      buttonsType = [BUTTON_NAME.MIDDLE, BUTTON_NAME.FORWARD];
       break;
 
     case BUTTONS_STATES.BACK_FORWARD:
-      buttonsType = ['back', 'forward'];
+      buttonsType = [BUTTON_NAME.BACK, BUTTON_NAME.FORWARD];
       break;
   }
 

@@ -7,7 +7,10 @@ import {
   EventEmitter,
 } from '@angular/core';
 import { setPixelPerfect } from '@seek-psd/utils';
-import { Engine2D, Canvas } from '@seek-psd/engine2d';
+import { Engine2D, Canvas, EVENT_TYPE } from '@seek-psd/engine2d';
+import { Store } from '../../../../../../core/functions/store';
+import { TestEvent } from '../../../../../../core/functions/modules/events/testEvent';
+import { TestRenderer } from '../../../../../../core/functions/modules/renderers/testRenderer';
 
 export interface Layers {
   psdLayer: ElementRef<HTMLCanvasElement>;
@@ -38,7 +41,11 @@ export class CanvasComponent implements OnInit {
 
     // engine2d
     const canvasEntity = new Canvas(this.uiLayer.nativeElement);
-    const eg = new Engine2D(canvasEntity);
+    const eg = new Engine2D();
+    eg.registerStore(new Store());
+    eg.registerEvent(EVENT_TYPE.POINTER, new TestEvent());
+    eg.registerRenderer(new TestRenderer());
+    eg.init(canvasEntity);
     eg.start();
   }
 

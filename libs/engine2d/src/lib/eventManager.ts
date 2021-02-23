@@ -1,4 +1,4 @@
-import type { Entity } from './entities/entity.interface';
+import type { Plugin } from './global.interface';
 import type { FilterResult } from './events/event/event';
 import type {
   PointerFlags,
@@ -34,12 +34,8 @@ import { GlobalEvents } from './events/globalEvents';
 import { TargetEvents } from './events/targetEvents';
 import { StoreManager } from './storeManager';
 
-type Plugin = ($mainStore: any, $store: StoreManager) => void;
-
 export class EventManager {
-  private entity: Entity;
-  private storeManager: StoreManager;
-  private static mainStore: any;
+  private storeManager: StoreManager = null;
   private static clipboards: Plugin[] = [];
   private static keyboards: Plugin[] = [];
   private static pointers: Plugin[] = [];
@@ -48,34 +44,34 @@ export class EventManager {
   private static mouses: Plugin[] = [];
   private static wheels: Plugin[] = [];
 
-  static registerPlugin($eventType: string, $callback: Plugin): void {
+  static registerPlugin($eventType: string, $plugin: Plugin): void {
     switch ($eventType) {
       case EVENT_TYPE.CLIPBOARD:
-        this.clipboards.push($callback);
+        EventManager.clipboards.push($plugin);
         break;
 
       case EVENT_TYPE.KEYBOARD:
-        this.keyboards.push($callback);
+        EventManager.keyboards.push($plugin);
         break;
 
       case EVENT_TYPE.POINTER:
-        this.pointers.push($callback);
+        EventManager.pointers.push($plugin);
         break;
 
       case EVENT_TYPE.DRAG:
-        this.drags.push($callback);
+        EventManager.drags.push($plugin);
         break;
 
       case EVENT_TYPE.EVENT:
-        this.events.push($callback);
+        EventManager.events.push($plugin);
         break;
 
       case EVENT_TYPE.MOUSE:
-        this.mouses.push($callback);
+        EventManager.mouses.push($plugin);
         break;
 
       case EVENT_TYPE.WHEEL:
-        this.wheels.push($callback);
+        EventManager.wheels.push($plugin);
         break;
 
       default:
@@ -88,11 +84,10 @@ export class EventManager {
 
   init($storeManager: StoreManager): void {
     this.storeManager = $storeManager;
-    this.entity = $storeManager.entity;
   }
 
   start(): void {
-    if (!this.storeManager || !this.entity) {
+    if (!this.storeManager) {
       throw new Error('EventManager is not properly initialized.');
     }
 
@@ -110,7 +105,7 @@ export class EventManager {
     const globalNotifier = new Notifier<FilterResult>();
     globalNotifier.notifyType = NOTIFY_TYPE.GLOBAL;
     const globalEvents = new GlobalEvents(globalNotifier);
-    globalEvents.init(this.entity);
+    globalEvents.init(this.storeManager.entity);
     globalEvents.start();
 
     // subscribe a notifier's obeserver
@@ -122,7 +117,7 @@ export class EventManager {
     const targetNotifier = new Notifier<FilterResult>();
     targetNotifier.notifyType = NOTIFY_TYPE.TARGET;
     const targetEvents = new TargetEvents(targetNotifier);
-    targetEvents.init(this.entity);
+    targetEvents.init(this.storeManager.entity);
     targetEvents.start();
 
     // subscribe a notifier's obeserver
@@ -142,7 +137,7 @@ export class EventManager {
 
     // update notifyType
     this.storeManager.updateNotifyType($e.type);
-    console.log(this.storeManager.notifyType);
+    //console.log(this.storeManager.notifyType);
 
     if (eventType === EVENT_TYPE.CLIPBOARD) {
       this._clipboard(flags, values);
@@ -166,7 +161,7 @@ export class EventManager {
     this.storeManager.updateClipboardValues($values);
 
     EventManager.clipboards.forEach((f) => {
-      f(EventManager.mainStore, this.storeManager);
+      f.call(this.storeManager);
     });
   }
 
@@ -175,7 +170,7 @@ export class EventManager {
     this.storeManager.updateKeyboardValues($values);
 
     EventManager.keyboards.forEach((f) => {
-      f(EventManager.mainStore, this.storeManager);
+      f.call(this.storeManager);
     });
   }
 
@@ -184,7 +179,7 @@ export class EventManager {
     this.storeManager.updatePointerOffset($flags, $values);
 
     EventManager.pointers.forEach((f) => {
-      f(EventManager.mainStore, this.storeManager);
+      f.call(this.storeManager);
     });
   }
 
@@ -193,7 +188,7 @@ export class EventManager {
     this.storeManager.updateDragValues($values);
 
     EventManager.drags.forEach((f) => {
-      f(EventManager.mainStore, this.storeManager);
+      f.call(this.storeManager);
     });
   }
 
@@ -202,7 +197,7 @@ export class EventManager {
     this.storeManager.updateEventValues($values);
 
     EventManager.events.forEach((f) => {
-      f(EventManager.mainStore, this.storeManager);
+      f.call(this.storeManager);
     });
   }
 
@@ -211,7 +206,7 @@ export class EventManager {
     this.storeManager.updateMouseValues($values);
 
     EventManager.mouses.forEach((f) => {
-      f(EventManager.mainStore, this.storeManager);
+      f.call(this.storeManager);
     });
   }
 
@@ -220,7 +215,7 @@ export class EventManager {
     this.storeManager.updateWheelValues($values);
 
     EventManager.wheels.forEach((f) => {
-      f(EventManager.mainStore, this.storeManager);
+      f.call(this.storeManager);
     });
   }
 }

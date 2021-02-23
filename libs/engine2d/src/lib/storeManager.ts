@@ -1,3 +1,4 @@
+import type { Entity } from './entities/entity.interface';
 import type {
   ClipboardFlags,
   ClipboardValues,
@@ -11,7 +12,6 @@ import type {
   PointerFlags,
   PointerValues,
 } from './events/meta-filters/pointerMetaFilter';
-import type { PointerOffset } from './store.interface';
 import type {
   DragFlags,
   DragValues,
@@ -28,11 +28,21 @@ import type {
   WheelFlags,
   WheelValues,
 } from './events/meta-filters/wheelMetaFilter';
+import type { PointerOffset } from './store';
 import { Store } from './store';
 
 export class StoreManager extends Store {
+  static registerPlugin($store: any): void {
+    // combine a main store with the backend store
+    Object.setPrototypeOf(Store.prototype, $store);
+  }
+
   constructor() {
     super();
+  }
+
+  init($entity: Entity): void {
+    this._entity = $entity;
   }
 
   updateNotifyType($notifyType: string): void {

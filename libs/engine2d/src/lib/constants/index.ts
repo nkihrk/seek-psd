@@ -21,6 +21,14 @@ export enum BUTTONS_STATES {
   MIDDLE_FORWARD = 20,
   BACK_FORWARD = 24,
 }
+export enum BUTTON_NAME {
+  LEFT = 'left',
+  MIDDLE = 'middle',
+  RIGHT = 'right',
+  BACK = 'back',
+  FORWARD = 'forward',
+  ERASER = 'eraser',
+}
 export enum POINTER {
   DOWN = 'pointerdown',
   UP = 'pointerup',

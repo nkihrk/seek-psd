@@ -1,10 +1,12 @@
 import type { Entity } from './entities/entity.interface';
-import type { PointerOffset } from './store.interface';
 import type {
   ClipboardFlags,
   ClipboardValues,
 } from './events/meta-filters/clipboardMetaFilter';
-import type { PointerFlags } from './events/meta-filters/pointerMetaFilter';
+import type {
+  PointerFlags,
+  Coord,
+} from './events/meta-filters/pointerMetaFilter';
 import type {
   KeyboardFlags,
   KeyboardValues,
@@ -25,6 +27,13 @@ import type {
   WheelFlags,
   WheelValues,
 } from './events/meta-filters/wheelMetaFilter';
+
+export interface PointerOffset {
+  current: Coord;
+  prev: Coord;
+  raw: Coord;
+  tmp: Coord;
+}
 
 export abstract class Store {
   protected _notifyType = '';
@@ -165,10 +174,6 @@ export abstract class Store {
   };
 
   constructor() {}
-
-  init($entity: Entity): void {
-    this._entity = $entity;
-  }
 
   get notifyType(): string {
     return this._notifyType;
