@@ -7,3 +7,12 @@ export function addEventListeners(
     $element.addEventListener($eventList[i], (e) => $callback(e), false);
   }
 }
+
+export function requestRender($callback: () => void): void {
+  const r: FrameRequestCallback = () => {
+    $callback();
+
+    requestAnimationFrame(r);
+  };
+  requestAnimationFrame(r);
+}
