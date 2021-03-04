@@ -27,16 +27,21 @@ export class OnPointerEvent extends Event {
   }
 
   onPointerdown($event: PointerEvent): void {
-    const { flags, values, filter } = this._getFilterContent($event);
+    const filterContent: FilterContent = this._getFilterContent($event);
 
     // set current button value
     this.prevButton = getButtonValue($event.button);
 
     // set a current filter for later-use
-    this.ongoingTouches.push(filter);
+    this.ongoingTouches.push(filterContent.filter);
 
     // manage a multi-touch event
-    this._manageMultiTouch(flags, values);
+    const set: {
+      flags: PointerFlags;
+      values: PointerValues;
+    } = this._manageMultiTouch(filterContent.flags, filterContent.values);
+    const flags = set.flags;
+    const values = set.values;
 
     // notify to the eventManager
     this._publish(flags, values, $event);
@@ -49,25 +54,31 @@ export class OnPointerEvent extends Event {
     this.prevButton = '';
 
     // always remove an item from the list
-    const currentId: number = values.meta.id;
-    this._removeFilterFromList(currentId);
+    const currentId: number = values.meta.pointerId;
+    this.ongoingTouches = this._removeFilterFromList(currentId);
 
     // notify to the eventManager
     this._publish(flags, values, $event);
   }
 
   onPointermove($event: PointerEvent): void {
-    const { flags, values } = this._getFilterContent($event);
+    const filterContent: FilterContent = this._getFilterContent($event);
 
     // set move flag
-    this._setMoveFlag(flags);
+    let flags: PointerFlags = this._setMoveFlag(filterContent.flags);
+    let values: PointerValues = filterContent.values;
 
     // manage temorary client coords
     // use case is when we want to get pointer coords stopped for certain mili secs
     this._setTmpClient(values);
 
     // manage a multi-touch event
-    this._manageMultiTouch(flags, values);
+    const set: {
+      flags: PointerFlags;
+      values: PointerValues;
+    } = this._manageMultiTouch(flags, values);
+    flags = set.flags;
+    values = set.values;
 
     // notify to the eventManager
     this._publish(flags, values, $event);
@@ -79,8 +90,11 @@ export class OnPointerEvent extends Event {
   }
 
   onPointerenter($event: PointerEvent): void {
-    const { flags, values } = this._getFilterContent($event);
-    this._publish(flags, values, $event);
+    // set current button value
+    this.prevButton = getButtonValue($event.button);
+
+    //const { flags, values } = this._getFilterContent($event);
+    //this._publish(flags, values, $event);
   }
 
   onPointercancel($event: PointerEvent): void {
@@ -93,9 +107,12 @@ export class OnPointerEvent extends Event {
     this._publish(flags, values, $event);
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   onPointerleave($event: PointerEvent): void {
-    const { flags, values } = this._getFilterContent($event);
-    this._publish(flags, values, $event);
+    this.prevButton = '';
+
+    //const { flags, values } = this._getFilterContent($event);
+    //this._publish(flags, values, $event);
   }
 
   private _getFilterContent($event: PointerEvent): FilterContent {
@@ -120,31 +137,32 @@ export class OnPointerEvent extends Event {
     });
   }
 
-  // *** this code should be fixed *** //
-  private _setMoveFlag($flags: PointerFlags): void {
+  private _setMoveFlag($flags: PointerFlags): PointerFlags {
+    const flags: PointerFlags = Object.assign({}, $flags);
+
     switch (this.prevButton) {
       case BUTTON_NAME.LEFT:
-        $flags.state.isLeftMove = true;
-        console.log('leftmove', this.prevButton);
+        flags.state.isLeftMove = true;
         break;
 
       case BUTTON_NAME.MIDDLE:
-        $flags.state.isMiddleMove = true;
-        console.log('middlemove', this.prevButton);
+        flags.state.isMiddleMove = true;
         break;
 
       case BUTTON_NAME.RIGHT:
-        $flags.state.isRightMove = true;
+        flags.state.isRightMove = true;
         break;
 
       case BUTTON_NAME.BACK:
-        $flags.state.isBackMove = true;
+        flags.state.isBackMove = true;
         break;
 
       case BUTTON_NAME.FORWARD:
-        $flags.state.isForwardMove = true;
+        flags.state.isForwardMove = true;
         break;
     }
+
+    return flags;
   }
 
   private _setTmpClient($values: PointerValues): void {
@@ -158,11 +176,14 @@ export class OnPointerEvent extends Event {
   private _manageMultiTouch(
     $flags: PointerFlags,
     $values: PointerValues
-  ): void {
-    const isMultiTouch: boolean = this.ongoingTouches.length > 1;
-    $flags.meta.isMultiTouch = isMultiTouch;
+  ): { flags: PointerFlags; values: PointerValues } {
+    const flags: PointerFlags = Object.assign({}, $flags);
+    const values: PointerValues = Object.assign({}, $values);
 
-    if (!isMultiTouch) return;
+    const isMultiTouch: boolean = this.ongoingTouches.length > 1;
+    flags.meta.isMultiTouch = isMultiTouch;
+
+    if (!isMultiTouch) return { flags, values };
 
     const touchCount: number = this.ongoingTouches.length;
     const currentFilter: PointerMetaFilter = this.ongoingTouches[
@@ -171,18 +192,22 @@ export class OnPointerEvent extends Event {
     const prevFilter: PointerMetaFilter = this.ongoingTouches[touchCount - 2];
 
     // calcurate center coordinates if it's multi-touch
-    $values.touch = getCenterCoord(
+    values.touch = getCenterCoord(
       currentFilter.values.client,
       prevFilter.values.client
     );
+
+    return { flags, values };
   }
 
-  private _removeFilterFromList($id: number): void {
+  private _removeFilterFromList($id: number): PointerMetaFilter[] {
     const index: number = this._getFilterIndexFromList($id);
-    this.ongoingTouches = removeItem(this.ongoingTouches, index);
+    return removeItem(this.ongoingTouches, index);
   }
 
   private _getFilterIndexFromList($id: number): number {
-    return this.ongoingTouches.findIndex((e) => $id === e.values.meta.id);
+    return this.ongoingTouches.findIndex(
+      (e) => $id === e.values.meta.pointerId
+    );
   }
 }

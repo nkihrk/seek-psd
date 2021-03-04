@@ -2,7 +2,7 @@ import { BehaviorSubject, NextObserver, Observable } from 'rxjs';
 
 export interface NotifiedEvent {
   type: string;
-  content: any;
+  content: any; // eslint-disable-line @typescript-eslint/no-explicit-any
 }
 
 // T is defined as a type of the content

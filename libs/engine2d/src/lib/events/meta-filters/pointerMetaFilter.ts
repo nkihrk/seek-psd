@@ -69,8 +69,8 @@ export interface Coord {
 }
 
 export interface PointerMetaValues {
-  id: number;
-  type: string;
+  pointerId: number;
+  pointerType: string;
 }
 
 export interface PointerPressureValues {
@@ -93,8 +93,8 @@ export class PointerMetaFilter extends MetaFilter<PointerFlags, PointerValues> {
 
   protected generateValues($event: PointerEvent): PointerValues {
     const meta: PointerMetaValues = {
-      id: $event.pointerId,
-      type: $event.pointerType,
+      pointerId: $event.pointerId,
+      pointerType: $event.pointerType,
     };
     const pressure: PointerPressureValues = {
       normal: $event.pressure,

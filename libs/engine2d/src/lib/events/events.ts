@@ -125,10 +125,11 @@ export abstract class Events {
       //      case 'pointerover':
       //        e.onPointerover($event);
       //        break;
-      //
-      //      case 'pointerenter':
-      //        e.onPointerenter($event);
-      //        break;
+
+      case 'pointerenter':
+        e.onPointerenter($event);
+        break;
+
       //      case 'pointercancel':
       //        e.onPointercancel($event);
       //        break;
@@ -136,10 +137,10 @@ export abstract class Events {
       //      case 'pointerout':
       //        e.onPointerout($event);
       //        break;
-      //
-      //      case 'pointerleave':
-      //        e.onPointerleave($event);
-      //        break;
+
+      case 'pointerleave':
+        e.onPointerleave($event);
+        break;
     }
   }
 

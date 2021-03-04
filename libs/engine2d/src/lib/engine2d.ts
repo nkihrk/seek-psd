@@ -24,6 +24,7 @@ export class Engine2D {
     return this._rendererManager;
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   registerStore($store: any): void {
     StoreManager.registerPlugin($store);
   }

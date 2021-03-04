@@ -45,6 +45,7 @@ export class OnKeyboardEvent extends Event {
 
     return { flags, values, filter };
   }
+
   private _publish(
     $flags: KeyboardFlags,
     $values: KeyboardValues,
