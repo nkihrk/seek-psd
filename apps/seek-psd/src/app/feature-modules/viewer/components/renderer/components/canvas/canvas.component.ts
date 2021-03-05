@@ -20,6 +20,8 @@ export interface Layers {
   styleUrls: ['./canvas.component.scss'],
 })
 export class CanvasComponent implements OnInit {
+  @ViewChild('layer', { static: true })
+  layer: ElementRef<HTMLDivElement>;
   @ViewChild('psdLayer', { static: true })
   psdLayer: ElementRef<HTMLCanvasElement>;
   @ViewChild('uiLayer', { static: true })
@@ -37,7 +39,7 @@ export class CanvasComponent implements OnInit {
     this._initCanvas();
 
     const psd = new PSD();
-    psd.init(this.uiLayer.nativeElement);
+    psd.init(this.layer.nativeElement);
     psd.start();
   }
 
