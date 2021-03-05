@@ -1,18 +1,16 @@
-import type { Plugin } from './global.interface';
+import { PluginManager } from './pluginManager';
 import { StoreManager } from './storeManager';
+import { EVENT_TYPE } from './constants';
 
 export class RendererManager {
   private storeManager: StoreManager = null;
-  private static plugins: Plugin[] = [];
-
-  static registerPlugin($plugin: Plugin): void {
-    RendererManager.plugins.push($plugin);
-  }
+  private pluginManager: PluginManager = null;
 
   constructor() {}
 
-  init($store: StoreManager): void {
-    this.storeManager = $store;
+  init($storeManager: StoreManager, $pluginManager: PluginManager): void {
+    this.storeManager = $storeManager;
+    this.pluginManager = $pluginManager;
   }
 
   start(): void {
@@ -24,8 +22,8 @@ export class RendererManager {
   }
 
   private _render(): void {
-    RendererManager.plugins.forEach((f) => {
-      f.call(this.storeManager);
+    this.pluginManager.searchByEventType(EVENT_TYPE.RENDER).forEach((f) => {
+      f.plugin.call(this.storeManager);
     });
   }
 }

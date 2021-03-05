@@ -25,6 +25,7 @@
     "seek-psd-e2e": { "tags": [], "implicitDependencies": ["seek-psd"] },
     "ui": { "tags": [] },
     "engine2d": { "tags": [] },
-    "utils": { "tags": [] }
+    "utils": { "tags": [] },
+    "psd": { "tags": [] }
   }
 }

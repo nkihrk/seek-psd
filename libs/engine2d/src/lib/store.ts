@@ -1,4 +1,4 @@
-import type { Entity } from './entities/entity.interface';
+import type { Entity } from './entities/entity';
 import type {
   ClipboardFlags,
   ClipboardValues,

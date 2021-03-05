@@ -20,7 +20,7 @@ import {
   KEYBOARD_EVENT,
   NOTIFY_TYPE,
 } from '../constants/index';
-import { Entity } from '../entities/entity.interface';
+import { Entity } from '../entities/entity';
 
 type Elements = Window | Document | HTMLElement;
 

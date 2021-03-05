@@ -1,12 +1,14 @@
-import type { Entity } from './entities/entity.interface';
-import type { Plugin } from './global.interface';
+import type { Entity } from './entities/entity';
+import type { PluginSet } from './global.interface';
 import { requestRender } from '@seek-psd/utils';
-import { EventManager } from './eventManager';
-import { RendererManager } from './rendererManager';
 import { StoreManager } from './storeManager';
+import { EventManager } from './eventManager';
+import { PluginManager } from './pluginManager';
+import { RendererManager } from './rendererManager';
 
 export class Engine2D {
   private _storeManager: StoreManager = null;
+  private _pluginManager: PluginManager = null;
   private _eventManager: EventManager = null;
   private _rendererManager: RendererManager = null;
 
@@ -14,6 +16,10 @@ export class Engine2D {
 
   get store(): StoreManager {
     return this._storeManager;
+  }
+
+  get plugin(): PluginManager {
+    return this._pluginManager;
   }
 
   get event(): EventManager {
@@ -29,12 +35,8 @@ export class Engine2D {
     StoreManager.registerPlugin($store);
   }
 
-  registerEvent($eventType: string, $event: Plugin): void {
-    EventManager.registerPlugin($eventType, $event);
-  }
-
-  registerRenderer($renderer: Plugin): void {
-    RendererManager.registerPlugin($renderer);
+  registerPlugin($eventType: string, $pluginSet: PluginSet): void {
+    PluginManager.registerPlugin($eventType, $pluginSet);
   }
 
   init($entity: Entity): void {
@@ -42,12 +44,15 @@ export class Engine2D {
     storeManager.init($entity);
     this._storeManager = storeManager;
 
+    const pluginManager = new PluginManager();
+    this._pluginManager = pluginManager;
+
     const eventManager = new EventManager();
-    eventManager.init(storeManager);
+    eventManager.init(storeManager, pluginManager);
     this._eventManager = eventManager;
 
     const rendererManager = new RendererManager();
-    rendererManager.init(storeManager);
+    rendererManager.init(storeManager, pluginManager);
     this._rendererManager = rendererManager;
   }
 

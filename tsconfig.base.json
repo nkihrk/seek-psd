@@ -17,7 +17,8 @@
     "paths": {
       "@seek-psd/ui": ["libs/ui/src/index.ts"],
       "@seek-psd/engine2d": ["libs/engine2d/src/index.ts"],
-      "@seek-psd/utils": ["libs/utils/src/index.ts"]
+      "@seek-psd/utils": ["libs/utils/src/index.ts"],
+      "@seek-psd/psd": ["libs/psd/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]

@@ -1,5 +1,5 @@
-import type { Plugin } from './global.interface';
 import type { FilterResult } from './events/event/event';
+import type { NotifiedEvent } from './notifiers/notifier';
 import type {
   PointerFlags,
   PointerValues,
@@ -29,61 +29,21 @@ import type {
   WheelValues,
 } from './events/meta-filters/wheelMetaFilter';
 import { NOTIFY_TYPE, EVENT_TYPE } from './constants/index';
-import { NotifiedEvent, Notifier } from './notifiers/notifier';
+import { Notifier } from './notifiers/notifier';
 import { GlobalEvents } from './events/globalEvents';
 import { TargetEvents } from './events/targetEvents';
 import { StoreManager } from './storeManager';
+import { PluginManager } from './pluginManager';
 
 export class EventManager {
   private storeManager: StoreManager = null;
-  private static clipboards: Plugin[] = [];
-  private static keyboards: Plugin[] = [];
-  private static pointers: Plugin[] = [];
-  private static drags: Plugin[] = [];
-  private static events: Plugin[] = [];
-  private static mouses: Plugin[] = [];
-  private static wheels: Plugin[] = [];
-
-  static registerPlugin($eventType: string, $plugin: Plugin): void {
-    switch ($eventType) {
-      case EVENT_TYPE.CLIPBOARD:
-        EventManager.clipboards.push($plugin);
-        break;
-
-      case EVENT_TYPE.KEYBOARD:
-        EventManager.keyboards.push($plugin);
-        break;
-
-      case EVENT_TYPE.POINTER:
-        EventManager.pointers.push($plugin);
-        break;
-
-      case EVENT_TYPE.DRAG:
-        EventManager.drags.push($plugin);
-        break;
-
-      case EVENT_TYPE.EVENT:
-        EventManager.events.push($plugin);
-        break;
-
-      case EVENT_TYPE.MOUSE:
-        EventManager.mouses.push($plugin);
-        break;
-
-      case EVENT_TYPE.WHEEL:
-        EventManager.wheels.push($plugin);
-        break;
-
-      default:
-        throw new Error('Invalid plugin category is detected.');
-        break;
-    }
-  }
+  private pluginManager: PluginManager = null;
 
   constructor() {}
 
-  init($storeManager: StoreManager): void {
+  init($storeManager: StoreManager, $pluginManager: PluginManager): void {
     this.storeManager = $storeManager;
+    this.pluginManager = $pluginManager;
   }
 
   start(): void {
@@ -160,8 +120,8 @@ export class EventManager {
     this.storeManager.updateClipboardFlags($flags);
     this.storeManager.updateClipboardValues($values);
 
-    EventManager.clipboards.forEach((f) => {
-      f.call(this.storeManager);
+    this.pluginManager.searchByEventType(EVENT_TYPE.CLIPBOARD).forEach((f) => {
+      f.plugin.call(this.storeManager);
     });
   }
 
@@ -169,8 +129,8 @@ export class EventManager {
     this.storeManager.updateKeyboardFlags($flags);
     this.storeManager.updateKeyboardValues($values);
 
-    EventManager.keyboards.forEach((f) => {
-      f.call(this.storeManager);
+    this.pluginManager.searchByEventType(EVENT_TYPE.KEYBOARD).forEach((f) => {
+      f.plugin.call(this.storeManager);
     });
   }
 
@@ -178,8 +138,8 @@ export class EventManager {
     this.storeManager.updatePointerFlags($flags);
     this.storeManager.updatePointerOffset($flags, $values);
 
-    EventManager.pointers.forEach((f) => {
-      f.call(this.storeManager);
+    this.pluginManager.searchByEventType(EVENT_TYPE.POINTER).forEach((f) => {
+      f.plugin.call(this.storeManager);
     });
   }
 
@@ -187,8 +147,8 @@ export class EventManager {
     this.storeManager.updateDragFlags($flags);
     this.storeManager.updateDragValues($values);
 
-    EventManager.drags.forEach((f) => {
-      f.call(this.storeManager);
+    this.pluginManager.searchByEventType(EVENT_TYPE.DRAG).forEach((f) => {
+      f.plugin.call(this.storeManager);
     });
   }
 
@@ -196,8 +156,8 @@ export class EventManager {
     this.storeManager.updateEventFlgas($flags);
     this.storeManager.updateEventValues($values);
 
-    EventManager.events.forEach((f) => {
-      f.call(this.storeManager);
+    this.pluginManager.searchByEventType(EVENT_TYPE.EVENT).forEach((f) => {
+      f.plugin.call(this.storeManager);
     });
   }
 
@@ -205,8 +165,8 @@ export class EventManager {
     this.storeManager.updateMouseFlags($flags);
     this.storeManager.updateMouseValues($values);
 
-    EventManager.mouses.forEach((f) => {
-      f.call(this.storeManager);
+    this.pluginManager.searchByEventType(EVENT_TYPE.MOUSE).forEach((f) => {
+      f.plugin.call(this.storeManager);
     });
   }
 
@@ -214,8 +174,8 @@ export class EventManager {
     this.storeManager.updateWheelFlags($flags);
     this.storeManager.updateWheelValues($values);
 
-    EventManager.wheels.forEach((f) => {
-      f.call(this.storeManager);
+    this.pluginManager.searchByEventType(EVENT_TYPE.WHEEL).forEach((f) => {
+      f.plugin.call(this.storeManager);
     });
   }
 }

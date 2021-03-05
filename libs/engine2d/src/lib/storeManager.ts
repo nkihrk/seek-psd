@@ -1,4 +1,4 @@
-import type { Entity } from './entities/entity.interface';
+import type { Entity } from './entities/entity';
 import type {
   ClipboardFlags,
   ClipboardValues,
@@ -32,6 +32,7 @@ import type { PointerOffset } from './store';
 import { Store } from './store';
 
 export class StoreManager extends Store {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   static registerPlugin($store: any): void {
     // combine a main store with the backend store
     Object.setPrototypeOf(Store.prototype, $store);

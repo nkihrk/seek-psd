@@ -209,6 +209,27 @@
           }
         }
       }
+    },
+    "psd": {
+      "root": "libs/psd",
+      "sourceRoot": "libs/psd/src",
+      "projectType": "library",
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": ["libs/psd/**/*.ts"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "outputs": ["coverage/libs/psd"],
+          "options": {
+            "jestConfig": "libs/psd/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
     }
   }
 }
