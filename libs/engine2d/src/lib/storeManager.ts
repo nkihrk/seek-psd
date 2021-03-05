@@ -31,6 +31,8 @@ import type {
 import type { PointerOffset } from './store';
 import { Store } from './store';
 
+import { EVENT_TYPE } from './constants';
+
 export class StoreManager extends Store {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   static registerPlugin($store: any): void {
@@ -44,6 +46,79 @@ export class StoreManager extends Store {
 
   init($entity: Entity): void {
     this._entity = $entity;
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  updateFlags($eventType: string, $flags: any): void {
+    switch ($eventType) {
+      case EVENT_TYPE.CLIPBOARD:
+        this.updateClipboardFlags($flags);
+        break;
+
+      case EVENT_TYPE.KEYBOARD:
+        this.updateKeyboardFlags($flags);
+        break;
+
+      case EVENT_TYPE.POINTER:
+        this.updatePointerFlags($flags);
+        break;
+
+      case EVENT_TYPE.DRAG:
+        this.updateDragFlags($flags);
+        break;
+
+      case EVENT_TYPE.EVENT:
+        this.updateEventFlgas($flags);
+        break;
+
+      case EVENT_TYPE.MOUSE:
+        this.updateMouseFlags($flags);
+        break;
+
+      case EVENT_TYPE.WHEEL:
+        this.updateWheelFlags($flags);
+        break;
+
+      default:
+        throw new Error('Invalid event type is detected.');
+        break;
+    }
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  updateValues($eventType: string, $values: any): void {
+    switch ($eventType) {
+      case EVENT_TYPE.CLIPBOARD:
+        this.updateClipboardValues($values);
+        break;
+
+      case EVENT_TYPE.KEYBOARD:
+        this.updateKeyboardValues($values);
+        break;
+
+      case EVENT_TYPE.POINTER:
+        break;
+
+      case EVENT_TYPE.DRAG:
+        this.updateDragValues($values);
+        break;
+
+      case EVENT_TYPE.EVENT:
+        this.updateEventFlgas($values);
+        break;
+
+      case EVENT_TYPE.MOUSE:
+        this.updateMouseValues($values);
+        break;
+
+      case EVENT_TYPE.WHEEL:
+        this.updateWheelValues($values);
+        break;
+
+      default:
+        throw new Error('Invalid event type is detected.');
+        break;
+    }
   }
 
   updateNotifyType($notifyType: string): void {

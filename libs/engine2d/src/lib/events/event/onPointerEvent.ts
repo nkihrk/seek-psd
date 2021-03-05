@@ -167,7 +167,8 @@ export class OnPointerEvent extends Event {
 
   private _setTmpClient($values: PointerValues): void {
     if (this.idleTimer) clearInterval(this.idleTimer);
-    this.idleTimer = setTimeout(() => {
+    // https://github.com/Microsoft/TypeScript/issues/30128#issuecomment-651877225
+    this.idleTimer = window.setTimeout(() => {
       $values.tmpClient.x = $values.client.x;
       $values.tmpClient.y = $values.client.y;
     }, IDLE_INTERVAL);

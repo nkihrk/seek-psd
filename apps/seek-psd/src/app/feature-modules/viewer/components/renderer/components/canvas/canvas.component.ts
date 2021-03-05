@@ -7,7 +7,7 @@ import {
   EventEmitter,
 } from '@angular/core';
 import { setPixelPerfect } from '@seek-psd/utils';
-import { PSD } from '@seek-psd/psd';
+import { SeekPsd } from '@seek-psd/psd';
 
 export interface Layers {
   psdLayer: ElementRef<HTMLCanvasElement>;
@@ -38,7 +38,7 @@ export class CanvasComponent implements OnInit {
     // init canvas sizes with a appropriate pixel ratio
     this._initCanvas();
 
-    const psd = new PSD();
+    const psd = new SeekPsd();
     psd.init(this.layer.nativeElement);
     psd.start();
   }
