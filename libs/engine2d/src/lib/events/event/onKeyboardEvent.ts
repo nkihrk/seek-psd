@@ -55,7 +55,7 @@ export class OnKeyboardEvent extends Event {
       flags: $flags,
       values: $values,
       eventType: EVENT_TYPE.KEYBOARD,
-      default: $event,
+      defaultEvent: $event,
     });
   }
 }

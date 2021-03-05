@@ -1,9 +1,10 @@
 import { Engine2D, Entity, EVENT_TYPE } from '@seek-psd/engine2d';
-import { Store } from './store';
+import { StoreManager } from './storeManager';
 import { TestEvent } from './modules/events/testEvent';
+import { FileLoader } from './modules/events/fileLoader';
 import { TestRenderer } from './modules/renderers/testRenderer';
 
-export class PSD {
+export class SeekPsd {
   private targetElement: HTMLElement = null;
 
   constructor() {}
@@ -17,10 +18,14 @@ export class PSD {
     const entity = new Entity(this.targetElement);
     const eg = new Engine2D();
     // make sure to register all plugins before initializing
-    eg.registerStore(new Store());
+    eg.registerStore(new StoreManager());
     eg.registerPlugin(EVENT_TYPE.POINTER, {
       pluginName: 'test',
       plugin: new TestEvent(),
+    });
+    eg.registerPlugin(EVENT_TYPE.DRAG, {
+      pluginName: 'fileLoader',
+      plugin: new FileLoader(),
     });
     eg.registerPlugin(EVENT_TYPE.RENDER, {
       pluginName: 'test',

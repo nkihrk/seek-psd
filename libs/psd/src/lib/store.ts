@@ -1,9 +1,16 @@
+import type { Psd } from 'ag-psd';
+
+export interface PsdData {
+  fileName: string;
+  psd: Psd;
+}
+
 export class Store {
-  private _hi = 'hi';
+  private _psdData = {} as PsdData;
 
   constructor() {}
 
-  get hi(): string {
-    return this._hi;
+  get psdData(): PsdData {
+    return this._psdData;
   }
 }

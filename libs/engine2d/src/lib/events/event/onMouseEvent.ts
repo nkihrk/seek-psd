@@ -58,7 +58,7 @@ export class OnMouseEvent extends Event {
       flags: $flags,
       values: $values,
       eventType: EVENT_TYPE.MOUSE,
-      default: $event,
+      defaultEvent: $event,
     });
   }
 }

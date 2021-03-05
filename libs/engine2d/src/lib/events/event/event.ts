@@ -1,10 +1,10 @@
 import type { Notifier } from '../../notifiers/notifier';
 
 export interface FilterResult {
-  flags: any;
-  values: any;
+  flags: any; // eslint-disable-line @typescript-eslint/no-explicit-any
+  values: any; // eslint-disable-line @typescript-eslint/no-explicit-any
   eventType: string;
-  default: any;
+  defaultEvent: any; // eslint-disable-line @typescript-eslint/no-explicit-any
 }
 
 export class Event {

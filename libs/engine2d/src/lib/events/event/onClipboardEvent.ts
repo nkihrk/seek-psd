@@ -61,7 +61,7 @@ export class OnClipboardEvent extends Event {
       flags: $flags,
       values: $values,
       eventType: EVENT_TYPE.CLIPBOARD,
-      default: $event,
+      defaultEvent: $event,
     });
   }
 }

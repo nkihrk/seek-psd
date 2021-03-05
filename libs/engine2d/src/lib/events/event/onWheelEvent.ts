@@ -28,7 +28,7 @@ export class OnWheelEvent extends Event {
       flags,
       values,
       eventType: EVENT_TYPE.WHEEL,
-      default: $event,
+      defaultEvent: $event,
     });
   }
 

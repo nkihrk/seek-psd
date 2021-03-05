@@ -91,7 +91,7 @@ export class OnDragEvent extends Event {
       flags: $flags,
       values: $values,
       eventType: EVENT_TYPE.DRAG,
-      default: $event,
+      defaultEvent: $event,
     });
   }
 }

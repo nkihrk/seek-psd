@@ -54,7 +54,7 @@ export class OnEvent extends CommonEvent {
       flags: $flags,
       values: $values,
       eventType: EVENT_TYPE.EVENT,
-      default: $event,
+      defaultEvent: $event,
     });
   }
 }

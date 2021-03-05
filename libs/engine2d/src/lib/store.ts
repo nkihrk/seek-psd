@@ -40,6 +40,9 @@ export abstract class Store {
 
   protected _entity: Entity = null;
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  protected _defaultEvent: any = null;
+
   protected _clipboardFlags: ClipboardFlags = {
     isCopy: false,
     isCut: false,
@@ -181,6 +184,11 @@ export abstract class Store {
 
   get entity(): Entity {
     return this._entity;
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  get defaultEvent(): any {
+    return this._defaultEvent;
   }
 
   get clipboardFlags(): ClipboardFlags {

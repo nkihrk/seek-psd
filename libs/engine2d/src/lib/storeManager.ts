@@ -125,6 +125,11 @@ export class StoreManager extends Store {
     this._notifyType = $notifyType;
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  updateDefaultEvent($defaultEvent: any): void {
+    this._defaultEvent = $defaultEvent;
+  }
+
   updateClipboardFlags($flags: ClipboardFlags): void {
     this._clipboardFlags = $flags;
   }

@@ -133,7 +133,7 @@ export class OnPointerEvent extends Event {
       flags: $flags,
       values: $values,
       eventType: EVENT_TYPE.POINTER,
-      default: $event,
+      defaultEvent: $event,
     });
   }
 

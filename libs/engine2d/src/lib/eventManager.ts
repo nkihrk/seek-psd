@@ -66,14 +66,18 @@ export class EventManager {
     const eventType: string = $e.content.eventType;
     const flags: any = $e.content.flags; // eslint-disable-line @typescript-eslint/no-explicit-any
     const values: any = $e.content.values; // eslint-disable-line @typescript-eslint/no-explicit-any
+    const defaultEvent: any = $e.content.defaultEvent; // eslint-disable-line @typescript-eslint/no-explicit-any
 
     // prevent it when on initialization
     // I guess this will only work on the initialization stage, but might be wrong
-    if (!flags && !values) return;
+    if (!flags && !values && !event) return;
 
     // update notifyType
     this.storeManager.updateNotifyType($e.type);
     //console.log(this.storeManager.notifyType);
+
+    // update default event
+    this.storeManager.updateDefaultEvent(defaultEvent);
 
     this.storeManager.updateFlags(eventType, flags);
     this.storeManager.updateValues(eventType, values);
