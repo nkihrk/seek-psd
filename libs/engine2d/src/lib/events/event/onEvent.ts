@@ -1,13 +1,16 @@
 import type { Notifier } from '../../notifiers/notifier';
 import type { FilterResult } from './event';
-import type { EventFlags, EventValues } from '../meta-filters/eventMetaFilter';
+import type {
+  IEventFlags,
+  IEventValues,
+} from '../meta-filters/eventMetaFilter';
 import { EventMetaFilter } from '../meta-filters/eventMetaFilter';
 import { Event as CommonEvent } from './event';
 import { EVENT_TYPE } from '../../constants';
 
 interface FilterContent {
-  flags: EventFlags;
-  values: EventValues;
+  flags: IEventFlags;
+  values: IEventValues;
   filter: EventMetaFilter;
 }
 
@@ -39,15 +42,15 @@ export class OnEvent extends CommonEvent {
   private _getFilterContent($event: Event): FilterContent {
     const filter = new EventMetaFilter();
     filter.init($event);
-    const flags: EventFlags = filter.flags;
-    const values: EventValues = filter.values;
+    const flags: IEventFlags = filter.flags;
+    const values: IEventValues = filter.values;
 
     return { flags, values, filter };
   }
 
   private _publish(
-    $flags: EventFlags,
-    $values: EventValues,
+    $flags: IEventFlags,
+    $values: IEventValues,
     $event: Event
   ): void {
     this.notifier.update({

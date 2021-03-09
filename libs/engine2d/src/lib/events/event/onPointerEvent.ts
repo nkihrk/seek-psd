@@ -1,7 +1,7 @@
 import type { Notifier } from '../../notifiers/notifier';
 import type {
-  PointerValues,
-  PointerFlags,
+  IPointerValues,
+  IPointerFlags,
 } from '../meta-filters/pointerMetaFilter';
 import type { FilterResult } from './event';
 import { PointerMetaFilter } from '../meta-filters/pointerMetaFilter';
@@ -11,8 +11,8 @@ import { getButtonValue } from '../meta-filters/utils';
 import { BUTTON_NAME, EVENT_TYPE, IDLE_INTERVAL } from '../../constants/index';
 
 interface FilterContent {
-  flags: PointerFlags;
-  values: PointerValues;
+  flags: IPointerFlags;
+  values: IPointerValues;
   filter: PointerMetaFilter;
 }
 
@@ -37,8 +37,8 @@ export class OnPointerEvent extends Event {
 
     // manage a multi-touch event
     const set: {
-      flags: PointerFlags;
-      values: PointerValues;
+      flags: IPointerFlags;
+      values: IPointerValues;
     } = this._manageMultiTouch(filterContent.flags, filterContent.values);
     const flags = set.flags;
     const values = set.values;
@@ -65,8 +65,8 @@ export class OnPointerEvent extends Event {
     const filterContent: FilterContent = this._getFilterContent($event);
 
     // set move flag
-    let flags: PointerFlags = this._setMoveFlag(filterContent.flags);
-    let values: PointerValues = filterContent.values;
+    let flags: IPointerFlags = this._setMoveFlag(filterContent.flags);
+    let values: IPointerValues = filterContent.values;
 
     // manage temorary client coords
     // use case is when we want to get pointer coords stopped for certain mili secs
@@ -74,8 +74,8 @@ export class OnPointerEvent extends Event {
 
     // manage a multi-touch event
     const set: {
-      flags: PointerFlags;
-      values: PointerValues;
+      flags: IPointerFlags;
+      values: IPointerValues;
     } = this._manageMultiTouch(flags, values);
     flags = set.flags;
     values = set.values;
@@ -118,15 +118,15 @@ export class OnPointerEvent extends Event {
   private _getFilterContent($event: PointerEvent): FilterContent {
     const filter = new PointerMetaFilter();
     filter.init($event);
-    const flags: PointerFlags = filter.flags;
-    const values: PointerValues = filter.values;
+    const flags: IPointerFlags = filter.flags;
+    const values: IPointerValues = filter.values;
 
     return { flags, values, filter };
   }
 
   private _publish(
-    $flags: PointerFlags,
-    $values: PointerValues,
+    $flags: IPointerFlags,
+    $values: IPointerValues,
     $event: PointerEvent
   ): void {
     this.notifier.update({
@@ -137,8 +137,8 @@ export class OnPointerEvent extends Event {
     });
   }
 
-  private _setMoveFlag($flags: PointerFlags): PointerFlags {
-    const flags: PointerFlags = Object.assign({}, $flags);
+  private _setMoveFlag($flags: IPointerFlags): IPointerFlags {
+    const flags: IPointerFlags = Object.assign({}, $flags);
 
     switch (this.prevButton) {
       case BUTTON_NAME.LEFT:
@@ -165,7 +165,7 @@ export class OnPointerEvent extends Event {
     return flags;
   }
 
-  private _setTmpClient($values: PointerValues): void {
+  private _setTmpClient($values: IPointerValues): void {
     if (this.idleTimer) clearInterval(this.idleTimer);
     // https://github.com/Microsoft/TypeScript/issues/30128#issuecomment-651877225
     this.idleTimer = window.setTimeout(() => {
@@ -175,11 +175,11 @@ export class OnPointerEvent extends Event {
   }
 
   private _manageMultiTouch(
-    $flags: PointerFlags,
-    $values: PointerValues
-  ): { flags: PointerFlags; values: PointerValues } {
-    const flags: PointerFlags = Object.assign({}, $flags);
-    const values: PointerValues = Object.assign({}, $values);
+    $flags: IPointerFlags,
+    $values: IPointerValues
+  ): { flags: IPointerFlags; values: IPointerValues } {
+    const flags: IPointerFlags = Object.assign({}, $flags);
+    const values: IPointerValues = Object.assign({}, $values);
 
     const isMultiTouch: boolean = this.ongoingTouches.length > 1;
     flags.meta.isMultiTouch = isMultiTouch;

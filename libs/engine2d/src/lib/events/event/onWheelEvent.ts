@@ -1,5 +1,8 @@
 import type { Notifier } from '../../notifiers/notifier';
-import type { WheelFlags, WheelValues } from '../meta-filters/wheelMetaFilter';
+import type {
+  IWheelFlags,
+  IWheelValues,
+} from '../meta-filters/wheelMetaFilter';
 import type { FilterResult } from './event';
 import { WheelMetaFilter } from '../meta-filters/wheelMetaFilter';
 import { Event } from './event';
@@ -17,8 +20,8 @@ export class OnWheelEvent extends Event {
   onWheel($event: WheelEvent): void {
     const filter = new WheelMetaFilter();
     filter.init($event);
-    const flags: WheelFlags = filter.flags;
-    const values: WheelValues = filter.values;
+    const flags: IWheelFlags = filter.flags;
+    const values: IWheelValues = filter.values;
 
     // watch wheel events to detect an end of the event
     if (this.wheelCounter1 === 0) flags.isWheelStart = true;

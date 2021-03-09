@@ -31,18 +31,15 @@ export class Engine2D {
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  registerStore($storeSet: any): void {
-    StoreManager.registerPlugin($storeSet);
+  registerPlugin($pluginSet: IPluginSet<any>): void {
+    PluginManager.registerPlugin($pluginSet);
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  registerPlugin($eventType: string, $pluginSet: IPluginSet<any>): void {
-    PluginManager.registerPlugin($eventType, $pluginSet);
-  }
-
-  init($entity?: Entity): void {
+  init($entity?: Entity, $userStore?: any): void {
     const storeManager = new StoreManager();
     if ($entity) storeManager.initEntity($entity);
+    if ($userStore) storeManager.registerStore($userStore);
     this._storeManager = storeManager;
 
     const pluginManager = new PluginManager();

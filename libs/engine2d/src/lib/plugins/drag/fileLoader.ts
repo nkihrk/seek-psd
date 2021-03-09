@@ -1,8 +1,8 @@
 import type { IPlugin, IStore } from '@seek-psd/engine2d';
 import type {
-  DragFlags,
-  DragValues,
-} from 'libs/engine2d/src/lib/events/meta-filters/dragMetaFilter';
+  IDragFlags,
+  IDragValues,
+} from '../../events/meta-filters/dragMetaFilter';
 import type { Store } from '../../store';
 import { hasProperty } from '@seek-psd/utils';
 
@@ -25,8 +25,8 @@ export class FileLoader implements IPlugin<Store> {
   }
 
   private _switchEventType(): void {
-    const flags: DragFlags = this.store.flags.drag;
-    const values: DragValues = this.store.values.drag;
+    const flags: IDragFlags = this.store.flags.drag;
+    const values: IDragValues = this.store.values.drag;
 
     if (flags.isDrop) {
       this._extractData(values.data);
@@ -56,6 +56,7 @@ export class FileLoader implements IPlugin<Store> {
         count++;
         if (count === results.length && files.length > 0) {
           this.store.values.drag.files = files;
+          console.log(files);
         }
       });
     }

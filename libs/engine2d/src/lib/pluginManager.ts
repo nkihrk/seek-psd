@@ -17,8 +17,8 @@ export class PluginManager {
   private static renders: IPluginSet<any>[] = [];
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  static registerPlugin($eventType: string, $pluginSet: IPluginSet<any>): void {
-    switch ($eventType) {
+  static registerPlugin($pluginSet: IPluginSet<any>): void {
+    switch ($pluginSet.eventType) {
       case EVENT_TYPE.CLIPBOARD:
         PluginManager.clipboards.push($pluginSet);
         break;

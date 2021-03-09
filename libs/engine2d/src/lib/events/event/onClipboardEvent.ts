@@ -1,16 +1,16 @@
 import type { Notifier } from '../../notifiers/notifier';
 import type { FilterResult } from './event';
 import type {
-  ClipboardFlags,
-  ClipboardValues,
+  IClipboardFlags,
+  IClipboardValues,
 } from '../meta-filters/clipboardMetaFilter';
 import { ClipboardMetaFilter } from '../meta-filters/clipboardMetaFilter';
 import { Event } from './event';
 import { EVENT_TYPE } from '../../constants';
 
 interface FilterContent {
-  flags: ClipboardFlags;
-  values: ClipboardValues;
+  flags: IClipboardFlags;
+  values: IClipboardValues;
   filter: ClipboardMetaFilter;
 }
 
@@ -46,15 +46,15 @@ export class OnClipboardEvent extends Event {
   private _getFilterContent($event: ClipboardEvent): FilterContent {
     const filter = new ClipboardMetaFilter();
     filter.init($event);
-    const flags: ClipboardFlags = filter.flags;
-    const values: ClipboardValues = filter.values;
+    const flags: IClipboardFlags = filter.flags;
+    const values: IClipboardValues = filter.values;
 
     return { flags, values, filter };
   }
 
   private _publish(
-    $flags: ClipboardFlags,
-    $values: ClipboardValues,
+    $flags: IClipboardFlags,
+    $values: IClipboardValues,
     $event: ClipboardEvent
   ): void {
     this.notifier.update({

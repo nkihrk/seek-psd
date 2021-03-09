@@ -1,13 +1,16 @@
 import type { Notifier } from '../../notifiers/notifier';
 import type { FilterResult } from './event';
-import type { MouseFlags, MouseValues } from '../meta-filters/mouseMetaFilter';
+import type {
+  IMouseFlags,
+  IMouseValues,
+} from '../meta-filters/mouseMetaFilter';
 import { MouseMetaFilter } from '../meta-filters/mouseMetaFilter';
 import { Event } from './event';
 import { EVENT_TYPE } from '../../constants';
 
 interface FilterContent {
-  flags: MouseFlags;
-  values: MouseValues;
+  flags: IMouseFlags;
+  values: IMouseValues;
   filter: MouseMetaFilter;
 }
 
@@ -43,15 +46,15 @@ export class OnMouseEvent extends Event {
   private _getFilterContent($event: MouseEvent): FilterContent {
     const filter = new MouseMetaFilter();
     filter.init($event);
-    const flags: MouseFlags = filter.flags;
-    const values: MouseValues = filter.values;
+    const flags: IMouseFlags = filter.flags;
+    const values: IMouseValues = filter.values;
 
     return { flags, values, filter };
   }
 
   private _publish(
-    $flags: MouseFlags,
-    $values: MouseValues,
+    $flags: IMouseFlags,
+    $values: IMouseValues,
     $event: MouseEvent
   ): void {
     this.notifier.update({

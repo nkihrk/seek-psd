@@ -2,49 +2,58 @@
 
 import type { Entity } from './entities/entity';
 import type {
-  ClipboardFlags,
-  ClipboardValues,
+  IClipboardFlags,
+  IClipboardValues,
 } from './events/meta-filters/clipboardMetaFilter';
 import {
-  KeyboardFlags,
-  KeyboardValues,
+  IKeyboardFlags,
+  IKeyboardValues,
 } from './events/meta-filters/keyboardMetaFilter';
 import type {
   Coord,
-  PointerFlags,
-  PointerValues,
+  IPointerFlags,
+  IPointerValues,
 } from './events/meta-filters/pointerMetaFilter';
 import type {
-  DragFlags,
-  DragValues,
+  IDragFlags,
+  IDragValues,
 } from './events/meta-filters/dragMetaFilter';
 import type {
-  EventFlags,
-  EventValues,
+  IEventFlags,
+  IEventValues,
 } from './events/meta-filters/eventMetaFilter';
 import type {
-  MouseFlags,
-  MouseValues,
+  IMouseFlags,
+  IMouseValues,
 } from './events/meta-filters/mouseMetaFilter';
 import type {
-  WheelFlags,
-  WheelValues,
+  IWheelFlags,
+  IWheelValues,
 } from './events/meta-filters/wheelMetaFilter';
 import type { IPointerOffset } from './store';
 import { Store } from './store';
 import { EVENT_TYPE } from './constants';
 
-export class StoreManager extends Store {
-  static registerPlugin($userStore: any): void {
-    Store._userStore = $userStore;
+export class StoreManager {
+  private _store = new Store();
+  private _userStore = null;
+
+  constructor() {}
+
+  get store(): Store {
+    return this._store;
   }
 
-  constructor() {
-    super();
+  get userStore(): any {
+    return this._userStore;
   }
 
   initEntity($entity: Entity): void {
-    this._entity = $entity;
+    this._store.entity = $entity;
+  }
+
+  registerStore($userStore: any): void {
+    this._userStore = $userStore;
   }
 
   updateFlags($eventType: string, $flags: any): void {
@@ -119,42 +128,45 @@ export class StoreManager extends Store {
   }
 
   updateNotifyType($notifyType: string): void {
-    this._notifyType = $notifyType;
+    this._store.notifyType = $notifyType;
   }
 
   updateDefaultEvent($defaultEvent: any): void {
-    this._defaultEvent = $defaultEvent;
+    this._store.defaultEvent = $defaultEvent;
   }
 
-  updateClipboardFlags($flags: ClipboardFlags): void {
-    this._flags.clipboard = $flags;
+  updateClipboardFlags($flags: IClipboardFlags): void {
+    this._store.flags.clipboard = $flags;
   }
 
-  updateClipboardData($values: ClipboardValues): void {
-    this._values.clipboard.data = $values.data;
+  updateClipboardData($values: IClipboardValues): void {
+    this._store.values.clipboard.data = $values.data;
   }
 
-  updateKeyboardFlags($flags: KeyboardFlags): void {
-    this._flags.keyboard = $flags;
+  updateKeyboardFlags($flags: IKeyboardFlags): void {
+    this._store.flags.keyboard = $flags;
   }
 
-  updateKeyboardValues($values: KeyboardValues): void {
-    this._values.keyboard = $values;
+  updateKeyboardValues($values: IKeyboardValues): void {
+    this._store.values.keyboard = $values;
   }
 
-  updatePointerFlags($flags: PointerFlags): void {
-    this._flags.pointer = $flags;
+  updatePointerFlags($flags: IPointerFlags): void {
+    this._store.flags.pointer = $flags;
   }
 
-  updatePointerOffset($flags: PointerFlags, $values: PointerValues): void {
-    const flags: PointerFlags = $flags;
-    const values: PointerValues = $values;
+  updatePointerOffset($flags: IPointerFlags, $values: IPointerValues): void {
+    const flags: IPointerFlags = $flags;
+    const values: IPointerValues = $values;
     const rect:
       | DOMRect
       | {
           x: number;
           y: number;
-        } = this.entity?.element.getBoundingClientRect() || { x: 0, y: 0 };
+        } = this._store.entity?.element.getBoundingClientRect() || {
+      x: 0,
+      y: 0,
+    };
 
     const currentOffset: Coord = {
       x: values.client.x - rect.x,
@@ -177,11 +189,11 @@ export class StoreManager extends Store {
         tmp: tmpOffset,
       };
 
-      this._values.pointer = pointerOffset;
+      this._store.values.pointer = pointerOffset;
     } else {
       const pointerOffset: IPointerOffset = Object.assign(
         {},
-        this._values.pointer,
+        this._store.values.pointer,
         {
           current: currentOffset,
           raw: rawOffset,
@@ -189,39 +201,39 @@ export class StoreManager extends Store {
         }
       );
 
-      this._values.pointer = pointerOffset;
+      this._store.values.pointer = pointerOffset;
     }
   }
 
-  updateDragFlags($flags: DragFlags): void {
-    this._flags.drag = $flags;
+  updateDragFlags($flags: IDragFlags): void {
+    this._store.flags.drag = $flags;
   }
 
-  updateDragData($values: DragValues): void {
-    this._values.drag.data = $values.data;
+  updateDragData($values: IDragValues): void {
+    this._store.values.drag.data = $values.data;
   }
 
-  updateEventFlgas($flags: EventFlags): void {
-    this._flags.event = $flags;
+  updateEventFlgas($flags: IEventFlags): void {
+    this._store.flags.event = $flags;
   }
 
-  updateEventValues($values: EventValues): void {
-    this._values.event = $values;
+  updateEventValues($values: IEventValues): void {
+    this._store.values.event = $values;
   }
 
-  updateMouseFlags($flags: MouseFlags): void {
-    this._flags.mouse = $flags;
+  updateMouseFlags($flags: IMouseFlags): void {
+    this._store.flags.mouse = $flags;
   }
 
-  updateMouseValues($values: MouseValues): void {
-    this._values.mouse = $values;
+  updateMouseValues($values: IMouseValues): void {
+    this._store.values.mouse = $values;
   }
 
-  updateWheelFlags($flags: WheelFlags): void {
-    this._flags.wheel = $flags;
+  updateWheelFlags($flags: IWheelFlags): void {
+    this._store.flags.wheel = $flags;
   }
 
-  updateWheelValues($values: WheelValues): void {
-    this._values.wheel = $values;
+  updateWheelValues($values: IWheelValues): void {
+    this._store.values.wheel = $values;
   }
 }

@@ -1,24 +1,24 @@
 import { MetaFilter } from './metaFilter';
 
-export interface ClipboardFlags {
+export interface IClipboardFlags {
   isCut: boolean;
   isCopy: boolean;
   isPaste: boolean;
 }
 
-export interface ClipboardValues {
+export interface IClipboardValues {
   data: DataTransfer;
 }
 
 export class ClipboardMetaFilter extends MetaFilter<
-  ClipboardFlags,
-  ClipboardValues
+  IClipboardFlags,
+  IClipboardValues
 > {
   constructor() {
     super();
   }
 
-  protected generateFlags(): ClipboardFlags {
+  protected generateFlags(): IClipboardFlags {
     return {
       isCut: false, // will be changed at onClipboardEvent
       isCopy: false, // will be changed at onClipboardEvent
@@ -26,7 +26,7 @@ export class ClipboardMetaFilter extends MetaFilter<
     };
   }
 
-  protected generateValues($event: ClipboardEvent): ClipboardValues {
+  protected generateValues($event: ClipboardEvent): IClipboardValues {
     return {
       data: $event.clipboardData || null,
     };

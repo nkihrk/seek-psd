@@ -1,14 +1,14 @@
 import type { Notifier } from '../../notifiers/notifier';
 import type { FilterResult } from './event';
-import type { DragFlags, DragValues } from '../meta-filters/dragMetaFilter';
+import type { IDragFlags, IDragValues } from '../meta-filters/dragMetaFilter';
 import { DragMetaFilter } from '../meta-filters/dragMetaFilter';
 import { Event } from './event';
 
 import { EVENT_TYPE } from '../../constants';
 
 interface FilterContent {
-  flags: DragFlags;
-  values: DragValues;
+  flags: IDragFlags;
+  values: IDragValues;
   filter: DragMetaFilter;
 }
 
@@ -76,15 +76,15 @@ export class OnDragEvent extends Event {
   private _getFilterContent($event: DragEvent): FilterContent {
     const filter = new DragMetaFilter();
     filter.init($event);
-    const flags: DragFlags = filter.flags;
-    const values: DragValues = filter.values;
+    const flags: IDragFlags = filter.flags;
+    const values: IDragValues = filter.values;
 
     return { flags, values, filter };
   }
 
   private _publish(
-    $flags: DragFlags,
-    $values: DragValues,
+    $flags: IDragFlags,
+    $values: IDragValues,
     $event: DragEvent
   ): void {
     this.notifier.update({

@@ -1,7 +1,7 @@
 import { MetaFilter } from './metaFilter';
 import { KEY_LOCATION } from '../../constants/index';
 
-export interface KeyboardFlags {
+export interface IKeyboardFlags {
   isAltKey: boolean;
   isCtrlKey: boolean;
   isMetaKey: boolean;
@@ -11,21 +11,21 @@ export interface KeyboardFlags {
   isKeyup: boolean;
 }
 
-export interface KeyboardValues {
+export interface IKeyboardValues {
   location: string;
   key: string;
 }
 
 export class KeyboardMetaFilter extends MetaFilter<
-  KeyboardFlags,
-  KeyboardValues
+  IKeyboardFlags,
+  IKeyboardValues
 > {
   constructor() {
     super();
   }
 
-  protected generateFlags($event: KeyboardEvent): KeyboardFlags {
-    const flags: KeyboardFlags = {
+  protected generateFlags($event: KeyboardEvent): IKeyboardFlags {
+    const flags: IKeyboardFlags = {
       isAltKey: $event.altKey,
       isCtrlKey: $event.ctrlKey,
       isMetaKey: $event.metaKey,
@@ -38,8 +38,8 @@ export class KeyboardMetaFilter extends MetaFilter<
     return flags;
   }
 
-  protected generateValues($event: KeyboardEvent): KeyboardValues {
-    const values: KeyboardValues = {
+  protected generateValues($event: KeyboardEvent): IKeyboardValues {
+    const values: IKeyboardValues = {
       key: $event.key,
       location: this._getLocation($event.location),
     };

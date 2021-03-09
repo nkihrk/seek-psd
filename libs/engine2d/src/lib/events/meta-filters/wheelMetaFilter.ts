@@ -1,26 +1,26 @@
 import { MetaFilter } from './metaFilter';
 
-export interface WheelFlags {
+export interface IWheelFlags {
   isWheelStart: boolean;
 }
 
-export interface WheelValues {
+export interface IWheelValues {
   deltaX: number;
   deltaY: number;
   deltaZ: number;
 }
 
-export class WheelMetaFilter extends MetaFilter<WheelFlags, WheelValues> {
+export class WheelMetaFilter extends MetaFilter<IWheelFlags, IWheelValues> {
   constructor() {
     super();
   }
 
-  protected generateFlags(): WheelFlags {
+  protected generateFlags(): IWheelFlags {
     return { isWheelStart: false };
   }
 
-  protected generateValues($event: WheelEvent): WheelValues {
-    const values: WheelValues = {
+  protected generateValues($event: WheelEvent): IWheelValues {
+    const values: IWheelValues = {
       deltaX: $event.deltaX,
       deltaY: $event.deltaY,
       deltaZ: $event.deltaZ,

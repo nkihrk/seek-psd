@@ -38,7 +38,7 @@ export class EventManager {
     const globalNotifier = new Notifier<FilterResult>();
     globalNotifier.notifyType = NOTIFY_TYPE.GLOBAL;
     const globalEvents = new GlobalEvents(globalNotifier);
-    globalEvents.init(this.storeManager.entity);
+    globalEvents.init(this.storeManager.store.entity);
     globalEvents.start();
 
     // subscribe a notifier's obeserver
@@ -46,7 +46,7 @@ export class EventManager {
   }
 
   private _createTargetEvents(): void {
-    const entity: Entity = this.storeManager.entity;
+    const entity: Entity = this.storeManager.store.entity;
 
     // return if no entity is present
     if (!entity) return;
@@ -80,7 +80,6 @@ export class EventManager {
 
     // update notifyType
     this.storeManager.updateNotifyType($e.type);
-    console.log(this.storeManager.notifyType);
 
     // update default event
     this.storeManager.updateDefaultEvent(defaultEvent);

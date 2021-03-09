@@ -1,6 +1,6 @@
 import { MetaFilter } from './metaFilter';
 
-export interface DragFlags {
+export interface IDragFlags {
   isDrag: boolean;
   isDragEnd: boolean;
   isDragEnter: boolean;
@@ -10,16 +10,16 @@ export interface DragFlags {
   isDrop: boolean;
 }
 
-export interface DragValues {
+export interface IDragValues {
   data: DataTransfer;
 }
 
-export class DragMetaFilter extends MetaFilter<DragFlags, DragValues> {
+export class DragMetaFilter extends MetaFilter<IDragFlags, IDragValues> {
   constructor() {
     super();
   }
 
-  protected generateFlags(): DragFlags {
+  protected generateFlags(): IDragFlags {
     // will be changed at onDragEvent
     return {
       isDrag: false,
@@ -32,7 +32,7 @@ export class DragMetaFilter extends MetaFilter<DragFlags, DragValues> {
     };
   }
 
-  protected generateValues($event: DragEvent): DragValues {
+  protected generateValues($event: DragEvent): IDragValues {
     return {
       data: $event.dataTransfer || null,
     };

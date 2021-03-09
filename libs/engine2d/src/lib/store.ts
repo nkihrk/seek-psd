@@ -1,25 +1,25 @@
 import type { Entity } from './entities/entity';
-import type { ClipboardFlags } from './events/meta-filters/clipboardMetaFilter';
+import type { IClipboardFlags } from './events/meta-filters/clipboardMetaFilter';
 import type {
-  PointerFlags,
+  IPointerFlags,
   Coord,
 } from './events/meta-filters/pointerMetaFilter';
 import type {
-  KeyboardFlags,
-  KeyboardValues,
+  IKeyboardFlags,
+  IKeyboardValues,
 } from './events/meta-filters/keyboardMetaFilter';
-import type { DragFlags } from './events/meta-filters/dragMetaFilter';
+import type { IDragFlags } from './events/meta-filters/dragMetaFilter';
 import type {
-  EventFlags,
-  EventValues,
+  IEventFlags,
+  IEventValues,
 } from './events/meta-filters/eventMetaFilter';
 import type {
-  MouseFlags,
-  MouseValues,
+  IMouseFlags,
+  IMouseValues,
 } from './events/meta-filters/mouseMetaFilter';
 import type {
-  WheelFlags,
-  WheelValues,
+  IWheelFlags,
+  IWheelValues,
 } from './events/meta-filters/wheelMetaFilter';
 
 export interface IStore {
@@ -31,23 +31,23 @@ export interface IStore {
 }
 
 export interface IFlags {
-  clipboard: ClipboardFlags;
-  pointer: PointerFlags;
-  keyboard: KeyboardFlags;
-  drag: DragFlags;
-  event: EventFlags;
-  mouse: MouseFlags;
-  wheel: WheelFlags;
+  clipboard: IClipboardFlags;
+  pointer: IPointerFlags;
+  keyboard: IKeyboardFlags;
+  drag: IDragFlags;
+  event: IEventFlags;
+  mouse: IMouseFlags;
+  wheel: IWheelFlags;
 }
 
 export interface IValues {
   clipboard: IFiles;
   pointer: IPointerOffset;
-  keyboard: KeyboardValues;
+  keyboard: IKeyboardValues;
   drag: IFiles;
-  event: EventValues;
-  mouse: MouseValues;
-  wheel: WheelValues;
+  event: IEventValues;
+  mouse: IMouseValues;
+  wheel: IWheelValues;
 }
 
 export interface IPointerOffset {
@@ -62,19 +62,16 @@ export interface IFiles {
   files: File[];
 }
 
-export abstract class Store {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  protected static _userStore: any = null;
+export class Store {
+  entity: Entity = null;
 
-  protected _entity: Entity = null;
-
-  protected _notifyType = '';
+  notifyType = '';
 
   // System defined event goes here
   // e.g. PointerEvent, ClipboardEvent, etc..
-  protected _defaultEvent = null;
+  defaultEvent = null;
 
-  protected _flags: IFlags = {
+  flags: IFlags = {
     clipboard: {
       isCopy: false,
       isCut: false,
@@ -158,7 +155,7 @@ export abstract class Store {
     },
   };
 
-  protected _values: IValues = {
+  values: IValues = {
     clipboard: {
       data: null,
       files: [],
@@ -202,40 +199,4 @@ export abstract class Store {
   };
 
   constructor() {}
-
-  get store(): IStore {
-    return {
-      entity: this.entity,
-      notifyType: this.notifyType,
-      defaultEvent: this.defaultEvent,
-      flags: this.flags,
-      values: this.values,
-    };
-  }
-
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  get userStore(): any {
-    return Store._userStore;
-  }
-
-  get entity(): Entity {
-    return this._entity;
-  }
-
-  get notifyType(): string {
-    return this._notifyType;
-  }
-
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  get defaultEvent(): any {
-    return this._defaultEvent;
-  }
-
-  get flags(): IFlags {
-    return this._flags;
-  }
-
-  get values(): IValues {
-    return this._values;
-  }
 }

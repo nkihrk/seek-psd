@@ -1,16 +1,16 @@
 import type { Notifier } from '../../notifiers/notifier';
 import type { FilterResult } from './event';
 import type {
-  KeyboardFlags,
-  KeyboardValues,
+  IKeyboardFlags,
+  IKeyboardValues,
 } from '../meta-filters/keyboardMetaFilter';
 import { KeyboardMetaFilter } from '../meta-filters/keyboardMetaFilter';
 import { Event } from './event';
 import { EVENT_TYPE } from '../../constants';
 
 interface FilterContent {
-  flags: KeyboardFlags;
-  values: KeyboardValues;
+  flags: IKeyboardFlags;
+  values: IKeyboardValues;
   filter: KeyboardMetaFilter;
 }
 
@@ -40,15 +40,15 @@ export class OnKeyboardEvent extends Event {
   private _getFilterContent($event: KeyboardEvent): FilterContent {
     const filter = new KeyboardMetaFilter();
     filter.init($event);
-    const flags: KeyboardFlags = filter.flags;
-    const values: KeyboardValues = filter.values;
+    const flags: IKeyboardFlags = filter.flags;
+    const values: IKeyboardValues = filter.values;
 
     return { flags, values, filter };
   }
 
   private _publish(
-    $flags: KeyboardFlags,
-    $values: KeyboardValues,
+    $flags: IKeyboardFlags,
+    $values: IKeyboardValues,
     $event: KeyboardEvent
   ): void {
     this.notifier.update({

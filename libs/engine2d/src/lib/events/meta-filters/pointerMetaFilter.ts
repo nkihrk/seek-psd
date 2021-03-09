@@ -2,13 +2,13 @@ import { MetaFilter } from './metaFilter';
 import { BUTTON_NAME, BUTTON_STATES, POINTER } from '../../constants/index';
 import { getButtonValue, getButtonsValue } from './utils/index';
 
-export interface PointerFlags {
-  meta: PointerMetaFlags;
-  base: PointerBaseFlags;
-  state: PointerStateFlags;
+export interface IPointerFlags {
+  meta: IPointerMetaFlags;
+  base: IPointerBaseFlags;
+  state: IPointerStateFlags;
 }
 
-export interface PointerMetaFlags {
+export interface IPointerMetaFlags {
   isPrimary: boolean;
   isTouch: boolean;
   isMultiTouch: boolean;
@@ -18,7 +18,7 @@ export interface PointerMetaFlags {
   isShiftKey: boolean;
 }
 
-export interface PointerBaseFlags {
+export interface IPointerBaseFlags {
   isDown: boolean;
   isUp: boolean;
   isMove: boolean;
@@ -29,7 +29,7 @@ export interface PointerBaseFlags {
   isLeave: boolean;
 }
 
-export interface PointerStateFlags {
+export interface IPointerStateFlags {
   isRightDown: boolean;
   isRightUp: boolean;
   isRightMove: boolean;
@@ -50,7 +50,7 @@ export interface PointerStateFlags {
   isEraserMove: boolean;
 }
 
-export interface PointerValues {
+export interface IPointerValues {
   meta: PointerMetaValues;
   pressure: PointerPressureValues;
   tilt: Coord;
@@ -78,20 +78,23 @@ export interface PointerPressureValues {
   tangential: number;
 }
 
-export class PointerMetaFilter extends MetaFilter<PointerFlags, PointerValues> {
+export class PointerMetaFilter extends MetaFilter<
+  IPointerFlags,
+  IPointerValues
+> {
   constructor() {
     super();
   }
 
-  protected generateFlags($event: PointerEvent): PointerFlags {
-    const meta: PointerMetaFlags = this._generateMetaFlags($event);
-    const base: PointerBaseFlags = this._generateBaseFlags($event);
-    const state: PointerStateFlags = this._generateStateFlags($event);
+  protected generateFlags($event: PointerEvent): IPointerFlags {
+    const meta: IPointerMetaFlags = this._generateMetaFlags($event);
+    const base: IPointerBaseFlags = this._generateBaseFlags($event);
+    const state: IPointerStateFlags = this._generateStateFlags($event);
 
     return { meta, base, state };
   }
 
-  protected generateValues($event: PointerEvent): PointerValues {
+  protected generateValues($event: PointerEvent): IPointerValues {
     const meta: PointerMetaValues = {
       pointerId: $event.pointerId,
       pointerType: $event.pointerType,
@@ -123,8 +126,8 @@ export class PointerMetaFilter extends MetaFilter<PointerFlags, PointerValues> {
     };
   }
 
-  private _generateMetaFlags($event: PointerEvent): PointerMetaFlags {
-    const meta: PointerMetaFlags = {
+  private _generateMetaFlags($event: PointerEvent): IPointerMetaFlags {
+    const meta: IPointerMetaFlags = {
       isPrimary: $event.isPrimary,
       isTouch: $event.pointerType === 'touch',
       isMultiTouch: false, // will be changed at onPointerEvent
@@ -137,8 +140,8 @@ export class PointerMetaFilter extends MetaFilter<PointerFlags, PointerValues> {
     return meta;
   }
 
-  private _generateBaseFlags($event: PointerEvent): PointerBaseFlags {
-    const base = {} as PointerBaseFlags;
+  private _generateBaseFlags($event: PointerEvent): IPointerBaseFlags {
+    const base = {} as IPointerBaseFlags;
 
     switch ($event.type) {
       case POINTER.DOWN:
@@ -177,9 +180,9 @@ export class PointerMetaFilter extends MetaFilter<PointerFlags, PointerValues> {
     return base;
   }
 
-  private _generateStateFlags($event: PointerEvent): PointerStateFlags {
+  private _generateStateFlags($event: PointerEvent): IPointerStateFlags {
     let buttonType = '';
-    let state = {} as PointerStateFlags;
+    let state = {} as IPointerStateFlags;
 
     switch ($event.button) {
       case BUTTON_STATES.LEFT:
@@ -217,9 +220,9 @@ export class PointerMetaFilter extends MetaFilter<PointerFlags, PointerValues> {
   private _generateDownUpMoveFlags(
     $type: string,
     $buttonType: string,
-    $flags: PointerStateFlags
-  ): PointerStateFlags {
-    const flags: PointerStateFlags = Object.assign({}, $flags);
+    $flags: IPointerStateFlags
+  ): IPointerStateFlags {
+    const flags: IPointerStateFlags = Object.assign({}, $flags);
 
     if ($type === POINTER.DOWN) {
       flags[`is${$buttonType}Down`] = true;

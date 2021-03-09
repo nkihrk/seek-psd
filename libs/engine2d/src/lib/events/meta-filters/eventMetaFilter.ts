@@ -1,20 +1,20 @@
 import { MetaFilter } from './metaFilter';
 
-export interface EventFlags {
+export interface IEventFlags {
   isFullscreen: boolean;
   isFullscreenSupported: boolean;
   isOnline: boolean;
 }
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
-export interface EventValues {}
+export interface IEventValues {}
 
-export class EventMetaFilter extends MetaFilter<EventFlags, EventValues> {
+export class EventMetaFilter extends MetaFilter<IEventFlags, IEventValues> {
   constructor() {
     super();
   }
 
-  protected generateFlags(): EventFlags {
+  protected generateFlags(): IEventFlags {
     return {
       isFullscreen: !!document.fullscreenElement,
       isFullscreenSupported: document.fullscreenEnabled,
@@ -22,7 +22,7 @@ export class EventMetaFilter extends MetaFilter<EventFlags, EventValues> {
     };
   }
 
-  protected generateValues(): EventValues {
+  protected generateValues(): IEventValues {
     return {};
   }
 }
