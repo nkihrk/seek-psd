@@ -1,5 +1,6 @@
 import type { FilterResult } from './events/event/event';
 import type { NotifiedEvent } from './notifiers/notifier';
+import type { Entity } from './entities';
 import { NOTIFY_TYPE, EVENT_TYPE } from './constants/index';
 import { Notifier } from './notifiers/notifier';
 import { GlobalEvents } from './events/globalEvents';
@@ -45,11 +46,16 @@ export class EventManager {
   }
 
   private _createTargetEvents(): void {
+    const entity: Entity = this.storeManager.entity;
+
+    // return if no entity is present
+    if (!entity) return;
+
     // create targetEvents
     const targetNotifier = new Notifier<FilterResult>();
     targetNotifier.notifyType = NOTIFY_TYPE.TARGET;
     const targetEvents = new TargetEvents(targetNotifier);
-    targetEvents.init(this.storeManager.entity);
+    targetEvents.init(entity);
     targetEvents.start();
 
     // subscribe a notifier's obeserver
@@ -70,11 +76,11 @@ export class EventManager {
 
     // prevent it when on initialization
     // I guess this will only work on the initialization stage, but might be wrong
-    if (!flags && !values && !event) return;
+    if (!flags && !values && !defaultEvent) return;
 
     // update notifyType
     this.storeManager.updateNotifyType($e.type);
-    //console.log(this.storeManager.notifyType);
+    console.log(this.storeManager.notifyType);
 
     // update default event
     this.storeManager.updateDefaultEvent(defaultEvent);

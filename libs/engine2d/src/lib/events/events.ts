@@ -281,7 +281,10 @@ export abstract class Events {
     }
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private _isTargetArea($event: any): boolean {
+    if (!this.entity) return false;
+
     const target: HTMLElement = this.entity.element;
     const tRect: DOMRect = target.getBoundingClientRect();
     const tOriginX: number = tRect.x;

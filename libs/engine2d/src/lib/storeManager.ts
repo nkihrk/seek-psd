@@ -149,8 +149,12 @@ export class StoreManager extends Store {
   updatePointerOffset($flags: PointerFlags, $values: PointerValues): void {
     const flags: PointerFlags = $flags;
     const values: PointerValues = $values;
-    const elem: HTMLElement = this.entity.element;
-    const rect: DOMRect = elem.getBoundingClientRect();
+    const rect:
+      | DOMRect
+      | {
+          x: number;
+          y: number;
+        } = this.entity?.element.getBoundingClientRect() || { x: 0, y: 0 };
 
     const currentOffset: Coord = {
       x: values.client.x - rect.x,

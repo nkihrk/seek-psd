@@ -40,9 +40,9 @@ export class Engine2D {
     PluginManager.registerPlugin($eventType, $pluginSet);
   }
 
-  init($entity: Entity): void {
+  init($entity?: Entity): void {
     const storeManager = new StoreManager();
-    storeManager.initEntity($entity);
+    if ($entity) storeManager.initEntity($entity);
     this._storeManager = storeManager;
 
     const pluginManager = new PluginManager();
