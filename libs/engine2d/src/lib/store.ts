@@ -2,7 +2,7 @@ import type { Entity } from './entities/entity';
 import type { IClipboardFlags } from './events/meta-filters/clipboardMetaFilter';
 import type {
   IPointerFlags,
-  Coord,
+  ICoord,
 } from './events/meta-filters/pointerMetaFilter';
 import type {
   IKeyboardFlags,
@@ -51,10 +51,10 @@ export interface IValues {
 }
 
 export interface IPointerOffset {
-  current: Coord;
-  prev: Coord;
-  raw: Coord;
-  tmp: Coord;
+  current: ICoord;
+  prev: ICoord;
+  raw: ICoord;
+  tmp: ICoord;
 }
 
 export interface IFiles {

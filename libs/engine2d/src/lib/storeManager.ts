@@ -10,7 +10,7 @@ import {
   IKeyboardValues,
 } from './events/meta-filters/keyboardMetaFilter';
 import type {
-  Coord,
+  ICoord,
   IPointerFlags,
   IPointerValues,
 } from './events/meta-filters/pointerMetaFilter';
@@ -168,15 +168,15 @@ export class StoreManager {
       y: 0,
     };
 
-    const currentOffset: Coord = {
+    const currentOffset: ICoord = {
       x: values.client.x - rect.x,
       y: values.client.y - rect.y,
     };
-    const rawOffset: Coord = {
+    const rawOffset: ICoord = {
       x: values.client.x,
       y: values.client.y,
     };
-    const tmpOffset: Coord = {
+    const tmpOffset: ICoord = {
       x: values.tmpClient.x - rect.x,
       y: values.tmpClient.y - rect.y,
     };

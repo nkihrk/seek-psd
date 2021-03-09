@@ -51,29 +51,29 @@ export interface IPointerStateFlags {
 }
 
 export interface IPointerValues {
-  meta: PointerMetaValues;
-  pressure: PointerPressureValues;
-  tilt: Coord;
+  meta: IPointerMetaValues;
+  pressure: IPointerPressureValues;
+  tilt: ICoord;
   twist: number;
-  client: Coord;
-  tmpClient: Coord;
-  movement: Coord;
-  touch: Coord; // a center coordinate of two clients
+  client: ICoord;
+  tmpClient: ICoord;
+  movement: ICoord;
+  touch: ICoord; // a center coordinate of two clients
   button: string;
   buttons: string[];
 }
 
-export interface Coord {
+export interface ICoord {
   x: number;
   y: number;
 }
 
-export interface PointerMetaValues {
+export interface IPointerMetaValues {
   pointerId: number;
   pointerType: string;
 }
 
-export interface PointerPressureValues {
+export interface IPointerPressureValues {
   normal: number;
   tangential: number;
 }
@@ -95,20 +95,20 @@ export class PointerMetaFilter extends MetaFilter<
   }
 
   protected generateValues($event: PointerEvent): IPointerValues {
-    const meta: PointerMetaValues = {
+    const meta: IPointerMetaValues = {
       pointerId: $event.pointerId,
       pointerType: $event.pointerType,
     };
-    const pressure: PointerPressureValues = {
+    const pressure: IPointerPressureValues = {
       normal: $event.pressure,
       tangential: $event.tangentialPressure,
     };
-    const tilt: Coord = { x: $event.clientX, y: $event.clientY };
+    const tilt: ICoord = { x: $event.clientX, y: $event.clientY };
     const twist: number = $event.twist;
-    const client: Coord = { x: $event.clientX, y: $event.clientY };
-    const tmpClient: Coord = { x: $event.clientX, y: $event.clientY };
-    const movement: Coord = { x: $event.movementX, y: $event.movementY };
-    const touch = {} as Coord;
+    const client: ICoord = { x: $event.clientX, y: $event.clientY };
+    const tmpClient: ICoord = { x: $event.clientX, y: $event.clientY };
+    const movement: ICoord = { x: $event.movementX, y: $event.movementY };
+    const touch = {} as ICoord;
     const button: string = getButtonValue($event.button);
     const buttons: string[] = getButtonsValue($event.buttons);
 
