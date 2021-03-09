@@ -1,4 +1,4 @@
-import type { Plugin, StoreManager } from '@seek-psd/engine2d';
+import type { IPlugin, IStore } from '@seek-psd/engine2d';
 import type {
   DragFlags,
   DragValues,
@@ -6,15 +6,17 @@ import type {
 import type { Store } from '../../store';
 import { hasProperty } from '@seek-psd/utils';
 
-export class FileLoader implements Plugin {
-  private store: StoreManager = null;
+export class FileLoader implements IPlugin<Store> {
+  private store: IStore = null;
+  private userStore: Store = null;
 
   constructor() {}
 
-  call($store: StoreManager & Store): void {
+  call($store: IStore, $userStore: Store): void {
     this.store = $store;
+    this.userStore = $userStore;
 
-    // cancel the system event
+    // cancel system events
     this.store.defaultEvent.preventDefault();
     this.store.defaultEvent.stopPropagation();
 
@@ -23,8 +25,8 @@ export class FileLoader implements Plugin {
   }
 
   private _switchEventType(): void {
-    const flags: DragFlags = this.store.dragFlags;
-    const values: DragValues = this.store.dragValues;
+    const flags: DragFlags = this.store.flags.drag;
+    const values: DragValues = this.store.values.drag;
 
     if (flags.isDrop) {
       this._extractData(values.data);
@@ -32,6 +34,7 @@ export class FileLoader implements Plugin {
   }
 
   private async _extractData($data: DataTransfer): Promise<void> {
+    let count = 0;
     const items: DataTransferItemList = $data.items;
     const results: any[] = []; // eslint-disable-line @typescript-eslint/no-explicit-any
     const promises: any[] = []; // eslint-disable-line @typescript-eslint/no-explicit-any
@@ -46,14 +49,13 @@ export class FileLoader implements Plugin {
 
     await Promise.all(promises);
 
-    let count = 0;
     for (const result of results) {
       result.file((file: File) => {
         files.push(file);
 
         count++;
         if (count === results.length && files.length > 0) {
-          this.onFileDropped(files);
+          this.store.values.drag.files = files;
         }
       });
     }
@@ -77,16 +79,5 @@ export class FileLoader implements Plugin {
         break;
       }
     }
-  }
-
-  onFileDropped($files: File[]): void {
-    for (let i = 0; i < $files.length; i++) {
-      this._checkFiles($files[i]);
-      break;
-    }
-  }
-
-  private _checkFiles($file: File): void {
-    console.log($file);
   }
 }

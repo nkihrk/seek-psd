@@ -1,20 +1,23 @@
-import type { PluginSet } from './global.interface';
+/* eslint @typescript-eslint/no-explicit-any: 0 */
+
+import type { IPluginSet } from './global.interface';
 import { EVENT_TYPE } from './constants/index';
 
 export class PluginManager {
   // Events
-  private static clipboards: PluginSet[] = [];
-  private static keyboards: PluginSet[] = [];
-  private static pointers: PluginSet[] = [];
-  private static drags: PluginSet[] = [];
-  private static events: PluginSet[] = [];
-  private static mouses: PluginSet[] = [];
-  private static wheels: PluginSet[] = [];
+  private static clipboards: IPluginSet<any>[] = [];
+  private static keyboards: IPluginSet<any>[] = [];
+  private static pointers: IPluginSet<any>[] = [];
+  private static drags: IPluginSet<any>[] = [];
+  private static events: IPluginSet<any>[] = [];
+  private static mouses: IPluginSet<any>[] = [];
+  private static wheels: IPluginSet<any>[] = [];
 
   // Renderers
-  private static renders: PluginSet[] = [];
+  private static renders: IPluginSet<any>[] = [];
 
-  static registerPlugin($eventType: string, $pluginSet: PluginSet): void {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  static registerPlugin($eventType: string, $pluginSet: IPluginSet<any>): void {
     switch ($eventType) {
       case EVENT_TYPE.CLIPBOARD:
         PluginManager.clipboards.push($pluginSet);
@@ -56,8 +59,8 @@ export class PluginManager {
 
   constructor() {}
 
-  searchByEventType($eventType: string): PluginSet[] {
-    let pluginSets: PluginSet[] = [];
+  searchByEventType($eventType: string): IPluginSet<any>[] {
+    let pluginSets: IPluginSet<any>[] = [];
 
     switch ($eventType) {
       case EVENT_TYPE.CLIPBOARD:
@@ -100,8 +103,11 @@ export class PluginManager {
     return pluginSets;
   }
 
-  searchByPluginName($eventType: string, $pluginName: string): PluginSet[] {
-    const pluginSets: PluginSet[] = this.searchByEventType($eventType);
+  searchByPluginName(
+    $eventType: string,
+    $pluginName: string
+  ): IPluginSet<any>[] {
+    const pluginSets: IPluginSet<any>[] = this.searchByEventType($eventType);
 
     return pluginSets.filter((e) => e.pluginName === $pluginName);
   }

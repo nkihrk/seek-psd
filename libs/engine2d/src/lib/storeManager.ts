@@ -1,3 +1,5 @@
+/* eslint @typescript-eslint/no-explicit-any: 0 */
+
 import type { Entity } from './entities/entity';
 import type {
   ClipboardFlags,
@@ -28,27 +30,23 @@ import type {
   WheelFlags,
   WheelValues,
 } from './events/meta-filters/wheelMetaFilter';
-import type { PointerOffset } from './store';
+import type { IPointerOffset } from './store';
 import { Store } from './store';
-
 import { EVENT_TYPE } from './constants';
 
 export class StoreManager extends Store {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  static registerPlugin($store: any): void {
-    // combine a main store with the backend store
-    Object.setPrototypeOf(Store.prototype, $store);
+  static registerPlugin($userStore: any): void {
+    Store._userStore = $userStore;
   }
 
   constructor() {
     super();
   }
 
-  init($entity: Entity): void {
+  initEntity($entity: Entity): void {
     this._entity = $entity;
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   updateFlags($eventType: string, $flags: any): void {
     switch ($eventType) {
       case EVENT_TYPE.CLIPBOARD:
@@ -85,11 +83,10 @@ export class StoreManager extends Store {
     }
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   updateValues($eventType: string, $values: any): void {
     switch ($eventType) {
       case EVENT_TYPE.CLIPBOARD:
-        this.updateClipboardValues($values);
+        this.updateClipboardData($values);
         break;
 
       case EVENT_TYPE.KEYBOARD:
@@ -100,7 +97,7 @@ export class StoreManager extends Store {
         break;
 
       case EVENT_TYPE.DRAG:
-        this.updateDragValues($values);
+        this.updateDragData($values);
         break;
 
       case EVENT_TYPE.EVENT:
@@ -125,29 +122,28 @@ export class StoreManager extends Store {
     this._notifyType = $notifyType;
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   updateDefaultEvent($defaultEvent: any): void {
     this._defaultEvent = $defaultEvent;
   }
 
   updateClipboardFlags($flags: ClipboardFlags): void {
-    this._clipboardFlags = $flags;
+    this._flags.clipboard = $flags;
   }
 
-  updateClipboardValues($values: ClipboardValues): void {
-    this._clipboardValues = $values;
+  updateClipboardData($values: ClipboardValues): void {
+    this._values.clipboard.data = $values.data;
   }
 
   updateKeyboardFlags($flags: KeyboardFlags): void {
-    this._keyboardFlags = $flags;
+    this._flags.keyboard = $flags;
   }
 
   updateKeyboardValues($values: KeyboardValues): void {
-    this._keyboardValues = $values;
+    this._values.keyboard = $values;
   }
 
   updatePointerFlags($flags: PointerFlags): void {
-    this._pointerFlags = $flags;
+    this._flags.pointer = $flags;
   }
 
   updatePointerOffset($flags: PointerFlags, $values: PointerValues): void {
@@ -170,18 +166,18 @@ export class StoreManager extends Store {
     };
 
     if (flags.base.isDown) {
-      const pointerOffset: PointerOffset = {
+      const pointerOffset: IPointerOffset = {
         current: currentOffset,
         prev: currentOffset,
         raw: rawOffset,
         tmp: tmpOffset,
       };
 
-      this._pointerOffset = pointerOffset;
+      this._values.pointer = pointerOffset;
     } else {
-      const pointerOffset: PointerOffset = Object.assign(
+      const pointerOffset: IPointerOffset = Object.assign(
         {},
-        this._pointerOffset,
+        this._values.pointer,
         {
           current: currentOffset,
           raw: rawOffset,
@@ -189,39 +185,39 @@ export class StoreManager extends Store {
         }
       );
 
-      this._pointerOffset = pointerOffset;
+      this._values.pointer = pointerOffset;
     }
   }
 
   updateDragFlags($flags: DragFlags): void {
-    this._dragFlags = $flags;
+    this._flags.drag = $flags;
   }
 
-  updateDragValues($values: DragValues): void {
-    this._dragValues = $values;
+  updateDragData($values: DragValues): void {
+    this._values.drag.data = $values.data;
   }
 
   updateEventFlgas($flags: EventFlags): void {
-    this._eventFlags = $flags;
+    this._flags.event = $flags;
   }
 
   updateEventValues($values: EventValues): void {
-    this._eventValues = $values;
+    this._values.event = $values;
   }
 
   updateMouseFlags($flags: MouseFlags): void {
-    this._mouseFlags = $flags;
+    this._flags.mouse = $flags;
   }
 
   updateMouseValues($values: MouseValues): void {
-    this._mouseValues = $values;
+    this._values.mouse = $values;
   }
 
   updateWheelFlags($flags: WheelFlags): void {
-    this._wheelFlags = $flags;
+    this._flags.wheel = $flags;
   }
 
   updateWheelValues($values: WheelValues): void {
-    this._wheelValues = $values;
+    this._values.wheel = $values;
   }
 }

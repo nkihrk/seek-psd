@@ -58,11 +58,11 @@ export class EventManager {
 
   private _observe($notifier: Notifier<FilterResult>): void {
     $notifier.observer().subscribe((e) => {
-      this._updateBackendStore(e);
+      this._updateStore(e);
     });
   }
 
-  private _updateBackendStore($e: NotifiedEvent) {
+  private _updateStore($e: NotifiedEvent) {
     const eventType: string = $e.content.eventType;
     const flags: any = $e.content.flags; // eslint-disable-line @typescript-eslint/no-explicit-any
     const values: any = $e.content.values; // eslint-disable-line @typescript-eslint/no-explicit-any
@@ -87,7 +87,7 @@ export class EventManager {
     }
 
     this.pluginManager.searchByEventType(eventType).forEach((f) => {
-      f.plugin.call(this.storeManager);
+      f.plugin.call(this.storeManager.store, this.storeManager.userStore);
     });
   }
 }

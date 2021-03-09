@@ -23,7 +23,7 @@ export class RendererManager {
 
   private _render(): void {
     this.pluginManager.searchByEventType(EVENT_TYPE.RENDER).forEach((f) => {
-      f.plugin.call(this.storeManager);
+      f.plugin.call(this.storeManager.store, this.storeManager.userStore);
     });
   }
 }

@@ -1,5 +1,5 @@
 import type { Entity } from './entities/entity';
-import type { PluginSet } from './global.interface';
+import type { IPluginSet } from './global.interface';
 import { requestRender } from '@seek-psd/utils';
 import { StoreManager } from './storeManager';
 import { EventManager } from './eventManager';
@@ -31,17 +31,18 @@ export class Engine2D {
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  registerStore($store: any): void {
-    StoreManager.registerPlugin($store);
+  registerStore($storeSet: any): void {
+    StoreManager.registerPlugin($storeSet);
   }
 
-  registerPlugin($eventType: string, $pluginSet: PluginSet): void {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  registerPlugin($eventType: string, $pluginSet: IPluginSet<any>): void {
     PluginManager.registerPlugin($eventType, $pluginSet);
   }
 
   init($entity: Entity): void {
     const storeManager = new StoreManager();
-    storeManager.init($entity);
+    storeManager.initEntity($entity);
     this._storeManager = storeManager;
 
     const pluginManager = new PluginManager();

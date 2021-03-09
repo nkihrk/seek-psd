@@ -19,7 +19,7 @@ export class DragMetaFilter extends MetaFilter<DragFlags, DragValues> {
     super();
   }
 
-  protected generateFlags($event: DragEvent): DragFlags {
+  protected generateFlags(): DragFlags {
     // will be changed at onDragEvent
     return {
       isDrag: false,

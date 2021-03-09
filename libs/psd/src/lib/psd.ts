@@ -1,7 +1,6 @@
-import { Engine2D, Entity, EVENT_TYPE } from '@seek-psd/engine2d';
+import { Engine2D, Entity, EVENT_TYPE, FileLoader } from '@seek-psd/engine2d';
 import { StoreManager } from './storeManager';
 import { TestEvent } from './modules/events/testEvent';
-import { FileLoader } from './modules/events/fileLoader';
 import { TestRenderer } from './modules/renderers/testRenderer';
 
 export class SeekPsd {

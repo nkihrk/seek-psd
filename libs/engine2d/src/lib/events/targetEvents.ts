@@ -8,6 +8,10 @@ export class TargetEvents extends Events {
   }
 
   start(): void {
+    if (!this.entity) {
+      throw new Error('Entity is not properly set.');
+    }
+
     // pointer events
     this.pointerEvent(this.entity.element);
 
