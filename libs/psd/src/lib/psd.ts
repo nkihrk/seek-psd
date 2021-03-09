@@ -6,27 +6,21 @@ import {
   IPluginSet,
 } from '@seek-psd/engine2d';
 import { Store } from './store';
-import { TestEvent } from './modules/events/testEvent';
-import { TestRenderer } from './modules/renderers/testRenderer';
+import { LoadPsd } from './modules/events/loadPsd';
 
 export class SeekPsd {
   private targetElement: HTMLElement = null;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private pluginSets: IPluginSet<any>[] = [
     {
-      eventType: EVENT_TYPE.POINTER,
-      pluginName: 'test',
-      plugin: new TestEvent(),
-    },
-    {
       eventType: EVENT_TYPE.DRAG,
       pluginName: 'fileLoader',
       plugin: new FileLoader(),
     },
     {
-      eventType: EVENT_TYPE.RENDER,
-      pluginName: 'test',
-      plugin: new TestRenderer(),
+      eventType: EVENT_TYPE.DRAG,
+      pluginName: 'loadPsd',
+      plugin: new LoadPsd(),
     },
   ];
 

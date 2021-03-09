@@ -62,7 +62,7 @@ export interface IFiles {
   files: File[];
 }
 
-export class Store {
+export class Store implements IStore {
   entity: Entity = null;
 
   notifyType = '';

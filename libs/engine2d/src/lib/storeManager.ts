@@ -31,6 +31,7 @@ import type {
   IWheelValues,
 } from './events/meta-filters/wheelMetaFilter';
 import type { IPointerOffset } from './store';
+import type { IStore } from './store';
 import { Store } from './store';
 import { EVENT_TYPE } from './constants';
 
@@ -40,7 +41,7 @@ export class StoreManager {
 
   constructor() {}
 
-  get store(): Store {
+  get store(): IStore {
     return this._store;
   }
 

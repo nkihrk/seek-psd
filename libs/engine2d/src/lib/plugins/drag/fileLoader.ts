@@ -1,43 +1,45 @@
-import type { IPlugin, IStore } from '@seek-psd/engine2d';
-import type {
-  IDragFlags,
-  IDragValues,
-} from '../../events/meta-filters/dragMetaFilter';
-import type { Store } from '../../store';
+/* eslint @typescript-eslint/no-explicit-any: 0 */
+
+import type { IPlugin, IStore, IDragFlags, IFiles } from '@seek-psd/engine2d';
 import { hasProperty } from '@seek-psd/utils';
 
-export class FileLoader implements IPlugin<Store> {
+export class FileLoader implements IPlugin<any> {
   private store: IStore = null;
-  private userStore: Store = null;
+  private userStore: any = null;
 
   constructor() {}
 
-  call($store: IStore, $userStore: Store): void {
-    this.store = $store;
-    this.userStore = $userStore;
+  async call($store: IStore, $userStore: any): Promise<void> {
+    return new Promise((resolve: () => void) => {
+      this.store = $store;
+      this.userStore = $userStore;
 
-    // cancel system events
-    this.store.defaultEvent.preventDefault();
-    this.store.defaultEvent.stopPropagation();
+      // cancel system events
+      this.store.defaultEvent.preventDefault();
+      this.store.defaultEvent.stopPropagation();
 
-    // switch between eventTypes
-    this._switchEventType();
+      // switch between eventTypes
+      this._switchEventType(resolve);
+    });
   }
 
-  private _switchEventType(): void {
+  private _switchEventType($resolve: () => void): void {
     const flags: IDragFlags = this.store.flags.drag;
-    const values: IDragValues = this.store.values.drag;
+    const values: IFiles = this.store.values.drag;
 
     if (flags.isDrop) {
-      this._extractData(values.data);
+      this._extractData(values.data, $resolve);
     }
   }
 
-  private async _extractData($data: DataTransfer): Promise<void> {
+  private async _extractData(
+    $data: DataTransfer,
+    $resolve: () => void
+  ): Promise<void> {
     let count = 0;
     const items: DataTransferItemList = $data.items;
-    const results: any[] = []; // eslint-disable-line @typescript-eslint/no-explicit-any
-    const promises: any[] = []; // eslint-disable-line @typescript-eslint/no-explicit-any
+    const results: any[] = [];
+    const promises: any[] = [];
     const files: File[] = [];
 
     for (const i in items) {
@@ -56,14 +58,14 @@ export class FileLoader implements IPlugin<Store> {
         count++;
         if (count === results.length && files.length > 0) {
           this.store.values.drag.files = files;
-          console.log(files);
+          console.log(files[0].name);
+          $resolve();
         }
       });
     }
   }
 
   // https://qiita.com/wannabe/items/2b2f59a626313a8f58d4
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private async _scanFiles($entry: any, $tmpObject: any): Promise<void> {
     switch (true) {
       case $entry.isDirectory: {

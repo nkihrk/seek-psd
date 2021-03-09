@@ -1,7 +1,5 @@
 import type { IStore } from './store';
 
-export type { IStore } from './store';
-
 export interface IPluginSet<T> {
   eventType: string;
   pluginName: string;

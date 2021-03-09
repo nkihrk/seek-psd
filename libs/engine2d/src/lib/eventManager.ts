@@ -1,6 +1,7 @@
 import type { FilterResult } from './events/event/event';
 import type { NotifiedEvent } from './notifiers/notifier';
 import type { Entity } from './entities';
+import type { IPluginSet } from './global.interface';
 import { NOTIFY_TYPE, EVENT_TYPE } from './constants/index';
 import { Notifier } from './notifiers/notifier';
 import { GlobalEvents } from './events/globalEvents';
@@ -68,7 +69,7 @@ export class EventManager {
     });
   }
 
-  private _updateStore($e: NotifiedEvent) {
+  private async _updateStore($e: NotifiedEvent): Promise<void> {
     const eventType: string = $e.content.eventType;
     const flags: any = $e.content.flags; // eslint-disable-line @typescript-eslint/no-explicit-any
     const values: any = $e.content.values; // eslint-disable-line @typescript-eslint/no-explicit-any
@@ -91,8 +92,16 @@ export class EventManager {
       this.storeManager.updatePointerOffset(flags, values);
     }
 
-    this.pluginManager.searchByEventType(eventType).forEach((f) => {
-      f.plugin.call(this.storeManager.store, this.storeManager.userStore);
-    });
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const plugins: IPluginSet<any>[] = this.pluginManager.searchByEventType(
+      eventType
+    );
+
+    for (let i = 0; i < plugins.length; i++) {
+      await plugins[i].plugin.call(
+        this.storeManager.store,
+        this.storeManager.userStore
+      );
+    }
   }
 }
