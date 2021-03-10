@@ -4,6 +4,8 @@ import {
   EVENT_TYPE,
   FileLoader,
   IPluginSet,
+  PreventDefault,
+  StopPropagation,
 } from '@seek-psd/engine2d';
 import { Store } from './store';
 import { LoadPsd } from './modules/events/loadPsd';
@@ -12,6 +14,16 @@ export class SeekPsd {
   private targetElement: HTMLElement = null;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private pluginSets: IPluginSet<any>[] = [
+    {
+      eventType: EVENT_TYPE.DRAG,
+      pluginName: 'preventDefault',
+      plugin: new PreventDefault(),
+    },
+    {
+      eventType: EVENT_TYPE.DRAG,
+      pluginName: 'stopPropagation',
+      plugin: new StopPropagation(),
+    },
     {
       eventType: EVENT_TYPE.DRAG,
       pluginName: 'fileLoader',
@@ -43,6 +55,13 @@ export class SeekPsd {
 
     // start the engine
     eg.start();
+
+    // get notifications when stores are updated
+    eg.store.updateNotifier.observer().subscribe((e) => {
+      if (e.type === EVENT_TYPE.DRAG) {
+        console.log(e);
+      }
+    });
   }
 
   private _registerPlugins($eg: Engine2D): void {

@@ -1,6 +1,6 @@
 /* eslint @typescript-eslint/no-explicit-any: 0 */
 
-import type { IPluginSet } from './global.interface';
+import type { IPluginSet } from './Global';
 import { EVENT_TYPE } from './constants/index';
 
 export class PluginManager {
@@ -110,5 +110,11 @@ export class PluginManager {
     const pluginSets: IPluginSet<any>[] = this.searchByEventType($eventType);
 
     return pluginSets.filter((e) => e.pluginName === $pluginName);
+  }
+
+  searchPluginName($eventType: string, $index: number): string {
+    const pluginSets: IPluginSet<any>[] = this.searchByEventType($eventType);
+
+    return pluginSets[$index].pluginName;
   }
 }

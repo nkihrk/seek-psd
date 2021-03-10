@@ -1,5 +1,5 @@
 import type { Entity } from './entities/entity';
-import type { IPluginSet } from './global.interface';
+import type { IPluginSet } from './Global';
 import { requestRender } from '@seek-psd/utils';
 import { StoreManager } from './storeManager';
 import { EventManager } from './eventManager';

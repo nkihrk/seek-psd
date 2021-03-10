@@ -1,41 +1,36 @@
 /* eslint @typescript-eslint/no-explicit-any: 0 */
 
-import type { IPlugin, IStore, IDragFlags, IFiles } from '@seek-psd/engine2d';
+import type { IStore, IFiles } from '../../store';
+import type { IDragFlags } from '../../events/meta-filters/index';
+import { Plugin } from '../../Global';
 import { hasProperty } from '@seek-psd/utils';
 
-export class FileLoader implements IPlugin<any> {
-  private store: IStore = null;
-  private userStore: any = null;
-
-  constructor() {}
+export class FileLoader extends Plugin<any> {
+  constructor() {
+    super();
+  }
 
   async call($store: IStore, $userStore: any): Promise<void> {
-    return new Promise((resolve: () => void) => {
-      this.store = $store;
-      this.userStore = $userStore;
+    super.call($store, $userStore);
 
-      // cancel system events
-      this.store.defaultEvent.preventDefault();
-      this.store.defaultEvent.stopPropagation();
+    return new Promise((resolve: () => void) => {
+      this.resolve = resolve;
 
       // switch between eventTypes
-      this._switchEventType(resolve);
+      this._switchEventType();
     });
   }
 
-  private _switchEventType($resolve: () => void): void {
+  private _switchEventType(): void {
     const flags: IDragFlags = this.store.flags.drag;
     const values: IFiles = this.store.values.drag;
 
     if (flags.isDrop) {
-      this._extractData(values.data, $resolve);
+      this._extractData(values.data);
     }
   }
 
-  private async _extractData(
-    $data: DataTransfer,
-    $resolve: () => void
-  ): Promise<void> {
+  private async _extractData($data: DataTransfer): Promise<void> {
     let count = 0;
     const items: DataTransferItemList = $data.items;
     const results: any[] = [];
@@ -58,8 +53,10 @@ export class FileLoader implements IPlugin<any> {
         count++;
         if (count === results.length && files.length > 0) {
           this.store.values.drag.files = files;
-          console.log(files[0].name);
-          $resolve();
+
+          console.log('fileLoader');
+
+          this.resolve();
         }
       });
     }

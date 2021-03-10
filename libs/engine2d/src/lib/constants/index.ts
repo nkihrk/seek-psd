@@ -58,6 +58,7 @@ export enum EVENT_TYPE {
   MOUSE = 'mouse',
   WHEEL = 'wheel',
   RENDER = 'render',
+  ANY = 'any',
 }
 
 export const POINTER_EVENT = [

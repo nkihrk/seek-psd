@@ -34,10 +34,12 @@ import type { IPointerOffset } from './store';
 import type { IStore } from './store';
 import { Store } from './store';
 import { EVENT_TYPE } from './constants';
+import { Notifier } from './notifiers/notifier';
 
 export class StoreManager {
   private _store = new Store();
   private _userStore = null;
+  readonly updateNotifier = new Notifier();
 
   constructor() {}
 

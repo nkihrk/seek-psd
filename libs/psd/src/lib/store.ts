@@ -1,16 +1,16 @@
 import type { Psd } from 'ag-psd';
 
 export interface IUserStore {
-  psdData: IPsdData;
+  psdData: PsdData;
 }
 
-export interface IPsdData {
+export interface PsdData {
   fileName: string;
   psd: Psd;
 }
 
 export class Store implements IUserStore {
-  psdData = null;
+  psdData = {} as PsdData;
 
   constructor() {}
 }

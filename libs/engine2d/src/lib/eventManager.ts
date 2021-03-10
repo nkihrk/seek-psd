@@ -1,7 +1,10 @@
+/* eslint @typescript-eslint/no-explicit-any: 0 */
+
 import type { FilterResult } from './events/event/event';
 import type { NotifiedEvent } from './notifiers/notifier';
 import type { Entity } from './entities';
-import type { IPluginSet } from './global.interface';
+import type { IPluginSet } from './Global';
+import { Plugin } from './Global';
 import { NOTIFY_TYPE, EVENT_TYPE } from './constants/index';
 import { Notifier } from './notifiers/notifier';
 import { GlobalEvents } from './events/globalEvents';
@@ -71,9 +74,9 @@ export class EventManager {
 
   private async _updateStore($e: NotifiedEvent): Promise<void> {
     const eventType: string = $e.content.eventType;
-    const flags: any = $e.content.flags; // eslint-disable-line @typescript-eslint/no-explicit-any
-    const values: any = $e.content.values; // eslint-disable-line @typescript-eslint/no-explicit-any
-    const defaultEvent: any = $e.content.defaultEvent; // eslint-disable-line @typescript-eslint/no-explicit-any
+    const flags: any = $e.content.flags;
+    const values: any = $e.content.values;
+    const defaultEvent: any = $e.content.defaultEvent;
 
     // prevent it when on initialization
     // I guess this will only work on the initialization stage, but might be wrong
@@ -92,16 +95,28 @@ export class EventManager {
       this.storeManager.updatePointerOffset(flags, values);
     }
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const plugins: IPluginSet<any>[] = this.pluginManager.searchByEventType(
       eventType
     );
 
     for (let i = 0; i < plugins.length; i++) {
-      await plugins[i].plugin.call(
-        this.storeManager.store,
-        this.storeManager.userStore
+      const plugin: Plugin<any> = plugins[i].plugin;
+
+      await plugin.call(this.storeManager.store, this.storeManager.userStore);
+
+      if (!plugin.isNotifierEnabled) continue;
+
+      const pluginName: string = this.pluginManager.searchPluginName(
+        eventType,
+        i
       );
+
+      this.storeManager.updateNotifier.notifyType = eventType;
+      this.storeManager.updateNotifier.update({
+        pluginName,
+        store: this.storeManager.store,
+        userStore: this.storeManager.userStore,
+      });
     }
   }
 }

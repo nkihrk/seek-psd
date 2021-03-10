@@ -7,18 +7,11 @@ export interface NotifiedEvent {
 
 // T is defined as a type of the content
 export class Notifier<T> {
-  private _notifyType: string;
+  notifyType: string;
+
   private notifyEvent = new BehaviorSubject({} as T);
 
   constructor() {}
-
-  get notifyType(): string {
-    return this._notifyType;
-  }
-
-  set notifyType($notifyType: string) {
-    this._notifyType = $notifyType;
-  }
 
   update($result: T): void {
     this.notifyEvent.next($result);
