@@ -6,7 +6,7 @@ module.exports = {
     '<rootDir>/libs/engine2d',
     '<rootDir>/apps/seek-psd-archived',
     '<rootDir>/libs/utils',
-    '<rootDir>/libs/psd',
+    '<rootDir>/libs/psd-renderer',
     '<rootDir>/libs/engine2d-plugins',
   ],
 };

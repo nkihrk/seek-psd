@@ -1,9 +1,14 @@
 {
   "npmScope": "seek-psd",
-  "affected": { "defaultBase": "master" },
+  "affected": {
+    "defaultBase": "master"
+  },
   "implicitDependencies": {
     "angular.json": "*",
-    "package.json": { "dependencies": "*", "devDependencies": "*" },
+    "package.json": {
+      "dependencies": "*",
+      "devDependencies": "*"
+    },
     "tsconfig.base.json": "*",
     "tslint.json": "*",
     ".eslintrc.json": "*",
@@ -21,12 +26,27 @@
     }
   },
   "projects": {
-    "seek-psd": { "tags": [] },
-    "seek-psd-e2e": { "tags": [], "implicitDependencies": ["seek-psd"] },
-    "ui": { "tags": [] },
-    "engine2d": { "tags": [] },
-    "utils": { "tags": [] },
-    "psd": { "tags": [] },
-    "engine2d-plugins": { "tags": [] }
+    "seek-psd": {
+      "tags": []
+    },
+    "seek-psd-e2e": {
+      "tags": [],
+      "implicitDependencies": ["seek-psd"]
+    },
+    "ui": {
+      "tags": []
+    },
+    "engine2d": {
+      "tags": []
+    },
+    "utils": {
+      "tags": []
+    },
+    "engine2d-plugins": {
+      "tags": []
+    },
+    "psd-renderer": {
+      "tags": []
+    }
   }
 }

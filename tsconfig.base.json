@@ -18,8 +18,8 @@
       "@seek-psd/ui": ["libs/ui/src/index.ts"],
       "@seek-psd/engine2d": ["libs/engine2d/src/index.ts"],
       "@seek-psd/utils": ["libs/utils/src/index.ts"],
-      "@seek-psd/psd": ["libs/psd/src/index.ts"],
-      "@seek-psd/engine2d-plugins": ["libs/engine2d-plugins/src/index.ts"]
+      "@seek-psd/engine2d-plugins": ["libs/engine2d-plugins/src/index.ts"],
+      "@seek-psd/psd-renderer": ["libs/psd-renderer/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]

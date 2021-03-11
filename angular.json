@@ -210,27 +210,6 @@
         }
       }
     },
-    "psd": {
-      "root": "libs/psd",
-      "sourceRoot": "libs/psd/src",
-      "projectType": "library",
-      "architect": {
-        "lint": {
-          "builder": "@nrwl/linter:eslint",
-          "options": {
-            "lintFilePatterns": ["libs/psd/**/*.ts"]
-          }
-        },
-        "test": {
-          "builder": "@nrwl/jest:jest",
-          "outputs": ["coverage/libs/psd"],
-          "options": {
-            "jestConfig": "libs/psd/jest.config.js",
-            "passWithNoTests": true
-          }
-        }
-      }
-    },
     "engine2d-plugins": {
       "root": "libs/engine2d-plugins",
       "sourceRoot": "libs/engine2d-plugins/src",
@@ -247,6 +226,27 @@
           "outputs": ["coverage/libs/engine2d-plugins"],
           "options": {
             "jestConfig": "libs/engine2d-plugins/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
+    "psd-renderer": {
+      "root": "libs/psd-renderer",
+      "sourceRoot": "libs/psd-renderer/src",
+      "projectType": "library",
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": ["libs/psd-renderer/**/*.ts"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "outputs": ["coverage/libs/psd-renderer"],
+          "options": {
+            "jestConfig": "libs/psd-renderer/jest.config.js",
             "passWithNoTests": true
           }
         }
