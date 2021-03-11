@@ -52,7 +52,8 @@
               "apps/seek-psd/src/assets"
             ],
             "styles": ["apps/seek-psd/src/styles.scss"],
-            "scripts": []
+            "scripts": [],
+            "webWorkerTsConfig": "apps/seek-psd/tsconfig.worker.json"
           },
           "configurations": {
             "production": {
@@ -107,6 +108,9 @@
             "lintFilePatterns": [
               "apps/seek-psd/src/**/*.ts",
               "apps/seek-psd/src/**/*.html"
+            ],
+            "tsConfig": [
+              "apps/seek-psd/tsconfig.worker.json"
             ]
           }
         },

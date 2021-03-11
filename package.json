@@ -48,10 +48,11 @@
     "@types/file-saver": "^2.0.1",
     "ag-psd": "^11.5.0",
     "angular-notifier": "^6.0.1",
-    "comlink": "^4.3.0",
     "file-saver": "^2.0.5",
+    "observable-webworker": "^3.2.6",
     "rxjs": "~6.6.3",
     "tslib": "^2.0.0",
+    "uuid": "^8.3.2",
     "zone.js": "^0.10.2"
   },
   "devDependencies": {
