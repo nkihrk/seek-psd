@@ -230,6 +230,27 @@
           }
         }
       }
+    },
+    "engine2d-plugins": {
+      "root": "libs/engine2d-plugins",
+      "sourceRoot": "libs/engine2d-plugins/src",
+      "projectType": "library",
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": ["libs/engine2d-plugins/**/*.ts"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "outputs": ["coverage/libs/engine2d-plugins"],
+          "options": {
+            "jestConfig": "libs/engine2d-plugins/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
     }
   }
 }

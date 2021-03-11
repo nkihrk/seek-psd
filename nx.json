@@ -26,6 +26,7 @@
     "ui": { "tags": [] },
     "engine2d": { "tags": [] },
     "utils": { "tags": [] },
-    "psd": { "tags": [] }
+    "psd": { "tags": [] },
+    "engine2d-plugins": { "tags": [] }
   }
 }
