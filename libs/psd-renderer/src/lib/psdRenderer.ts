@@ -4,8 +4,15 @@ import {
   StopPropagation,
   FileLoader,
 } from '@seek-psd/engine2d-plugins';
+import type { IUserStore } from './store';
 import { Store } from './store';
 import { LoadPsd } from './modules/events/loadPsd';
+import { ShapePsdData } from './modules/events/shapePsdData';
+
+export interface IRenderTargetSet {
+  renderTargetName: string;
+  renderTarget: HTMLCanvasElement;
+}
 
 export class PsdRenderer {
   private targetElement: HTMLElement = null;
@@ -27,7 +34,12 @@ export class PsdRenderer {
       pluginName: 'loadPsd',
       plugin: new LoadPsd(),
     },
+    {
+      pluginName: 'shapePsdData',
+      plugin: new ShapePsdData(),
+    },
   ];
+  private renderTargetSets: IRenderTargetSet[] = [];
 
   constructor() {}
 
@@ -35,16 +47,22 @@ export class PsdRenderer {
     this.targetElement = $targetElement;
   }
 
+  registerRenderTargetSet($renderTargetSet: IRenderTargetSet): void {
+    this.renderTargetSets.push($renderTargetSet);
+  }
+
   start(): void {
     // engine2d
-    const entity = new Entity(this.targetElement);
     const eg = new Engine2D();
+    const entity = new Entity(this.targetElement);
+    const store = new Store();
 
     // make sure to register all plugins before initializing
     this._registerPlugins(eg);
+    this._registerRenderTargetSets(store);
 
     // initialize Engine2D
-    eg.init(entity, new Store());
+    eg.init(entity, store);
 
     // start the engine
     eg.start();
@@ -59,5 +77,9 @@ export class PsdRenderer {
 
   private _registerPlugins($eg: Engine2D): void {
     this.pluginSets.forEach((e) => $eg.registerPlugin(e));
+  }
+
+  private _registerRenderTargetSets($store: IUserStore): void {
+    $store.renderTargetSets = this.renderTargetSets;
   }
 }

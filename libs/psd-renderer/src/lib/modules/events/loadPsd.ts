@@ -1,5 +1,6 @@
 import type { IStore, IDragFlags, IFiles } from '@seek-psd/engine2d';
-import type { IUserStore } from '../../store';
+import type { IPsdSet, IUserStore } from '../../store';
+import { IPsdData, PsdData } from '../../entities/psdData';
 import type { Psd } from 'ag-psd';
 import { EVENT_TYPE } from '@seek-psd/engine2d';
 import { readPsd } from 'ag-psd';
@@ -14,7 +15,6 @@ export class LoadPsd extends Plugin<IUserStore> {
     // enable notifier
     super({
       pluginType: EVENT_TYPE.DRAG,
-      isNotifierEnabled: true,
     });
   }
 
@@ -63,33 +63,14 @@ export class LoadPsd extends Plugin<IUserStore> {
         const rect: DOMRect = $img.getBoundingClientRect();
         canvas.width = rect.width;
         canvas.height = rect.height;
-
         const ctx: CanvasRenderingContext2D = canvas.getContext('2d');
         ctx.drawImage($img, 0, 0);
-
-        const psd: Psd = {
-          canvas: canvas,
-          children: [
-            {
-              name: $file.name,
-              canvas: canvas,
-              blendMode: 'normal',
-              hidden: false,
-              opacity: 1,
-              clipping: false,
-              top: 0,
-              bottom: canvas.height,
-              left: 0,
-              right: canvas.width,
-            },
-          ],
-          width: canvas.width,
-          height: canvas.height,
-        };
-        this.userStore.psdDatas.push({
+        const psdSet: IPsdSet = {
           fileName: $file.name,
-          psd,
-        });
+          psdData: new PsdData($file.name, canvas),
+        };
+
+        this.userStore.psdSets.push(psdSet);
 
         console.log($file.name);
 
@@ -136,32 +117,12 @@ export class LoadPsd extends Plugin<IUserStore> {
   private _psdReader($fileName: string, $arrayBuffer: ArrayBuffer): void {
     try {
       const psd: Psd = readPsd($arrayBuffer);
+      const psdSet: IPsdSet = {
+        fileName: $fileName,
+        psdData: new PsdData($fileName, psd.canvas, psd),
+      };
 
-      if (psd?.children) {
-        this.userStore.psdDatas.push({ fileName: $fileName, psd });
-      } else {
-        const fixedPsd: Psd = {
-          canvas: psd.canvas,
-          children: [
-            {
-              name: $fileName,
-              canvas: psd.canvas,
-              blendMode: 'normal',
-              hidden: false,
-              opacity: 1,
-              clipping: false,
-              left: 0,
-              right: psd.width,
-              top: 0,
-              bottom: psd.height,
-            },
-          ],
-          width: psd.width,
-          height: psd.height,
-        };
-
-        this.userStore.psdDatas.push({ fileName: $fileName, psd: fixedPsd });
-      }
+      this.userStore.psdSets.push(psdSet);
 
       console.log($fileName);
 

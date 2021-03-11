@@ -1,3 +1,4 @@
+import type { IRenderTargetSet } from '@seek-psd/psd-renderer';
 import {
   Component,
   OnInit,
@@ -8,6 +9,8 @@ import {
 } from '@angular/core';
 import { setPixelPerfect } from '@seek-psd/utils';
 import { PsdRenderer } from '@seek-psd/psd-renderer';
+import { fromWorker } from 'observable-webworker';
+import { of } from 'rxjs';
 
 export interface Layers {
   psdLayer: ElementRef<HTMLCanvasElement>;
@@ -29,18 +32,37 @@ export class CanvasComponent implements OnInit {
 
   @Output() emitLayers = new EventEmitter<Layers>();
 
+  private renderTargetSets: IRenderTargetSet[] = [];
+
   constructor() {}
 
   ngOnInit(): void {
-    // pass layers to the parent component
-    this._emitLayers();
-
     // init canvas sizes with a appropriate pixel ratio
     this._initCanvas();
 
     const psd = new PsdRenderer();
     psd.init(this.layer.nativeElement);
+
+    // add render targets
+    const renderTargetSets: IRenderTargetSet[] = [
+      {
+        renderTargetName: 'psdLayer',
+        renderTarget: this.psdLayer.nativeElement,
+      },
+      {
+        renderTargetName: 'uiLayer',
+        renderTarget: this.uiLayer.nativeElement,
+      },
+    ];
+    renderTargetSets.forEach((e) => psd.registerRenderTargetSet(e));
+
+    // start rendering
     psd.start();
+
+    // pass layers to the parent component
+    this._emitLayers();
+
+    this._testWorker();
   }
 
   private _emitLayers(): void {
@@ -59,5 +81,20 @@ export class CanvasComponent implements OnInit {
 
   private _render($canvas: HTMLCanvasElement): void {
     //console.log($canvas);
+  }
+
+  private _testWorker(): void {
+    if (typeof Worker !== 'undefined') {
+      const input$ = of('Hello from main thread');
+
+      fromWorker<string, string>(
+        () => new Worker('./render-psd.worker', { type: 'module' }),
+        input$
+      ).subscribe((message) => {
+        console.log(message); // Outputs 'Hello from webworker'
+      });
+    } else {
+      console.warn('Web worker is not supported in this browser.');
+    }
   }
 }
