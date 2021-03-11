@@ -1,8 +1,8 @@
 import { Engine2D, Entity, EVENT_TYPE, IPluginSet } from '@seek-psd/engine2d';
 import {
-  FileLoader,
   PreventDefault,
   StopPropagation,
+  FileLoader,
 } from '@seek-psd/engine2d-plugins';
 import { Store } from './store';
 import { LoadPsd } from './modules/events/loadPsd';

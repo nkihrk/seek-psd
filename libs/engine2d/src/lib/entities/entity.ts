@@ -3,5 +3,7 @@ export class Entity {
 
   constructor($element: HTMLElement) {
     this.element = $element;
+
+    if (!$element) throw new Error('element is not set properly');
   }
 }
