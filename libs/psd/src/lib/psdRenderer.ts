@@ -10,7 +10,7 @@ import {
 import { Store } from './store';
 import { LoadPsd } from './modules/events/loadPsd';
 
-export class SeekPsd {
+export class PsdRenderer {
   private targetElement: HTMLElement = null;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private pluginSets: IPluginSet<any>[] = [
