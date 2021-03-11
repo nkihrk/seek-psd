@@ -1,11 +1,13 @@
 /* eslint @typescript-eslint/no-explicit-any: 0 */
 
-import type { IStore } from '@seek-psd/engine2d';
-import { Plugin } from '@seek-psd/engine2d';
+import type { IStore, TPluginType } from '@seek-psd/engine2d';
+import { Plugin, EVENT_TYPE } from '@seek-psd/engine2d';
 
 export class StopPropagation extends Plugin<any> {
-  constructor() {
-    super();
+  constructor($pluginType?: TPluginType) {
+    super({
+      pluginType: $pluginType || EVENT_TYPE.ANY,
+    });
   }
 
   call($store: IStore, $userStore: any): void {

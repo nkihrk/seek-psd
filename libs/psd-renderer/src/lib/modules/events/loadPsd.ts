@@ -1,6 +1,7 @@
 import type { IStore, IDragFlags, IFiles } from '@seek-psd/engine2d';
 import type { IUserStore } from '../../store';
 import type { Psd } from 'ag-psd';
+import { EVENT_TYPE } from '@seek-psd/engine2d';
 import { readPsd } from 'ag-psd';
 import { Plugin } from '@seek-psd/engine2d';
 import { createImage, validateFormat } from '@seek-psd/utils';
@@ -11,7 +12,10 @@ export class LoadPsd extends Plugin<IUserStore> {
 
   constructor() {
     // enable notifier
-    super(true);
+    super({
+      pluginType: EVENT_TYPE.DRAG,
+      isNotifierEnabled: true,
+    });
   }
 
   async call($store: IStore, $userStore: IUserStore): Promise<void> {

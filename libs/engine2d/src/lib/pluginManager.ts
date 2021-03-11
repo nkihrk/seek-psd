@@ -12,13 +12,14 @@ export class PluginManager {
   private static events: IPluginSet<any>[] = [];
   private static mouses: IPluginSet<any>[] = [];
   private static wheels: IPluginSet<any>[] = [];
+  private static anys: IPluginSet<any>[] = [];
 
   // Renderers
   private static renders: IPluginSet<any>[] = [];
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   static registerPlugin($pluginSet: IPluginSet<any>): void {
-    switch ($pluginSet.eventType) {
+    switch ($pluginSet.plugin.pluginType) {
       case EVENT_TYPE.CLIPBOARD:
         PluginManager.clipboards.push($pluginSet);
         break;
@@ -50,6 +51,9 @@ export class PluginManager {
       case EVENT_TYPE.RENDER:
         PluginManager.renders.push($pluginSet);
         break;
+
+      case EVENT_TYPE.ANY:
+        PluginManager.anys.push($pluginSet);
 
       default:
         throw new Error('Invalid plugin category is detected.');
@@ -93,6 +97,10 @@ export class PluginManager {
 
       case EVENT_TYPE.RENDER:
         pluginSets = PluginManager.renders;
+        break;
+
+      case EVENT_TYPE.ANY:
+        pluginSets = PluginManager.anys;
         break;
 
       default:

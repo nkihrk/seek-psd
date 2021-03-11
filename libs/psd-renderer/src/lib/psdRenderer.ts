@@ -12,22 +12,18 @@ export class PsdRenderer {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private pluginSets: IPluginSet<any>[] = [
     {
-      eventType: EVENT_TYPE.DRAG,
       pluginName: 'preventDefault',
-      plugin: new PreventDefault(),
+      plugin: new PreventDefault(EVENT_TYPE.DRAG),
     },
     {
-      eventType: EVENT_TYPE.DRAG,
       pluginName: 'stopPropagation',
-      plugin: new StopPropagation(),
+      plugin: new StopPropagation(EVENT_TYPE.DRAG),
     },
     {
-      eventType: EVENT_TYPE.DRAG,
       pluginName: 'fileLoader',
       plugin: new FileLoader(),
     },
     {
-      eventType: EVENT_TYPE.DRAG,
       pluginName: 'loadPsd',
       plugin: new LoadPsd(),
     },

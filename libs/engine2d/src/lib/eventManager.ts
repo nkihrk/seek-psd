@@ -82,6 +82,16 @@ export class EventManager {
     // I guess this will only work on the initialization stage, but might be wrong
     if (!flags && !values && !defaultEvent) return;
 
+    const plugins: IPluginSet<any>[] = this.pluginManager.searchByEventType(
+      eventType
+    );
+
+    // insert any typed plugins to the head of the plugins
+    const anyPlugins: IPluginSet<any>[] = this.pluginManager.searchByEventType(
+      EVENT_TYPE.ANY
+    );
+    plugins.unshift(...anyPlugins);
+
     // update notifyType
     this.storeManager.updateNotifyType($e.type);
 
@@ -95,21 +105,17 @@ export class EventManager {
       this.storeManager.updatePointerOffset(flags, values);
     }
 
-    const plugins: IPluginSet<any>[] = this.pluginManager.searchByEventType(
-      eventType
-    );
-
     for (let i = 0; i < plugins.length; i++) {
-      const plugin: Plugin<any> = plugins[i].plugin;
-
-      await plugin.call(this.storeManager.store, this.storeManager.userStore);
-
-      if (!plugin.isNotifierEnabled) continue;
-
+      const pluginSet: IPluginSet<any> = plugins[i];
+      const plugin: Plugin<any> = pluginSet.plugin;
       const pluginName: string = this.pluginManager.searchPluginName(
         eventType,
         i
       );
+
+      await plugin.call(this.storeManager.store, this.storeManager.userStore);
+
+      if (!plugin.isNotifierEnabled) continue;
 
       this.storeManager.updateNotifier.notifyType = eventType;
       this.storeManager.updateNotifier.update({

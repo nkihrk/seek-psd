@@ -1,12 +1,14 @@
 /* eslint @typescript-eslint/no-explicit-any: 0 */
 
-import type { IStore, IFiles, IDragFlags } from '@seek-psd/engine2d';
+import { IStore, IFiles, IDragFlags, EVENT_TYPE } from '@seek-psd/engine2d';
 import { Plugin } from '@seek-psd/engine2d';
 import { hasProperty } from '@seek-psd/utils';
 
 export class FileLoader extends Plugin<any> {
   constructor() {
-    super();
+    super({
+      pluginType: EVENT_TYPE.DRAG,
+    });
   }
 
   async call($store: IStore, $userStore: any): Promise<void> {
