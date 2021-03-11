@@ -38,7 +38,7 @@ export class Engine2D {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   init($entity?: Entity, $userStore?: any): void {
     const storeManager = new StoreManager();
-    if ($entity) storeManager.initEntity($entity);
+    if ($entity) storeManager.registerEntity($entity);
     if ($userStore) storeManager.registerStore($userStore);
     this._storeManager = storeManager;
 

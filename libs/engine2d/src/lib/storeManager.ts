@@ -51,7 +51,7 @@ export class StoreManager {
     return this._userStore;
   }
 
-  initEntity($entity: Entity): void {
+  registerEntity($entity: Entity): void {
     this._store.entity = $entity;
   }
 

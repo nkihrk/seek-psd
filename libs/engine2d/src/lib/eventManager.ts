@@ -52,7 +52,7 @@ export class EventManager {
   private _createTargetEvents(): void {
     const entity: Entity = this.storeManager.store.entity;
 
-    // return if no entity is present
+    // return if no entity exits
     if (!entity) return;
 
     // create targetEvents
