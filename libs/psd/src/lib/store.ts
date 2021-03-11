@@ -1,7 +1,7 @@
 import type { Psd } from 'ag-psd';
 
 export interface IUserStore {
-  psdData: PsdData;
+  psdDatas: PsdData[];
 }
 
 export interface PsdData {
@@ -10,7 +10,7 @@ export interface PsdData {
 }
 
 export class Store implements IUserStore {
-  psdData = {} as PsdData;
+  psdDatas = [];
 
   constructor() {}
 }

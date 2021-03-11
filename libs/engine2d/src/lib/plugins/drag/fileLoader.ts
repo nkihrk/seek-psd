@@ -54,7 +54,7 @@ export class FileLoader extends Plugin<any> {
         if (count === results.length && files.length > 0) {
           this.store.values.drag.files = files;
 
-          console.log('fileLoader');
+          console.log('File loaded!', files);
 
           this.resolve();
         }

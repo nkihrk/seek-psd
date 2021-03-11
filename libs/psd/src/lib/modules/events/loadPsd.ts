@@ -6,6 +6,9 @@ import { Plugin } from '@seek-psd/engine2d';
 import { createImage, validateFormat } from '@seek-psd/utils';
 
 export class LoadPsd extends Plugin<IUserStore> {
+  private totalCount = 0;
+  private count = 0;
+
   constructor() {
     // enable notifier
     super(true);
@@ -15,7 +18,10 @@ export class LoadPsd extends Plugin<IUserStore> {
     super.call($store, $userStore);
 
     return new Promise((resolve: () => void) => {
+      // initialize
       this.resolve = resolve;
+      this.totalCount = $store.values.drag.files.length;
+      this.count = 0;
 
       // switch between eventTypes
       this._switchEventType();
@@ -33,7 +39,7 @@ export class LoadPsd extends Plugin<IUserStore> {
 
   private _onFileDropped($files: File[]): void {
     for (let i = 0; i < $files.length; i++) {
-      const file: File = $files[0];
+      const file: File = $files[i];
 
       if (validateFormat(file.name, 'jpe?g|png|bmp')) {
         this._blobReader(file);
@@ -42,8 +48,6 @@ export class LoadPsd extends Plugin<IUserStore> {
       } else {
         throw new Error('Invalid file format is detected.');
       }
-
-      break;
     }
   }
 
@@ -51,40 +55,42 @@ export class LoadPsd extends Plugin<IUserStore> {
     const img: HTMLImageElement = createImage(
       $file,
       ($img: HTMLImageElement) => {
-        const imgCanvas: HTMLCanvasElement = document.createElement('canvas');
-        imgCanvas.width = $img.width;
-        imgCanvas.height = $img.height;
+        const canvas: HTMLCanvasElement = document.createElement('canvas');
+        const rect: DOMRect = $img.getBoundingClientRect();
+        canvas.width = rect.width;
+        canvas.height = rect.height;
 
-        const ctx: CanvasRenderingContext2D = imgCanvas.getContext('2d');
+        const ctx: CanvasRenderingContext2D = canvas.getContext('2d');
         ctx.drawImage($img, 0, 0);
 
         const psd: Psd = {
-          canvas: imgCanvas,
+          canvas: canvas,
           children: [
             {
               name: $file.name,
-              canvas: imgCanvas,
+              canvas: canvas,
               blendMode: 'normal',
               hidden: false,
               opacity: 1,
               clipping: false,
               top: 0,
-              bottom: imgCanvas.height,
+              bottom: canvas.height,
               left: 0,
-              right: imgCanvas.width,
+              right: canvas.width,
             },
           ],
-          width: imgCanvas.width,
-          height: imgCanvas.height,
+          width: canvas.width,
+          height: canvas.height,
         };
-        this.userStore.psdData = {
+        this.userStore.psdDatas.push({
           fileName: $file.name,
           psd,
-        };
+        });
 
-        console.log('loadPsd');
+        console.log($file.name);
 
-        this.resolve();
+        this.count++;
+        if (this.count === this.totalCount) this.resolve();
       }
     );
     img.onerror = () => {
@@ -128,7 +134,7 @@ export class LoadPsd extends Plugin<IUserStore> {
       const psd: Psd = readPsd($arrayBuffer);
 
       if (psd?.children) {
-        this.userStore.psdData = { fileName: $fileName, psd };
+        this.userStore.psdDatas.push({ fileName: $fileName, psd });
       } else {
         const fixedPsd: Psd = {
           canvas: psd.canvas,
@@ -150,10 +156,13 @@ export class LoadPsd extends Plugin<IUserStore> {
           height: psd.height,
         };
 
-        this.userStore.psdData = { fileName: $fileName, psd: fixedPsd };
+        this.userStore.psdDatas.push({ fileName: $fileName, psd: fixedPsd });
       }
 
-      this.resolve();
+      console.log($fileName);
+
+      this.count++;
+      if (this.count === this.totalCount) this.resolve();
     } catch (e) {
       throw new Error('Error pasing a file.');
     }
