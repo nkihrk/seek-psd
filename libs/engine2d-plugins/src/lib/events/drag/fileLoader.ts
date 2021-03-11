@@ -1,8 +1,7 @@
 /* eslint @typescript-eslint/no-explicit-any: 0 */
 
-import type { IStore, IFiles } from '../../store';
-import type { IDragFlags } from '../../events/meta-filters/index';
-import { Plugin } from '../../Global';
+import type { IStore, IFiles, IDragFlags } from '@seek-psd/engine2d';
+import { Plugin } from '@seek-psd/engine2d';
 import { hasProperty } from '@seek-psd/utils';
 
 export class FileLoader extends Plugin<any> {

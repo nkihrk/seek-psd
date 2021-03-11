@@ -1,7 +1,7 @@
 /* eslint @typescript-eslint/no-explicit-any: 0 */
 
-import type { IStore } from '../store';
-import { Plugin } from '../Global';
+import type { IStore } from '@seek-psd/engine2d';
+import { Plugin } from '@seek-psd/engine2d';
 
 export class StopPropagation extends Plugin<any> {
   constructor() {
