@@ -4,10 +4,21 @@ import type { Layer, Psd } from 'ag-psd';
 export interface ILayerInfo {
   readonly layerName: string;
   readonly uniqueId: string;
-  readonly layer: Layer | Psd;
+  readonly element: HTMLCanvasElement;
+  readonly layer: ILayer;
   isLayerHidden: IIsLayerHidden;
-  folderCanvas: HTMLCanvasElement;
+  folderThumbnail: HTMLCanvasElement;
   children: ILayerInfo[];
+}
+
+export interface ILayer {
+  blendMode: string;
+  opacity: number;
+  clipping: boolean;
+  left: number;
+  right: number;
+  top: number;
+  bottom: number;
 }
 
 export interface IIsLayerHidden {
@@ -19,8 +30,10 @@ export interface IIsLayerHidden {
 export class LayerInfo implements ILayerInfo {
   readonly layerName: string;
   readonly uniqueId: string;
-  readonly layer: Layer | Psd;
-  folderCanvas: HTMLCanvasElement = null;
+  readonly element: HTMLCanvasElement;
+  readonly layer: ILayer;
+  readonly isFolder: boolean;
+  folderThumbnail: HTMLCanvasElement = null;
   isLayerHidden: IIsLayerHidden = {
     current: false,
     prev: true,
@@ -28,10 +41,23 @@ export class LayerInfo implements ILayerInfo {
   };
   children: ILayerInfo[] = [];
 
-  constructor($layer: Layer | Psd, $isLayerHidden?: IIsLayerHidden) {
+  constructor($layer: Layer, $isLayerHidden?: IIsLayerHidden) {
     this.layerName = $layer.name;
     this.uniqueId = generateUuid();
-    this.layer = $layer;
+    this.element = $layer.canvas || null;
+    this.layer = {
+      blendMode: $layer.blendMode,
+      opacity: $layer.opacity,
+      clipping: $layer.clipping,
+      left: $layer.left,
+      right: $layer.right,
+      top: $layer.top,
+      bottom: $layer.bottom,
+    };
+    this.isFolder =
+      $layer.children?.length > 0 &&
+      !($layer.canvas instanceof HTMLCanvasElement);
+
     if ($isLayerHidden) this.isLayerHidden = $isLayerHidden;
   }
 }

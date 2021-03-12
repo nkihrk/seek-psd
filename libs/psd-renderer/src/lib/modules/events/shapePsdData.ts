@@ -65,7 +65,7 @@ export class ShapePsdData extends Plugin<IUserStore> {
     if (!$childLayer.children) return;
 
     for (let i = $childLayer.children.length - 1; i > -1; i--) {
-      const layerInfo = new LayerInfo($childLayer, {
+      const layerInfo = new LayerInfo($childLayer.children[i], {
         current: $childLayer.children[i].hidden,
         prev: !$childLayer.children[i].hidden,
         parent: $layerInfo.isLayerHidden.current,
