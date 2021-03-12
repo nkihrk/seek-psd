@@ -53,6 +53,7 @@ export interface IValues {
 export interface IPointerOffset {
   current: ICoord;
   prev: ICoord;
+  diff: ICoord;
   raw: ICoord;
   tmp: ICoord;
 }
@@ -87,6 +88,7 @@ export class Store implements IStore {
         isOut: false,
         isOver: false,
         isUp: false,
+        isDownMove: false,
       },
       meta: {
         isShiftKey: false,
@@ -168,6 +170,10 @@ export class Store implements IStore {
       prev: {
         x: -Infinity,
         y: -Infinity,
+      },
+      diff: {
+        x: 0,
+        y: 0,
       },
       raw: {
         x: -Infinity,

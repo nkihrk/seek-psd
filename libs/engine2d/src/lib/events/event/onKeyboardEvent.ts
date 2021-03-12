@@ -1,5 +1,5 @@
 import type { Notifier } from '../../notifiers/notifier';
-import type { FilterResult } from './event';
+import type { IEventOptions } from './event';
 import type {
   IKeyboardFlags,
   IKeyboardValues,
@@ -8,15 +8,15 @@ import { KeyboardMetaFilter } from '../meta-filters/keyboardMetaFilter';
 import { Event } from './event';
 import { EVENT_TYPE } from '../../constants';
 
-interface FilterContent {
+interface IFilterContent {
   flags: IKeyboardFlags;
   values: IKeyboardValues;
   filter: KeyboardMetaFilter;
 }
 
 export class OnKeyboardEvent extends Event {
-  constructor($notifier: Notifier<FilterResult>) {
-    super($notifier);
+  constructor($eventOptions: IEventOptions) {
+    super($eventOptions);
   }
 
   onKeydown($event: KeyboardEvent): void {
@@ -37,7 +37,7 @@ export class OnKeyboardEvent extends Event {
     this._publish(flags, values, $event);
   }
 
-  private _getFilterContent($event: KeyboardEvent): FilterContent {
+  private _getFilterContent($event: KeyboardEvent): IFilterContent {
     const filter = new KeyboardMetaFilter();
     filter.init($event);
     const flags: IKeyboardFlags = filter.flags;

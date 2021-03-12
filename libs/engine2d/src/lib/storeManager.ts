@@ -170,10 +170,15 @@ export class StoreManager {
       x: 0,
       y: 0,
     };
+    const storePointer: IPointerOffset = this._store.values.pointer;
 
     const currentOffset: ICoord = {
       x: values.client.x - rect.x,
       y: values.client.y - rect.y,
+    };
+    const diffOffset: ICoord = {
+      x: currentOffset.x - this._store.values.pointer.prev.x,
+      y: currentOffset.y - this._store.values.pointer.prev.y,
     };
     const rawOffset: ICoord = {
       x: values.client.x,
@@ -184,28 +189,27 @@ export class StoreManager {
       y: values.tmpClient.y - rect.y,
     };
 
-    if (flags.base.isDown) {
-      const pointerOffset: IPointerOffset = {
-        current: currentOffset,
+    let pointerOffset: IPointerOffset = {
+      current: currentOffset,
+      diff: diffOffset,
+      raw: rawOffset,
+      tmp: tmpOffset,
+      prev: storePointer.prev,
+    };
+
+    if (flags.base.isDown || flags.base.isUp) {
+      pointerOffset = Object.assign({}, pointerOffset, {
         prev: currentOffset,
-        raw: rawOffset,
-        tmp: tmpOffset,
-      };
-
-      this._store.values.pointer = pointerOffset;
-    } else {
-      const pointerOffset: IPointerOffset = Object.assign(
-        {},
-        this._store.values.pointer,
-        {
-          current: currentOffset,
-          raw: rawOffset,
-          tmp: tmpOffset,
-        }
-      );
-
-      this._store.values.pointer = pointerOffset;
+        diff: { x: 0, y: 0 },
+      });
+    } else if (flags.base.isDownMove) {
+      pointerOffset = Object.assign({}, pointerOffset, {
+        diff: diffOffset,
+      });
     }
+
+    // update the store
+    this._store.values.pointer = Object.assign({}, storePointer, pointerOffset);
   }
 
   updateDragFlags($flags: IDragFlags): void {

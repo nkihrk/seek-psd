@@ -22,6 +22,7 @@ export interface IPointerBaseFlags {
   isDown: boolean;
   isUp: boolean;
   isMove: boolean;
+  isDownMove: boolean;
   isOver: boolean;
   isEnter: boolean;
   isCancel: boolean;

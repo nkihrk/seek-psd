@@ -1,22 +1,22 @@
 import type { Notifier } from '../../notifiers/notifier';
-import type { FilterResult } from './event';
 import type {
   IEventFlags,
   IEventValues,
 } from '../meta-filters/eventMetaFilter';
+import type { IEventOptions } from './event';
 import { EventMetaFilter } from '../meta-filters/eventMetaFilter';
 import { Event as CommonEvent } from './event';
 import { EVENT_TYPE } from '../../constants';
 
-interface FilterContent {
+interface IFilterContent {
   flags: IEventFlags;
   values: IEventValues;
   filter: EventMetaFilter;
 }
 
 export class OnEvent extends CommonEvent {
-  constructor($notifier: Notifier<FilterResult>) {
-    super($notifier);
+  constructor($eventOptions: IEventOptions) {
+    super($eventOptions);
   }
 
   onFullscreenchange($event: Event): void {
@@ -39,7 +39,7 @@ export class OnEvent extends CommonEvent {
     this._publish(flags, values, $event);
   }
 
-  private _getFilterContent($event: Event): FilterContent {
+  private _getFilterContent($event: Event): IFilterContent {
     const filter = new EventMetaFilter();
     filter.init($event);
     const flags: IEventFlags = filter.flags;

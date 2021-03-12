@@ -1,20 +1,20 @@
 import type { Notifier } from '../../notifiers/notifier';
-import type { FilterResult } from './event';
 import type { IDragFlags, IDragValues } from '../meta-filters/dragMetaFilter';
+import type { IEventOptions } from './event';
 import { DragMetaFilter } from '../meta-filters/dragMetaFilter';
 import { Event } from './event';
 
 import { EVENT_TYPE } from '../../constants';
 
-interface FilterContent {
+interface IFilterContent {
   flags: IDragFlags;
   values: IDragValues;
   filter: DragMetaFilter;
 }
 
 export class OnDragEvent extends Event {
-  constructor($notifier: Notifier<FilterResult>) {
-    super($notifier);
+  constructor($eventOptions: IEventOptions) {
+    super($eventOptions);
   }
 
   onDrag($event: DragEvent): void {
@@ -73,7 +73,7 @@ export class OnDragEvent extends Event {
     this._publish(flags, values, $event);
   }
 
-  private _getFilterContent($event: DragEvent): FilterContent {
+  private _getFilterContent($event: DragEvent): IFilterContent {
     const filter = new DragMetaFilter();
     filter.init($event);
     const flags: IDragFlags = filter.flags;

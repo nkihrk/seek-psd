@@ -3,7 +3,7 @@ import type {
   IWheelFlags,
   IWheelValues,
 } from '../meta-filters/wheelMetaFilter';
-import type { FilterResult } from './event';
+import type { IEventOptions } from './event';
 import { WheelMetaFilter } from '../meta-filters/wheelMetaFilter';
 import { Event } from './event';
 import { EVENT_TYPE, WHEEL_INTERVAL } from '../../constants/index';
@@ -13,8 +13,8 @@ export class OnWheelEvent extends Event {
   private wheelCounter2 = 0;
   private wheelMaker = true;
 
-  constructor($notifier: Notifier<FilterResult>) {
-    super($notifier);
+  constructor($eventOptions: IEventOptions) {
+    super($eventOptions);
   }
 
   onWheel($event: WheelEvent): void {

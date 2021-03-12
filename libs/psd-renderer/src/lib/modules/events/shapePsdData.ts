@@ -2,10 +2,12 @@ import type { IStore, IFiles } from '@seek-psd/engine2d';
 import type { IUserStore, IPsdSet } from '../../store';
 import type { ILayerInfo } from '../../entities/layerInfo';
 import type { IPsdData } from '../../entities/psdData';
+import type { IPsd, IPsdMeta } from '../../entities/psd';
+import type { Layer } from 'ag-psd';
 import { LayerInfo } from '../../entities/layerInfo';
+import { Psd } from '../../entities/psd';
 import { EVENT_TYPE } from '@seek-psd/engine2d';
 import { Plugin } from '@seek-psd/engine2d';
-import { Psd, Layer } from 'ag-psd';
 import { generateUuid } from '@seek-psd/utils';
 
 export class ShapePsdData extends Plugin<IUserStore> {
@@ -27,14 +29,18 @@ export class ShapePsdData extends Plugin<IUserStore> {
   }
 
   private _shapePsdData(): void {
-    const layerInfos: ILayerInfo[] = [];
     const psdSets: IPsdSet[] = this.userStore.psdSets;
 
     if (psdSets.length === 0) return;
 
     for (let i = 0; i < psdSets.length; i++) {
+      const layerInfos: ILayerInfo[] = [];
       const psdSet: IPsdSet = psdSets[i];
       const psdData: IPsdData = psdSet.psdData;
+      const uniqueId: string = generateUuid();
+      const width: number = psdData.width;
+      const height: number = psdData.height;
+      console.log(psdData);
 
       if (psdData?.children) {
         const childLayers: Layer[] = psdData.children as Layer[];
@@ -47,18 +53,26 @@ export class ShapePsdData extends Plugin<IUserStore> {
           });
 
           layerInfos.push(layerInfo);
-
-          this._getChildren(childLayers[j], layerInfo);
         }
       } else {
         const layerInfo = new LayerInfo(psdSets[i].psdData as Layer);
 
         layerInfos.push(layerInfo);
       }
-    }
 
-    // update layerInfos in the store
-    this.userStore.layerInfos = layerInfos;
+      const psdMeta: IPsdMeta = {
+        fileName: psdSet.fileName,
+        uniqueId,
+        rawWidth: width,
+        rawHeight: height,
+        element: document.createElement('canvas'),
+        layerInfos,
+      };
+      const psd: IPsd = new Psd(psdMeta);
+
+      // update psds in the userStore
+      this.userStore.psds.push(psd);
+    }
   }
 
   private _getChildren($childLayer: Layer, $layerInfo: ILayerInfo): void {

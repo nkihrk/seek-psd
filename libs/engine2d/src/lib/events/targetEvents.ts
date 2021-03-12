@@ -1,10 +1,11 @@
+import type { IEventStore } from '../eventStore';
 import type { Notifier } from '../notifiers/notifier';
-import type { FilterResult } from './event/event';
+import type { IEventOptions } from './event/event';
 import { Events } from './events';
 
 export class TargetEvents extends Events {
-  constructor($notifier: Notifier<FilterResult>) {
-    super($notifier);
+  constructor($eventOptions: IEventOptions) {
+    super($eventOptions);
   }
 
   start(): void {

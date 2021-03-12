@@ -1,9 +1,9 @@
 import type { Notifier } from '../../notifiers/notifier';
-import type { FilterResult } from './event';
 import type {
   IClipboardFlags,
   IClipboardValues,
 } from '../meta-filters/clipboardMetaFilter';
+import type { IEventOptions } from './event';
 import { ClipboardMetaFilter } from '../meta-filters/clipboardMetaFilter';
 import { Event } from './event';
 import { EVENT_TYPE } from '../../constants';
@@ -15,8 +15,8 @@ interface FilterContent {
 }
 
 export class OnClipboardEvent extends Event {
-  constructor($notifier: Notifier<FilterResult>) {
-    super($notifier);
+  constructor($eventOptions: IEventOptions) {
+    super($eventOptions);
   }
 
   onCut($event: ClipboardEvent): void {

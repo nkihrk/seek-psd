@@ -1,5 +1,6 @@
 import type { Notifier } from '../notifiers/notifier';
-import type { FilterResult } from './event/event';
+import type { IEventOptions, IFilterResult } from './event/event';
+import type { IEventStore } from '../eventStore';
 import { addEventListeners } from '@seek-psd/utils';
 import { OnEvent } from './event/onEvent';
 import { OnMouseEvent } from './event/onMouseEvent';
@@ -22,11 +23,11 @@ import {
 } from '../constants/index';
 import { Entity } from '../entities/entity';
 
-type Elements = Window | Document | HTMLElement;
+type TElement = Window | Document | HTMLElement;
 
 export abstract class Events {
   protected entity: Entity;
-  private readonly notifier: Notifier<FilterResult>;
+  private readonly notifier: Notifier<IFilterResult>;
   private onPointerEvent: OnPointerEvent;
   private onWheelEvent: OnWheelEvent;
   private onMouseEvent: OnMouseEvent;
@@ -35,17 +36,17 @@ export abstract class Events {
   private onClipboardEvent: OnClipboardEvent;
   private onKeyboardEvent: OnKeyboardEvent;
 
-  constructor($notifier: Notifier<FilterResult>) {
-    this.notifier = $notifier;
+  constructor($eventOptions: IEventOptions) {
+    this.notifier = $eventOptions.notifier;
 
     // initialize events
-    this.onPointerEvent = new OnPointerEvent($notifier);
-    this.onWheelEvent = new OnWheelEvent($notifier);
-    this.onMouseEvent = new OnMouseEvent($notifier);
-    this.onEvent = new OnEvent($notifier);
-    this.onDragEvent = new OnDragEvent($notifier);
-    this.onClipboardEvent = new OnClipboardEvent($notifier);
-    this.onKeyboardEvent = new OnKeyboardEvent($notifier);
+    this.onPointerEvent = new OnPointerEvent($eventOptions);
+    this.onWheelEvent = new OnWheelEvent($eventOptions);
+    this.onMouseEvent = new OnMouseEvent($eventOptions);
+    this.onEvent = new OnEvent($eventOptions);
+    this.onDragEvent = new OnDragEvent($eventOptions);
+    this.onClipboardEvent = new OnClipboardEvent($eventOptions);
+    this.onKeyboardEvent = new OnKeyboardEvent($eventOptions);
   }
 
   init($entity: Entity): void {
@@ -54,47 +55,47 @@ export abstract class Events {
 
   abstract start(): void;
 
-  protected pointerEvent($element: Elements): void {
+  protected pointerEvent($element: TElement): void {
     const f = (e) => this._onPointerEvent(e);
     addEventListeners(POINTER_EVENT, $element, f);
   }
 
-  protected wheelEvent($element: Elements): void {
+  protected wheelEvent($element: TElement): void {
     const f = (e) => this._onWheelEvent(e);
     addEventListeners(WHEEL_EVENT, $element, f);
   }
 
-  protected clickEvent($element: Elements): void {
+  protected clickEvent($element: TElement): void {
     const f = (e) => this._onMouseEvent(e);
     addEventListeners(CLICK_EVENT, $element, f);
   }
 
-  protected contextmenuEvent($element: Elements): void {
+  protected contextmenuEvent($element: TElement): void {
     const f = (e) => this._onMouseEvent(e);
     addEventListeners(CONTEXTMENU_EVENT, $element, f);
   }
 
-  protected viewEvent($element: Elements): void {
+  protected viewEvent($element: TElement): void {
     const f = (e) => this._onEvent(e);
     addEventListeners(VIEW_EVENT, $element, f);
   }
 
-  protected networkEvent($element: Elements): void {
+  protected networkEvent($element: TElement): void {
     const f = (e) => this._onEvent(e);
     addEventListeners(NETWORK_EVENT, $element, f);
   }
 
-  protected dragEvent($element: Elements): void {
+  protected dragEvent($element: TElement): void {
     const f = (e) => this._onDragEvent(e);
     addEventListeners(DRAG_EVENT, $element, f);
   }
 
-  protected clipboardEvent($element: Elements): void {
+  protected clipboardEvent($element: TElement): void {
     const f = (e) => this._onClipboardEvent(e);
     addEventListeners(CLIPBOARD_EVENT, $element, f);
   }
 
-  protected keyboardEvent($element: Elements): void {
+  protected keyboardEvent($element: TElement): void {
     const f = (e) => this._onKeyboardEvent(e);
     addEventListeners(KEYBOARD_EVENT, $element, f);
   }
@@ -122,21 +123,21 @@ export abstract class Events {
         e.onPointermove($event);
         break;
 
-      //      case 'pointerover':
-      //        e.onPointerover($event);
-      //        break;
+      case 'pointerover':
+        e.onPointerover($event);
+        break;
 
       case 'pointerenter':
         e.onPointerenter($event);
         break;
 
-      //      case 'pointercancel':
-      //        e.onPointercancel($event);
-      //        break;
-      //
-      //      case 'pointerout':
-      //        e.onPointerout($event);
-      //        break;
+      case 'pointercancel':
+        e.onPointercancel($event);
+        break;
+
+      case 'pointerout':
+        e.onPointerout($event);
+        break;
 
       case 'pointerleave':
         e.onPointerleave($event);
