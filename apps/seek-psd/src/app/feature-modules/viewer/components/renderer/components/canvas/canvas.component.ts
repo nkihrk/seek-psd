@@ -1,4 +1,5 @@
 import type { IRenderTargetSet } from '@seek-psd/psd-renderer';
+import { RENDER_TARGET } from '@seek-psd/psd-renderer';
 import {
   Component,
   OnInit,
@@ -46,11 +47,11 @@ export class CanvasComponent implements OnInit {
     // add render targets
     const renderTargetSets: IRenderTargetSet[] = [
       {
-        renderTargetName: 'psdLayer',
+        renderTargetName: RENDER_TARGET.PSD_LAYER,
         renderTarget: this.psdLayer.nativeElement,
       },
       {
-        renderTargetName: 'uiLayer',
+        renderTargetName: RENDER_TARGET.UI_LAYER,
         renderTarget: this.uiLayer.nativeElement,
       },
     ];

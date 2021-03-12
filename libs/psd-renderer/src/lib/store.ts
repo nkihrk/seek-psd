@@ -1,5 +1,4 @@
 import type { Layer } from 'ag-psd';
-import type { IRenderTargetSet } from './psdRenderer';
 import type { ILayerInfo } from './entities/layerInfo';
 import type { IPsdData } from './entities/psdData';
 import type { IPsd } from './entities/psd';
@@ -11,12 +10,17 @@ export interface IUserStore {
 
   searchPsdByFilename($fileName: string): IPsd[];
   searchPsdByUniqueId($uniqueId: string): IPsd;
-  getRawPsdCanvas: ($psd: IPsd) => HTMLCanvasElement;
+  searchRenderTargetByName($renderTargetName: string): HTMLCanvasElement;
 }
 
 export interface IPsdSet {
   fileName: string;
   psdData: IPsdData;
+}
+
+export interface IRenderTargetSet {
+  renderTargetName: string;
+  renderTarget: HTMLCanvasElement;
 }
 
 export class Store implements IUserStore {
@@ -38,9 +42,11 @@ export class Store implements IUserStore {
     return psd;
   }
 
-  getRawPsdCanvas($psd: IPsd): HTMLCanvasElement {
-    const psd: IPsd = $psd;
+  searchRenderTargetByName($renderTargetName: string): HTMLCanvasElement {
+    const renderTarget: HTMLCanvasElement = this.renderTargetSets.filter(
+      (e) => e.renderTargetName === $renderTargetName
+    )[0].renderTarget;
 
-    return null;
+    return renderTarget;
   }
 }

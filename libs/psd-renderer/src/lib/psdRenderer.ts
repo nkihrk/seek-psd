@@ -1,42 +1,44 @@
 import { Engine2D, Entity, EVENT_TYPE, IPluginSet } from '@seek-psd/engine2d';
 import {
+  PLUGIN as PRESET_PLUGIN,
   PreventDefault,
   StopPropagation,
   FileLoader,
 } from '@seek-psd/engine2d-plugins';
-import type { IUserStore } from './store';
+import type { IUserStore, IRenderTargetSet } from './store';
 import { Store } from './store';
 import { LoadPsd } from './modules/events/loadPsd';
 import { ShapePsdData } from './modules/events/shapePsdData';
-
-export interface IRenderTargetSet {
-  renderTargetName: string;
-  renderTarget: HTMLCanvasElement;
-}
+import { PLUGIN } from './constants';
+import { RenderCanvas } from './modules/renders/renderCanvas';
 
 export class PsdRenderer {
   private targetElement: HTMLElement = null;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private pluginSets: IPluginSet<any>[] = [
     {
-      pluginName: 'preventDefault',
+      pluginName: PRESET_PLUGIN.PREVENT_DEFAULT,
       plugin: new PreventDefault(EVENT_TYPE.DRAG),
     },
     {
-      pluginName: 'stopPropagation',
+      pluginName: PRESET_PLUGIN.STOP_PROPAGATION,
       plugin: new StopPropagation(EVENT_TYPE.DRAG),
     },
     {
-      pluginName: 'fileLoader',
+      pluginName: PLUGIN.FILE_LOADER,
       plugin: new FileLoader(),
     },
     {
-      pluginName: 'loadPsd',
+      pluginName: PLUGIN.LOAD_PSD,
       plugin: new LoadPsd(),
     },
     {
-      pluginName: 'shapePsdData',
+      pluginName: PLUGIN.SHAPE_PSD_DATA,
       plugin: new ShapePsdData(),
+    },
+    {
+      pluginName: PLUGIN.RENDER_CANVAS,
+      plugin: new RenderCanvas(),
     },
   ];
   private renderTargetSets: IRenderTargetSet[] = [];

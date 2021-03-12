@@ -1,2 +1,1 @@
-export * from './lib/events/index';
-//export * from './lib/renders/index';
+export * from './lib/index';
