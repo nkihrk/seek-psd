@@ -53,6 +53,7 @@ export class ShapePsdData extends Plugin<IUserStore> {
           });
 
           layerInfos.push(layerInfo);
+          this._getChildren(childLayers[j], layerInfo);
         }
       } else {
         const layerInfo = new LayerInfo(psdSets[i].psdData as Layer);

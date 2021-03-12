@@ -20,48 +20,38 @@ export interface IPsdDataChild {
   bottom: number;
 }
 
+export interface IDummyPsd {
+  width: number;
+  height: number;
+  canvas: HTMLCanvasElement;
+  children: Layer[];
+}
+
 export class PsdData implements IPsdData {
   readonly canvas: HTMLCanvasElement;
   readonly children: IPsdDataChild[] | Layer[] = [];
   width = 0;
   height = 0;
 
-  constructor($fileName: string, $canvas: HTMLCanvasElement, $psd?: Psd) {
-    const rect: DOMRect = $canvas.getBoundingClientRect();
+  constructor($fileName: string, $psd: Psd | IDummyPsd) {
+    this.canvas = $psd.canvas;
+    this.width = $psd.width;
+    this.height = $psd.height;
 
-    this.canvas = $canvas;
-    this.width = rect.width;
-    this.height = rect.height;
-
-    if ($psd) {
-      if ($psd.children) {
-        this.children = $psd.children;
-      } else {
-        this.children.push({
-          name: $fileName,
-          canvas: $canvas,
-          blendMode: 'normal',
-          hidden: false,
-          opacity: 1,
-          clipping: false,
-          left: 0,
-          right: $psd.width,
-          top: 0,
-          bottom: $psd.height,
-        });
-      }
+    if ($psd.children) {
+      this.children = $psd.children;
     } else {
       this.children.push({
         name: $fileName,
-        canvas: $canvas,
+        canvas: $psd.canvas,
         blendMode: 'normal',
         hidden: false,
         opacity: 1,
         clipping: false,
         left: 0,
-        right: rect.width,
+        right: $psd.width,
         top: 0,
-        bottom: rect.height,
+        bottom: $psd.height,
       });
     }
   }

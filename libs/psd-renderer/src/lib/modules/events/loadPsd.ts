@@ -1,6 +1,6 @@
 import type { IStore, IDragFlags, IFiles } from '@seek-psd/engine2d';
 import type { IPsdSet, IUserStore } from '../../store';
-import { IPsdData, PsdData } from '../../entities/psdData';
+import { IDummyPsd, IPsdData, PsdData } from '../../entities/psdData';
 import type { Psd } from 'ag-psd';
 import { EVENT_TYPE } from '@seek-psd/engine2d';
 import { readPsd } from 'ag-psd';
@@ -60,14 +60,20 @@ export class LoadPsd extends Plugin<IUserStore> {
       $file,
       ($img: HTMLImageElement) => {
         const canvas: HTMLCanvasElement = document.createElement('canvas');
-        const rect: DOMRect = $img.getBoundingClientRect();
-        canvas.width = rect.width;
-        canvas.height = rect.height;
+        canvas.width = $img.width;
+        canvas.height = $img.height;
         const ctx: CanvasRenderingContext2D = canvas.getContext('2d');
         ctx.drawImage($img, 0, 0);
+
+        const dummyPsd: IDummyPsd = {
+          width: $img.width,
+          height: $img.height,
+          canvas,
+          children: [],
+        };
         const psdSet: IPsdSet = {
           fileName: $file.name,
-          psdData: new PsdData($file.name, canvas),
+          psdData: new PsdData($file.name, dummyPsd),
         };
 
         this.userStore.psdSets.push(psdSet);
@@ -119,7 +125,7 @@ export class LoadPsd extends Plugin<IUserStore> {
       const psd: Psd = readPsd($arrayBuffer);
       const psdSet: IPsdSet = {
         fileName: $fileName,
-        psdData: new PsdData($fileName, psd.canvas, psd),
+        psdData: new PsdData($fileName, psd),
       };
 
       this.userStore.psdSets.push(psdSet);
