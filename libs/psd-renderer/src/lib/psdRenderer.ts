@@ -1,15 +1,17 @@
-import { Engine2D, Entity, EVENT_TYPE, IPluginSet } from '@seek-psd/engine2d';
+import type { IUserStore, IRenderTargetSet } from './store';
+import type { IPluginSet } from '@seek-psd/engine2d';
+import { Engine2D, Entity, EVENT_TYPE } from '@seek-psd/engine2d';
 import {
   PLUGIN as PRESET_PLUGIN,
   PreventDefault,
   StopPropagation,
   FileLoader,
 } from '@seek-psd/engine2d-plugins';
-import type { IUserStore, IRenderTargetSet } from './store';
+import { PLUGIN } from './constants';
 import { Store } from './store';
 import { LoadPsd } from './modules/events/loadPsd';
-import { ShapePsdData } from './modules/events/shapePsdData';
-import { PLUGIN } from './constants';
+import { ShapePsd } from './modules/events/shapePsd';
+import { RenderPsd } from './modules/events/renderPsd';
 import { RenderCanvas } from './modules/renders/renderCanvas';
 
 export class PsdRenderer {
@@ -33,8 +35,12 @@ export class PsdRenderer {
       plugin: new LoadPsd(),
     },
     {
-      pluginName: PLUGIN.SHAPE_PSD_DATA,
-      plugin: new ShapePsdData(),
+      pluginName: PLUGIN.SHAPE_PSD,
+      plugin: new ShapePsd(),
+    },
+    {
+      pluginName: PLUGIN.RENDER_PSD,
+      plugin: new RenderPsd(),
     },
     {
       pluginName: PLUGIN.RENDER_CANVAS,
@@ -71,7 +77,7 @@ export class PsdRenderer {
 
     // get notifications when stores are updated
     eg.store.updateNotifier.observer().subscribe((e) => {
-      if (e.type === EVENT_TYPE.DRAG) {
+      if (e.notifyType === EVENT_TYPE.DRAG) {
         console.log(e);
       }
     });

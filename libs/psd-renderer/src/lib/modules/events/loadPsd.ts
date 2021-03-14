@@ -12,7 +12,6 @@ export class LoadPsd extends Plugin<IUserStore> {
   private count = 0;
 
   constructor() {
-    // enable notifier
     super({
       pluginType: EVENT_TYPE.DRAG,
     });

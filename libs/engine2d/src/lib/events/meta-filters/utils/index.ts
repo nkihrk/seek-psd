@@ -1,8 +1,4 @@
-import {
-  BUTTON_STATES,
-  BUTTONS_STATES,
-  BUTTON_NAME,
-} from '../../../constants/index';
+import { BUTTON_STATES, BUTTONS_STATES, BUTTON_NAME } from '../../../constants';
 
 export function getButtonValue($buttonType: number): string {
   let buttonType: string;

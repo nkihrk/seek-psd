@@ -1,7 +1,7 @@
 /* eslint @typescript-eslint/no-explicit-any: 0 */
 
 import type { IPluginSet } from './Global';
-import { EVENT_TYPE } from './constants/index';
+import { EVENT_TYPE } from './constants';
 
 export class PluginManager {
   // Events
@@ -54,6 +54,7 @@ export class PluginManager {
 
       case EVENT_TYPE.ANY:
         PluginManager.anys.push($pluginSet);
+        break;
 
       default:
         throw new Error('Invalid plugin category is detected.');

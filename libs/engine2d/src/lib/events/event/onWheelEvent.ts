@@ -6,7 +6,7 @@ import type {
 import type { IEventOptions } from './event';
 import { WheelMetaFilter } from '../meta-filters/wheelMetaFilter';
 import { Event } from './event';
-import { EVENT_TYPE, WHEEL_INTERVAL } from '../../constants/index';
+import { EVENT_TYPE, WHEEL_INTERVAL } from '../../constants';
 
 export class OnWheelEvent extends Event {
   private wheelCounter1 = 0;

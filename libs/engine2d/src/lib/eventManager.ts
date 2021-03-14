@@ -6,7 +6,7 @@ import type { Entity } from './entities';
 import type { IPluginSet } from './Global';
 import type { IEventStore } from './eventStore';
 import { Plugin } from './Global';
-import { NOTIFY_TYPE, EVENT_TYPE } from './constants/index';
+import { NOTIFY_TYPE, EVENT_TYPE } from './constants';
 import { Notifier } from './notifiers/notifier';
 import { GlobalEvents } from './events/globalEvents';
 import { TargetEvents } from './events/targetEvents';
@@ -102,7 +102,7 @@ export class EventManager {
     plugins.unshift(...anyPlugins);
 
     // update notifyType
-    this.storeManager.updateNotifyType($e.type);
+    this.storeManager.updateNotifyType($e.notifyType);
 
     // update default event
     this.storeManager.updateDefaultEvent(defaultEvent);

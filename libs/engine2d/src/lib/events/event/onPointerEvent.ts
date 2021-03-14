@@ -9,7 +9,7 @@ import { PointerMetaFilter } from '../meta-filters/pointerMetaFilter';
 import { Event } from './event';
 import { removeItem, getCenterCoord } from '@seek-psd/utils';
 import { getButtonValue } from '../meta-filters/utils';
-import { BUTTON_NAME, EVENT_TYPE, IDLE_INTERVAL } from '../../constants/index';
+import { BUTTON_NAME, EVENT_TYPE, IDLE_INTERVAL } from '../../constants';
 
 interface IFilterContent {
   flags: IPointerFlags;

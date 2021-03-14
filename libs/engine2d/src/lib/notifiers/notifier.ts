@@ -1,7 +1,7 @@
 import { BehaviorSubject, NextObserver, Observable } from 'rxjs';
 
 export interface NotifiedEvent {
-  type: string;
+  notifyType: string;
   content: any; // eslint-disable-line @typescript-eslint/no-explicit-any
 }
 
@@ -25,7 +25,7 @@ export class Notifier<T> {
     const observable = new Observable<NotifiedEvent>(
       (observer: NextObserver<NotifiedEvent>) => {
         this.notifyEvent.subscribe((e: T) => {
-          observer.next({ type: this.notifyType, content: e });
+          observer.next({ notifyType: this.notifyType, content: e });
         });
       }
     );

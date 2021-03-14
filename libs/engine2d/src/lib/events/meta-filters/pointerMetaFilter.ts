@@ -1,5 +1,5 @@
 import { MetaFilter } from './metaFilter';
-import { BUTTON_NAME, BUTTON_STATES, POINTER } from '../../constants/index';
+import { BUTTON_NAME, BUTTON_STATES, POINTER } from '../../constants';
 import { getButtonValue, getButtonsValue } from './utils/index';
 
 export interface IPointerFlags {

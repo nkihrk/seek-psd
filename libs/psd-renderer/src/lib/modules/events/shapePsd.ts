@@ -10,7 +10,7 @@ import { EVENT_TYPE } from '@seek-psd/engine2d';
 import { Plugin } from '@seek-psd/engine2d';
 import { generateUuid } from '@seek-psd/utils';
 
-export class ShapePsdData extends Plugin<IUserStore> {
+export class ShapePsd extends Plugin<IUserStore> {
   constructor() {
     // enable notifier
     super({
@@ -23,12 +23,12 @@ export class ShapePsdData extends Plugin<IUserStore> {
     super.call($store, $userStore);
 
     if ($store.flags.drag.isDrop) {
-      this._shapePsdData();
+      this._shapePsd();
       this._clearCaches();
     }
   }
 
-  private _shapePsdData(): void {
+  private _shapePsd(): void {
     const psdSets: IPsdSet[] = this.userStore.psdSets;
 
     if (psdSets.length === 0) return;

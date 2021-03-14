@@ -20,7 +20,7 @@ import {
   CLIPBOARD_EVENT,
   KEYBOARD_EVENT,
   NOTIFY_TYPE,
-} from '../constants/index';
+} from '../constants';
 import { Entity } from '../entities/entity';
 
 type TElement = Window | Document | HTMLElement;

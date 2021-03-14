@@ -6,7 +6,6 @@ import { EVENT_TYPE } from '@seek-psd/engine2d';
 
 export class RenderPsd extends Plugin<IUserStore> {
   constructor() {
-    // enable notifier
     super({
       pluginType: EVENT_TYPE.DRAG,
       isNotifierEnabled: true,

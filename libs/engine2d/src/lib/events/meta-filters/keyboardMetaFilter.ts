@@ -1,5 +1,5 @@
 import { MetaFilter } from './metaFilter';
-import { KEY_LOCATION } from '../../constants/index';
+import { KEY_LOCATION } from '../../constants';
 
 export interface IKeyboardFlags {
   isAltKey: boolean;

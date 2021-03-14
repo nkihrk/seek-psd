@@ -6,6 +6,7 @@ export enum RENDER_TARGET {
 export enum PLUGIN {
   FILE_LOADER = 'fileLoader',
   LOAD_PSD = 'loadPsd',
-  SHAPE_PSD_DATA = 'shapePsdData',
+  SHAPE_PSD = 'shapePsd',
+  RENDER_PSD = 'renderPsd',
   RENDER_CANVAS = 'renderCanvas',
 }
