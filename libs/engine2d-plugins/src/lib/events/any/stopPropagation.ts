@@ -3,6 +3,8 @@
 import type { IStore, TPluginType } from '@seek-psd/engine2d';
 import { Plugin, EVENT_TYPE } from '@seek-psd/engine2d';
 
+export const STOP_PROPAGATION = 'stoPropagation';
+
 export class StopPropagation extends Plugin<any> {
   constructor($pluginType?: TPluginType) {
     super({

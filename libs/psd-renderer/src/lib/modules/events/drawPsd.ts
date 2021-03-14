@@ -4,7 +4,9 @@ import type { IPsd } from '../../entities/psd';
 import { Plugin } from '@seek-psd/engine2d';
 import { EVENT_TYPE } from '@seek-psd/engine2d';
 
-export class ExecPsd extends Plugin<IUserStore> {
+export const DRAW_PSD = 'drawPsd';
+
+export class DrawPsd extends Plugin<IUserStore> {
   constructor() {
     super({
       pluginType: EVENT_TYPE.DRAG,
@@ -19,14 +21,14 @@ export class ExecPsd extends Plugin<IUserStore> {
       const psds: IPsd[] = this.userStore.psds;
 
       for (let i = 0; i < psds.length; i++) {
-        this.render(psds[i]);
+        this.draw(psds[i]);
       }
     }
   }
 
-  renderRaw(): void {}
+  drawRaw(): void {}
 
-  render($psd: IPsd): void {
+  draw($psd: IPsd): void {
     const aspectRatio: number = $psd.rawHeight / $psd.rawWidth;
   }
 }

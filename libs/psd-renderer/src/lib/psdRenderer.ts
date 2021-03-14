@@ -2,59 +2,78 @@ import type { IUserStore, IRenderTargetSet } from './store';
 import type { IPluginSet } from '@seek-psd/engine2d';
 import { Engine2D, Entity, EVENT_TYPE } from '@seek-psd/engine2d';
 import {
-  PLUGIN as PRESET_PLUGIN,
   PreventDefault,
+  PREVENT_DEFAULT,
   StopPropagation,
+  STOP_PROPAGATION,
   FileLoader,
+  FILE_LOADER,
 } from '@seek-psd/engine2d-plugins';
-import { PLUGIN } from './constants';
 import { Store } from './store';
-import { LoadPsd } from './modules/events/loadPsd';
-import { ShapePsd } from './modules/events/shapePsd';
-import { ExecPsd } from './modules/events/execPsd';
-import { ExecWebGl } from './modules/events/execWebGl';
-import { RenderCanvas } from './modules/renders/renderCanvas';
-import { RenderTestWebGl } from './modules/renders/renderTestWebGl';
+import { LoadPsd, LOAD_PSD } from './modules/events/loadPsd';
+import { ShapePsd, SHAPE_PSD } from './modules/events/shapePsd';
+import { DrawPsd, DRAW_PSD } from './modules/events/drawPsd';
+import { DrawWebGl, DRAW_WEBGL } from './modules/events/drawWebGl';
+import {
+  RenderInitCanvas,
+  RENDER_INIT_CANVAS,
+} from './modules/renders/renderInitCanvas';
+import { RenderCanvas, RENDER_CANVAS } from './modules/renders/renderCanvas';
+import { RenderWebGl, RENDER_WEBGL } from './modules/renders/renderWebGl';
 
 export class PsdRenderer {
   private targetElement: HTMLElement = null;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private pluginSets: IPluginSet<any>[] = [
+    // preventDefault when drag event occures
     {
-      pluginName: PRESET_PLUGIN.PREVENT_DEFAULT,
+      pluginName: PREVENT_DEFAULT,
       plugin: new PreventDefault(EVENT_TYPE.DRAG),
     },
+    // stopPropagation when drag event occures
     {
-      pluginName: PRESET_PLUGIN.STOP_PROPAGATION,
+      pluginName: STOP_PROPAGATION,
       plugin: new StopPropagation(EVENT_TYPE.DRAG),
     },
+    // load files
     {
-      pluginName: PLUGIN.FILE_LOADER,
+      pluginName: FILE_LOADER,
       plugin: new FileLoader(),
     },
+    // load psd
     {
-      pluginName: PLUGIN.LOAD_PSD,
+      pluginName: LOAD_PSD,
       plugin: new LoadPsd(),
     },
+    // shape psd
     {
-      pluginName: PLUGIN.SHAPE_PSD,
+      pluginName: SHAPE_PSD,
       plugin: new ShapePsd(),
     },
+    // draw psd
     {
-      pluginName: PLUGIN.EXEC_PSD,
-      plugin: new ExecPsd(),
+      pluginName: DRAW_PSD,
+      plugin: new DrawPsd(),
     },
+    // draw webgl
     {
-      pluginName: 'execWebGl',
-      plugin: new ExecWebGl(),
+      pluginName: DRAW_WEBGL,
+      plugin: new DrawWebGl(),
     },
+    // initialize canvases
     {
-      pluginName: PLUGIN.RENDER_CANVAS,
+      pluginName: RENDER_INIT_CANVAS,
+      plugin: new RenderInitCanvas(),
+    },
+    // render canvas2d
+    {
+      pluginName: RENDER_CANVAS,
       plugin: new RenderCanvas(),
     },
+    // render webgl
     {
-      pluginName: 'renderTestWebGl',
-      plugin: new RenderTestWebGl(),
+      pluginName: RENDER_WEBGL,
+      plugin: new RenderWebGl(),
     },
   ];
   private renderTargetSets: IRenderTargetSet[] = [];

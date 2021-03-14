@@ -3,6 +3,8 @@
 import type { IStore, TPluginType } from '@seek-psd/engine2d';
 import { Plugin, EVENT_TYPE } from '@seek-psd/engine2d';
 
+export const PREVENT_DEFAULT = 'preventDefault';
+
 export class PreventDefault extends Plugin<any> {
   constructor($pluginType?: TPluginType) {
     super({

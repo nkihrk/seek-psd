@@ -4,6 +4,8 @@ import { IStore, IFiles, IDragFlags, EVENT_TYPE } from '@seek-psd/engine2d';
 import { Plugin } from '@seek-psd/engine2d';
 import { hasProperty } from '@seek-psd/utils';
 
+export const FILE_LOADER = 'fileLoader';
+
 export class FileLoader extends Plugin<any> {
   constructor() {
     super({

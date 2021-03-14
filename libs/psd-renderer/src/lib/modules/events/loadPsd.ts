@@ -5,7 +5,9 @@ import type { Psd } from 'ag-psd';
 import { EVENT_TYPE } from '@seek-psd/engine2d';
 import { readPsd } from 'ag-psd';
 import { Plugin } from '@seek-psd/engine2d';
-import { createImage, validateFormat } from '@seek-psd/utils';
+import { createDecodedImage, validateFormat } from '@seek-psd/utils';
+
+export const LOAD_PSD = 'loadPsd';
 
 export class LoadPsd extends Plugin<IUserStore> {
   private totalCount = 0;
@@ -55,7 +57,7 @@ export class LoadPsd extends Plugin<IUserStore> {
   }
 
   private _blobReader($file: File): void {
-    const img: HTMLImageElement = createImage(
+    const img: HTMLImageElement = createDecodedImage(
       $file,
       ($img: HTMLImageElement) => {
         const canvas: HTMLCanvasElement = document.createElement('canvas');

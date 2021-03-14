@@ -10,12 +10,13 @@ import { EVENT_TYPE } from '@seek-psd/engine2d';
 import { Plugin } from '@seek-psd/engine2d';
 import { generateUuid } from '@seek-psd/utils';
 
+export const SHAPE_PSD = 'shapePsd';
+
 export class ShapePsd extends Plugin<IUserStore> {
   constructor() {
     // enable notifier
     super({
       pluginType: EVENT_TYPE.DRAG,
-      isNotifierEnabled: true,
     });
   }
 

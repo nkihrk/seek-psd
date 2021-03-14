@@ -5,6 +5,8 @@ import { Plugin } from '@seek-psd/engine2d';
 import { EVENT_TYPE } from '@seek-psd/engine2d';
 import { RENDER_TARGET } from '../../constants';
 
+export const RENDER_CANVAS = 'renderCanvas';
+
 export class RenderCanvas extends Plugin<IUserStore> {
   constructor() {
     // enable notifier
@@ -24,9 +26,6 @@ export class RenderCanvas extends Plugin<IUserStore> {
     const c: HTMLCanvasElement = this.userStore.searchRenderTargetByName(
       RENDER_TARGET.PSD_LAYER
     );
-    const rect: DOMRect = this.store.entity.element.getBoundingClientRect();
-    c.width = rect.width;
-    c.height = rect.height;
     const ctx: CanvasRenderingContext2D = c.getContext('2d');
 
     for (let i = 0; i < psds.length; i++) {
