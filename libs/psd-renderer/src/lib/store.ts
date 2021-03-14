@@ -7,6 +7,7 @@ export interface IUserStore {
   psdSets: IPsdSet[];
   renderTargetSets: IRenderTargetSet[];
   psds: IPsd[];
+  webGlElement: HTMLCanvasElement;
 
   searchPsdByFilename($fileName: string): IPsd[];
   searchPsdByUniqueId($uniqueId: string): IPsd;
@@ -27,6 +28,7 @@ export class Store implements IUserStore {
   renderTargetSets: IRenderTargetSet[] = [];
   psdSets: IPsdSet[] = [];
   psds: IPsd[] = [];
+  webGlElement = null;
 
   constructor() {}
 

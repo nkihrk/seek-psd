@@ -7,6 +7,6 @@ export enum PLUGIN {
   FILE_LOADER = 'fileLoader',
   LOAD_PSD = 'loadPsd',
   SHAPE_PSD = 'shapePsd',
-  RENDER_PSD = 'renderPsd',
+  EXEC_PSD = 'execPsd',
   RENDER_CANVAS = 'renderCanvas',
 }

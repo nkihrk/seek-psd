@@ -11,8 +11,10 @@ import { PLUGIN } from './constants';
 import { Store } from './store';
 import { LoadPsd } from './modules/events/loadPsd';
 import { ShapePsd } from './modules/events/shapePsd';
-import { RenderPsd } from './modules/events/renderPsd';
+import { ExecPsd } from './modules/events/execPsd';
+import { ExecWebGl } from './modules/events/execWebGl';
 import { RenderCanvas } from './modules/renders/renderCanvas';
+import { RenderTestWebGl } from './modules/renders/renderTestWebGl';
 
 export class PsdRenderer {
   private targetElement: HTMLElement = null;
@@ -39,12 +41,20 @@ export class PsdRenderer {
       plugin: new ShapePsd(),
     },
     {
-      pluginName: PLUGIN.RENDER_PSD,
-      plugin: new RenderPsd(),
+      pluginName: PLUGIN.EXEC_PSD,
+      plugin: new ExecPsd(),
+    },
+    {
+      pluginName: 'execWebGl',
+      plugin: new ExecWebGl(),
     },
     {
       pluginName: PLUGIN.RENDER_CANVAS,
       plugin: new RenderCanvas(),
+    },
+    {
+      pluginName: 'renderTestWebGl',
+      plugin: new RenderTestWebGl(),
     },
   ];
   private renderTargetSets: IRenderTargetSet[] = [];
