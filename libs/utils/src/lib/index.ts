@@ -6,3 +6,4 @@ export * from './math';
 export * from './image';
 export * from './validate';
 export * from './generator';
+export * from './string';

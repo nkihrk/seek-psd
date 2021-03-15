@@ -8,6 +8,8 @@ import {
   STOP_PROPAGATION,
   FileLoader,
   FILE_LOADER,
+  ZipLoader,
+  ZIP_LOADER,
 } from '@seek-psd/engine2d-plugins';
 import { Store } from './store';
 import { LoadPsd, LOAD_PSD } from './modules/events/loadPsd';
@@ -45,6 +47,10 @@ export class PsdRenderer {
     {
       pluginName: FILE_LOADER,
       plugin: new FileLoader(),
+    },
+    {
+      pluginName: ZIP_LOADER,
+      plugin: new ZipLoader(),
     },
     // load psd
     {

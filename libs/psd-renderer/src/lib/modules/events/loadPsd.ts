@@ -5,9 +5,16 @@ import type { Psd } from 'ag-psd';
 import { EVENT_TYPE } from '@seek-psd/engine2d';
 import { readPsd } from 'ag-psd';
 import { Plugin } from '@seek-psd/engine2d';
-import { createDecodedImage, validateFormat } from '@seek-psd/utils';
+import {
+  createDecodedImage,
+  validateFormat,
+  getExtensionFromName,
+} from '@seek-psd/utils';
 
 export const LOAD_PSD = 'loadPsd';
+
+const VALID_BLOB = '.(jpe?g|png|bmp)$';
+const VALID_FILE = '.(psd)$';
 
 export class LoadPsd extends Plugin<IUserStore> {
   private totalCount = 0;
@@ -23,10 +30,7 @@ export class LoadPsd extends Plugin<IUserStore> {
     super.call($store, $userStore);
 
     return new Promise((resolve: () => void) => {
-      // initialize
       this.resolve = resolve;
-      this.totalCount = $store.values.drag.files.length;
-      this.count = 0;
 
       // switch between eventTypes
       this._switchEventType();
@@ -38,20 +42,37 @@ export class LoadPsd extends Plugin<IUserStore> {
     const values: IFiles = this.store.values.drag;
 
     if (flags.isDrop) {
-      this._onFileDropped(values.files);
+      this._loadFiles(values.files);
     }
   }
 
-  private _onFileDropped($files: File[]): void {
-    for (let i = 0; i < $files.length; i++) {
-      const file: File = $files[i];
+  private _loadFiles($files: File[]): void {
+    const files: File[] = $files.filter((f) => {
+      return validateFormat(f, VALID_BLOB) || validateFormat(f, VALID_FILE);
+    });
 
-      if (validateFormat(file.name, 'jpe?g|png|bmp')) {
+    console.log('Files : ', files);
+
+    // initialize counts
+    this.totalCount = files.length;
+    this.count = 0;
+
+    if (files.length === 0) {
+      console.log('There is no supported files.');
+      this.resolve();
+    }
+
+    for (let i = 0; i < files.length; i++) {
+      const file: File = files[i];
+
+      if (validateFormat(file, VALID_BLOB)) {
         this._blobReader(file);
-      } else if (validateFormat(file.name, 'psd')) {
+      } else if (validateFormat(file, VALID_BLOB)) {
         this._fileReader(file);
       } else {
-        throw new Error('Invalid file format is detected.');
+        console.log('Unknow file format is detected.');
+
+        this.totalCount--;
       }
     }
   }
@@ -87,15 +108,17 @@ export class LoadPsd extends Plugin<IUserStore> {
     );
     img.onerror = () => {
       throw new Error('Error loading an image.');
+
+      this.totalCount--;
     };
   }
 
   private async _fileReader($file: File): Promise<void> {
     const arrayBuffer: ArrayBuffer = await this._readAsArrayBuffer($file);
     const fileName: string = $file.name;
-    const fileType: string = fileName.split('.').slice(-1).pop().toLowerCase();
+    const fileType: string = getExtensionFromName(fileName);
 
-    this._switchSubReaders(fileName, fileType, arrayBuffer);
+    this._switchSubReaders(fileType, fileName, arrayBuffer);
   }
 
   private _readAsArrayBuffer($file: File): Promise<ArrayBuffer> {
@@ -110,14 +133,16 @@ export class LoadPsd extends Plugin<IUserStore> {
   }
 
   private _switchSubReaders(
-    $fileName: string,
     $fileType: string,
+    $fileName: string,
     $arrayBuffer: ArrayBuffer
   ): void {
     if ($fileType === 'psd') {
       this._psdReader($fileName, $arrayBuffer);
     } else {
       throw new Error('Invalid file format is detected.');
+
+      this.totalCount--;
     }
   }
 
@@ -137,6 +162,8 @@ export class LoadPsd extends Plugin<IUserStore> {
       if (this.count === this.totalCount) this.resolve();
     } catch (e) {
       throw new Error('Error pasing a file.');
+
+      this.totalCount--;
     }
   }
 }

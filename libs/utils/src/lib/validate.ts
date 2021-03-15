@@ -1,8 +1,8 @@
 import { validate as uuidValidate } from 'uuid';
 
-export function validateFormat($fileName: string, $regExp: string): boolean {
+export function validateFormat($file: File, $regExp: string): boolean {
   const regex = new RegExp($regExp);
-  return regex.test($fileName);
+  return $file.type ? regex.test($file.type) : regex.test($file.name);
 }
 
 export function validateUuid($uuid: string): boolean {
