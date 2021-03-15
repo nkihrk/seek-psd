@@ -91,12 +91,12 @@ export class EventManager {
     // I guess this will only work on the initialization stage, but might be wrong
     if (!flags && !values && !defaultEvent) return;
 
-    const plugins: IPluginSet<any>[] = this.pluginManager.searchByEventType(
+    const plugins: IPluginSet<any>[] = this.pluginManager.searchPluginsByEventType(
       eventType
     );
 
     // insert any typed plugins to the head of the plugins
-    const anyPlugins: IPluginSet<any>[] = this.pluginManager.searchByEventType(
+    const anyPlugins: IPluginSet<any>[] = this.pluginManager.searchPluginsByEventType(
       EVENT_TYPE.ANY
     );
     plugins.unshift(...anyPlugins);
@@ -117,7 +117,7 @@ export class EventManager {
     for (let i = 0; i < plugins.length; i++) {
       const pluginSet: IPluginSet<any> = plugins[i];
       const plugin: Plugin<any> = pluginSet.plugin;
-      const pluginName: string = this.pluginManager.searchPluginName(
+      const pluginName: string = this.pluginManager.searchPluginNameByIndex(
         eventType,
         i
       );

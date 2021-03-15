@@ -49,7 +49,7 @@ export class PluginManager {
 
   constructor() {}
 
-  searchByEventType($eventType: string): IPluginSet<any>[] {
+  searchPluginsByEventType($eventType: string): IPluginSet<any>[] {
     let pluginSets: IPluginSet<any>[] = [];
 
     if (PluginManager.plugins[$eventType]) {
@@ -61,17 +61,18 @@ export class PluginManager {
     return pluginSets;
   }
 
-  searchByPluginName(
-    $eventType: string,
-    $pluginName: string
-  ): IPluginSet<any>[] {
-    const pluginSets: IPluginSet<any>[] = this.searchByEventType($eventType);
+  searchPluginByName($eventType: string, $pluginName: string): IPluginSet<any> {
+    const pluginSets: IPluginSet<any>[] = this.searchPluginsByEventType(
+      $eventType
+    );
 
-    return pluginSets.filter((e) => e.pluginName === $pluginName);
+    return pluginSets.filter((e) => e.pluginName === $pluginName)[0];
   }
 
-  searchPluginName($eventType: string, $index: number): string {
-    const pluginSets: IPluginSet<any>[] = this.searchByEventType($eventType);
+  searchPluginNameByIndex($eventType: string, $index: number): string {
+    const pluginSets: IPluginSet<any>[] = this.searchPluginsByEventType(
+      $eventType
+    );
 
     return pluginSets[$index].pluginName;
   }
