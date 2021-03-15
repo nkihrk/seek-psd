@@ -41,6 +41,26 @@ export class StoreManager {
   private _userStore = null;
   readonly updateNotifier = new Notifier();
 
+  private flagUpdator = {
+    [EVENT_TYPE.CLIPBOARD]: (f) => this.updateClipboardFlags(f),
+    [EVENT_TYPE.KEYBOARD]: (f) => this.updateKeyboardFlags(f),
+    [EVENT_TYPE.POINTER]: (f) => this.updatePointerFlags(f),
+    [EVENT_TYPE.DRAG]: (f) => this.updateDragFlags(f),
+    [EVENT_TYPE.EVENT]: (f) => this.updateEventFlgas(f),
+    [EVENT_TYPE.MOUSE]: (f) => this.updateMouseFlags(f),
+    [EVENT_TYPE.WHEEL]: (f) => this.updateWheelFlags(f),
+  };
+
+  private valueUpdator = {
+    [EVENT_TYPE.CLIPBOARD]: (v) => this.updateClipboardData(v),
+    [EVENT_TYPE.KEYBOARD]: (v) => this.updateKeyboardValues(v),
+    [EVENT_TYPE.POINTER]: (v) => {},
+    [EVENT_TYPE.DRAG]: (v) => this.updateDragData(v),
+    [EVENT_TYPE.EVENT]: (v) => this.updateEventValues(v),
+    [EVENT_TYPE.MOUSE]: (v) => this.updateMouseValues(v),
+    [EVENT_TYPE.WHEEL]: (v) => this.updateWheelValues(v),
+  };
+
   constructor() {}
 
   get store(): IStore {
@@ -60,73 +80,18 @@ export class StoreManager {
   }
 
   updateFlags($eventType: string, $flags: any): void {
-    switch ($eventType) {
-      case EVENT_TYPE.CLIPBOARD:
-        this.updateClipboardFlags($flags);
-        break;
-
-      case EVENT_TYPE.KEYBOARD:
-        this.updateKeyboardFlags($flags);
-        break;
-
-      case EVENT_TYPE.POINTER:
-        this.updatePointerFlags($flags);
-        break;
-
-      case EVENT_TYPE.DRAG:
-        this.updateDragFlags($flags);
-        break;
-
-      case EVENT_TYPE.EVENT:
-        this.updateEventFlgas($flags);
-        break;
-
-      case EVENT_TYPE.MOUSE:
-        this.updateMouseFlags($flags);
-        break;
-
-      case EVENT_TYPE.WHEEL:
-        this.updateWheelFlags($flags);
-        break;
-
-      default:
-        throw new Error('Invalid event type is detected.');
-        break;
+    if (this.flagUpdator[$eventType]) {
+      this.flagUpdator[$eventType]($flags);
+    } else {
+      throw new Error('Invalid event type is detected.');
     }
   }
 
   updateValues($eventType: string, $values: any): void {
-    switch ($eventType) {
-      case EVENT_TYPE.CLIPBOARD:
-        this.updateClipboardData($values);
-        break;
-
-      case EVENT_TYPE.KEYBOARD:
-        this.updateKeyboardValues($values);
-        break;
-
-      case EVENT_TYPE.POINTER:
-        break;
-
-      case EVENT_TYPE.DRAG:
-        this.updateDragData($values);
-        break;
-
-      case EVENT_TYPE.EVENT:
-        this.updateEventFlgas($values);
-        break;
-
-      case EVENT_TYPE.MOUSE:
-        this.updateMouseValues($values);
-        break;
-
-      case EVENT_TYPE.WHEEL:
-        this.updateWheelValues($values);
-        break;
-
-      default:
-        throw new Error('Invalid event type is detected.');
-        break;
+    if (this.valueUpdator[$eventType]) {
+      this.valueUpdator[$eventType]($values);
+    } else {
+      throw new Error('Invalid event type is detected.');
     }
   }
 
