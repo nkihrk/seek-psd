@@ -22,8 +22,8 @@ export class DrawWebGl extends Plugin<IUserStore> {
   }
 
   private _createWebGlCanvas(): void {
-    const canvas: HTMLCanvasElement = document.createElement('canvas');
-    const gl: WebGLRenderingContext = canvas.getContext('webgl', {
+    const c: HTMLCanvasElement = document.createElement('canvas');
+    const gl: WebGLRenderingContext = c.getContext('webgl', {
       preserveDrawingBuffer: true,
     });
 
@@ -40,7 +40,7 @@ export class DrawWebGl extends Plugin<IUserStore> {
     // Clear the color buffer with specified clear color
     gl.clear(gl.COLOR_BUFFER_BIT);
 
-    this.userStore.webGlElement = canvas;
+    this.userStore.webGlElement = c;
   }
 
   private _draw(): void {}

@@ -59,11 +59,11 @@ export class ShaderManager {
 
   constructor() {}
 
-  searchByShaderType($shaderType: TShaderType): IShaderSet[] {
+  searchShaderByType($shaderType: TShaderType): IShaderSet[] {
     return this.shaders[$shaderType];
   }
 
-  searchByShaderName(
+  searchShaderByName(
     $shaderType: TShaderType,
     $shaderName: string
   ): IShaderSet {
