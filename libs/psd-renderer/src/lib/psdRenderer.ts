@@ -14,6 +14,7 @@ import { LoadPsd, LOAD_PSD } from './modules/events/loadPsd';
 import { ShapePsd, SHAPE_PSD } from './modules/events/shapePsd';
 import { DrawPsd, DRAW_PSD } from './modules/events/drawPsd';
 import { DrawWebGl, DRAW_WEBGL } from './modules/events/drawWebGl';
+import { LoadShaders, LOAD_SHADERS } from './modules/events/loadShaders';
 import {
   RenderInitCanvas,
   RENDER_INIT_CANVAS,
@@ -25,6 +26,11 @@ export class PsdRenderer {
   private targetElement: HTMLElement = null;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private pluginSets: IPluginSet<any>[] = [
+    // load shaders
+    {
+      pluginName: LOAD_SHADERS,
+      plugin: new LoadShaders(),
+    },
     // preventDefault when drag event occures
     {
       pluginName: PREVENT_DEFAULT,

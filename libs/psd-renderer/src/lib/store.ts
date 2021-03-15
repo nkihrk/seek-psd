@@ -9,6 +9,7 @@ export interface IUserStore {
   psds: IPsd[];
 
   webGlElement: HTMLCanvasElement;
+  shaders: IShaders;
 
   searchPsdByFilename($fileName: string): IPsd[];
   searchPsdByUniqueId($uniqueId: string): IPsd;
@@ -25,12 +26,33 @@ export interface IRenderTargetSet {
   renderTarget: HTMLCanvasElement;
 }
 
+export interface IShaders {
+  vertex: IShaderSet[];
+  fragment: IShaderSet[];
+}
+
+export interface IShaderSet {
+  name: string;
+  program: string;
+}
+
+export type TShaderType = SHADER_TYPE.VERTEX | SHADER_TYPE.FRAGMENT;
+
+export enum SHADER_TYPE {
+  VERTEX = 'vertex',
+  FRAGMENT = 'fragmentr',
+}
+
 export class Store implements IUserStore {
   renderTargetSets: IRenderTargetSet[] = [];
   psdSets: IPsdSet[] = [];
   psds: IPsd[] = [];
 
   webGlElement = null;
+  shaders = {
+    vertex: [],
+    fragment: [],
+  };
 
   constructor() {}
 
@@ -52,5 +74,16 @@ export class Store implements IUserStore {
     )[0].renderTarget;
 
     return renderTarget;
+  }
+
+  searchShaderByType($shaderType: TShaderType): IShaderSet[] {
+    return this.shaders[$shaderType];
+  }
+
+  searchShaderByName(
+    $shaderType: TShaderType,
+    $shaderName: string
+  ): IShaderSet {
+    return this.shaders[$shaderType].filter((e) => e.name === $shaderName);
   }
 }

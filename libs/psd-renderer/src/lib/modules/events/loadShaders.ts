@@ -1,21 +1,11 @@
-export interface IShaders {
-  vertex: IShaderSet[];
-  fragment: IShaderSet[];
-}
+import type { IStore } from '@seek-psd/engine2d';
+import type { IUserStore, IShaders } from '../../store';
+import { Plugin } from '@seek-psd/engine2d';
+import { EVENT_TYPE } from '@seek-psd/engine2d';
 
-export interface IShaderSet {
-  name: string;
-  program: string;
-}
+export const LOAD_SHADERS = 'loadShaders';
 
-export type TShaderType = SHADER_TYPE.VERTEX | SHADER_TYPE.FRAGMENT;
-
-export enum SHADER_TYPE {
-  VERTEX = 'vertex',
-  FRAGMENT = 'fragmentr',
-}
-
-export class ShaderManager {
+export class LoadShaders extends Plugin<IUserStore> {
   private shaders: IShaders = {
     vertex: [
       {
@@ -57,16 +47,19 @@ export class ShaderManager {
     ],
   };
 
-  constructor() {}
-
-  searchShaderByType($shaderType: TShaderType): IShaderSet[] {
-    return this.shaders[$shaderType];
+  constructor() {
+    super({
+      pluginType: EVENT_TYPE.ANY,
+    });
   }
 
-  searchShaderByName(
-    $shaderType: TShaderType,
-    $shaderName: string
-  ): IShaderSet {
-    return this.shaders[$shaderType].filter((e) => e.name === $shaderName);
+  call($store: IStore, $userStore: IUserStore): void {
+    super.call($store, $userStore);
+
+    this._loadShaders();
+  }
+
+  private _loadShaders(): void {
+    this.userStore.shaders = this.shaders;
   }
 }
