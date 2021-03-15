@@ -1,20 +1,34 @@
 import ResizeObserver from 'resize-observer-polyfill';
 
-export async function setPixelPerfect(
+export function setPixelPerfect(
   $canvas: HTMLCanvasElement,
-  $callback: ($canvas: HTMLCanvasElement) => void
-): Promise<void> {
+  $callback: (c: HTMLCanvasElement) => void
+): void {
+  makePixelPerfect($canvas);
+
+  // execute a callback
+  $callback($canvas);
+}
+
+export function setPixelPerfectOnResize(
+  $canvas: HTMLCanvasElement,
+  $callback: (c: HTMLCanvasElement) => void
+): void {
   const observer = new ResizeObserver(() => {
-    const cRect: DOMRect = $canvas.getBoundingClientRect();
-    const pixelRatio: number = getPixelRatio($canvas.getContext('2d'));
-    $canvas.width = cRect.width * pixelRatio;
-    $canvas.height = cRect.height * pixelRatio;
+    makePixelPerfect($canvas);
 
     // execute a callback
     $callback($canvas);
   });
 
   observer.observe($canvas);
+}
+
+export function makePixelPerfect($canvas: HTMLCanvasElement): void {
+  const cRect: DOMRect = $canvas.getBoundingClientRect();
+  const pixelRatio: number = getPixelRatio($canvas.getContext('2d'));
+  $canvas.width = cRect.width * pixelRatio;
+  $canvas.height = cRect.height * pixelRatio;
 }
 
 export function getPixelRatio($ctx: CanvasRenderingContext2D): number {

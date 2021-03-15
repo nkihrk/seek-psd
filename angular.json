@@ -39,7 +39,7 @@
       "prefix": "seek-psd",
       "architect": {
         "build": {
-          "builder": "@angular-devkit/build-angular:browser",
+          "builder": "@angular-builders/custom-webpack:browser",
           "options": {
             "outputPath": "dist/apps/seek-psd",
             "index": "apps/seek-psd/src/index.html",
@@ -53,7 +53,10 @@
             ],
             "styles": ["apps/seek-psd/src/styles.scss"],
             "scripts": [],
-            "webWorkerTsConfig": "apps/seek-psd/tsconfig.worker.json"
+            "webWorkerTsConfig": "apps/seek-psd/tsconfig.worker.json",
+            "customWebpackConfig": {
+              "path": "./extra-webpack.config.js"
+            }
           },
           "configurations": {
             "production": {
@@ -86,7 +89,7 @@
           }
         },
         "serve": {
-          "builder": "@angular-devkit/build-angular:dev-server",
+          "builder": "@angular-builders/custom-webpack:dev-server",
           "options": {
             "browserTarget": "seek-psd:build"
           },
@@ -109,9 +112,7 @@
               "apps/seek-psd/src/**/*.ts",
               "apps/seek-psd/src/**/*.html"
             ],
-            "tsConfig": [
-              "apps/seek-psd/tsconfig.worker.json"
-            ]
+            "tsConfig": ["apps/seek-psd/tsconfig.worker.json"]
           }
         },
         "test": {

@@ -1,6 +1,5 @@
-import type { IStore, IFiles } from '@seek-psd/engine2d';
+import type { IStore } from '@seek-psd/engine2d';
 import type { IUserStore } from '../../store';
-import type { IPsd } from '../../entities/psd';
 import { Plugin } from '@seek-psd/engine2d';
 import { EVENT_TYPE } from '@seek-psd/engine2d';
 
@@ -28,7 +27,7 @@ export class DrawWebGl extends Plugin<IUserStore> {
       preserveDrawingBuffer: true,
     });
 
-    // Only continue if WebGL is available and working
+    // only continue if WebGL is available and working
     if (gl === null) {
       alert(
         'Unable to initialize WebGL. Your browser or machine may not support it.'

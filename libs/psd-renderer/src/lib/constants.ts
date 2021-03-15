@@ -1,4 +1,4 @@
 export enum RENDER_TARGET {
-  PSD_LAYER = 'psdLayer',
+  MAIN_LAYER = 'mainLayer',
   UI_LAYER = 'uiLayer',
 }

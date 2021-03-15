@@ -28,6 +28,7 @@ export function createDecodedImage(
     .then(() => {
       if ($callback) $callback(img);
       if ($blob instanceof Blob) URL.revokeObjectURL(img.src);
+      console.log('isBlob : ', $blob instanceof Blob);
     })
     .catch(() => {
       throw new Error('Could not load/decode an image.');

@@ -24,7 +24,7 @@ export class RenderCanvas extends Plugin<IUserStore> {
   private _render(): void {
     const psds: IPsd[] = this.userStore.psds;
     const c: HTMLCanvasElement = this.userStore.searchRenderTargetByName(
-      RENDER_TARGET.PSD_LAYER
+      RENDER_TARGET.MAIN_LAYER
     );
     const ctx: CanvasRenderingContext2D = c.getContext('2d');
 

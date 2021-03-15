@@ -8,13 +8,12 @@ import {
   Output,
   EventEmitter,
 } from '@angular/core';
-import { setPixelPerfect } from '@seek-psd/utils';
 import { PsdRenderer } from '@seek-psd/psd-renderer';
 import { fromWorker } from 'observable-webworker';
 import { of } from 'rxjs';
 
 export interface Layers {
-  psdLayer: ElementRef<HTMLCanvasElement>;
+  mainLayer: ElementRef<HTMLCanvasElement>;
   uiLayer: ElementRef<HTMLCanvasElement>;
 }
 
@@ -26,7 +25,7 @@ export interface Layers {
 export class CanvasComponent implements OnInit {
   @ViewChild('layer', { static: true })
   layer: ElementRef<HTMLDivElement>;
-  @ViewChild('psdLayer', { static: true })
+  @ViewChild('mainLayer', { static: true })
   psdLayer: ElementRef<HTMLCanvasElement>;
   @ViewChild('uiLayer', { static: true })
   uiLayer: ElementRef<HTMLCanvasElement>;
@@ -38,16 +37,13 @@ export class CanvasComponent implements OnInit {
   constructor() {}
 
   ngOnInit(): void {
-    // init canvas sizes with a appropriate pixel ratio
-    this._initCanvas();
-
     const psd = new PsdRenderer();
     psd.init(this.layer.nativeElement);
 
     // add render targets
     const renderTargetSets: IRenderTargetSet[] = [
       {
-        renderTargetName: RENDER_TARGET.PSD_LAYER,
+        renderTargetName: RENDER_TARGET.MAIN_LAYER,
         renderTarget: this.psdLayer.nativeElement,
       },
       {
@@ -68,20 +64,11 @@ export class CanvasComponent implements OnInit {
 
   private _emitLayers(): void {
     const layers: Layers = {
-      psdLayer: this.psdLayer,
+      mainLayer: this.psdLayer,
       uiLayer: this.uiLayer,
     };
 
     this.emitLayers.emit(layers);
-  }
-
-  private _initCanvas(): void {
-    setPixelPerfect(this.psdLayer.nativeElement, this._render);
-    setPixelPerfect(this.uiLayer.nativeElement, this._render);
-  }
-
-  private _render($canvas: HTMLCanvasElement): void {
-    //console.log($canvas);
   }
 
   private _testWorker(): void {
@@ -89,7 +76,7 @@ export class CanvasComponent implements OnInit {
       const input$ = of('Hello from main thread');
 
       fromWorker<string, string>(
-        () => new Worker('./render-psd.worker', { type: 'module' }),
+        () => new Worker('./test.worker', { type: 'module' }),
         input$
       ).subscribe((message) => {
         console.log(message); // Outputs 'Hello from webworker'

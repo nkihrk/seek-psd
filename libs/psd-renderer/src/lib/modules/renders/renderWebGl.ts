@@ -27,9 +27,9 @@ export class RenderWebGl extends Plugin<IUserStore> {
     const img: HTMLImageElement = createDecodedImage(src);
 
     const c: HTMLCanvasElement = this.userStore.searchRenderTargetByName(
-      RENDER_TARGET.PSD_LAYER
+      RENDER_TARGET.MAIN_LAYER
     );
     const ctx: CanvasRenderingContext2D = c.getContext('2d');
-    ctx.drawImage(img, 0, 0);
+    ctx.drawImage(img, 0, 0, img.width, img.height);
   }
 }
