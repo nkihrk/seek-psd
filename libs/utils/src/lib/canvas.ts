@@ -31,3 +31,15 @@ export function getPixelRatio($ctx: CanvasRenderingContext2D): number {
 
   return dpr / bsr;
 }
+
+export function duplicateCanvasElement(
+  $canvas: HTMLCanvasElement
+): HTMLCanvasElement {
+  const c: HTMLCanvasElement = document.createElement('canvas');
+  c.width = $canvas.width;
+  c.height = $canvas.height;
+  const ctx: CanvasRenderingContext2D = c.getContext('2d');
+  ctx.drawImage($canvas, 0, 0, c.width, c.height);
+
+  return c;
+}

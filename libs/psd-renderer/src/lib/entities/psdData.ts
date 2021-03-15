@@ -1,10 +1,11 @@
 import type { Psd, Layer } from 'ag-psd';
+import { duplicateCanvasElement } from '@seek-psd/utils';
 
 export interface IPsdData {
   readonly canvas: HTMLCanvasElement;
   readonly children: IPsdDataChild[] | Layer[];
-  width: number;
-  height: number;
+  readonly width: number;
+  readonly height: number;
 }
 
 export interface IPsdDataChild {
@@ -30,20 +31,20 @@ export interface IDummyPsd {
 export class PsdData implements IPsdData {
   readonly canvas: HTMLCanvasElement;
   readonly children: IPsdDataChild[] | Layer[] = [];
-  width = 0;
-  height = 0;
+  readonly width: number;
+  readonly height: number;
 
   constructor($fileName: string, $psd: Psd | IDummyPsd) {
     this.canvas = $psd.canvas;
     this.width = $psd.width;
     this.height = $psd.height;
 
-    if ($psd.children) {
+    if ($psd.children.length > 0) {
       this.children = $psd.children;
     } else {
       this.children.push({
         name: $fileName,
-        canvas: $psd.canvas,
+        canvas: duplicateCanvasElement($psd.canvas),
         blendMode: 'normal',
         hidden: false,
         opacity: 1,

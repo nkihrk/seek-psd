@@ -3,6 +3,7 @@ import type { IUserStore } from '../../store';
 import { Plugin } from '@seek-psd/engine2d';
 import { EVENT_TYPE } from '@seek-psd/engine2d';
 import { RENDER_TARGET } from '../../constants';
+import { createDecodedImage } from '@seek-psd/utils';
 
 export const RENDER_WEBGL = 'renderWebGl';
 
@@ -22,8 +23,8 @@ export class RenderWebGl extends Plugin<IUserStore> {
   private _render(): void {
     if (!this.userStore.webGlElement) return;
 
-    const img: HTMLImageElement = new Image();
-    img.src = this.userStore.webGlElement.toDataURL();
+    const src: string = this.userStore.webGlElement.toDataURL();
+    const img: HTMLImageElement = createDecodedImage(src);
 
     const c: HTMLCanvasElement = this.userStore.searchRenderTargetByName(
       RENDER_TARGET.PSD_LAYER

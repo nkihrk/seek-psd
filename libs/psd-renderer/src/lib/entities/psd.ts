@@ -8,8 +8,8 @@ export interface IPsdMeta {
   readonly uniqueId: string;
   readonly rawWidth: number;
   readonly rawHeight: number;
-  readonly element: HTMLCanvasElement;
-  layerInfos: ILayerInfo[];
+  readonly rawElement: HTMLCanvasElement;
+  readonly layerInfos: ILayerInfo[];
 }
 
 export interface IPsdUtils {
@@ -26,6 +26,7 @@ export interface IPsdHistory {
 }
 
 export interface IPsdState {
+  element: HTMLCanvasElement;
   width: number;
   height: number;
   offset: {
@@ -103,9 +104,11 @@ export class Psd implements IPsd {
   readonly uniqueId: string;
   readonly rawWidth: number;
   readonly rawHeight: number;
-  readonly element: HTMLCanvasElement;
+  readonly rawElement: HTMLCanvasElement;
+  readonly layerInfos: ILayerInfo[] = [];
   history: IPsdHistory = {
     current: {
+      element: document.createElement('canvas'),
       width: 0,
       height: 0,
       offset: {
@@ -125,14 +128,13 @@ export class Psd implements IPsd {
     commands: [],
     position: 0,
   };
-  layerInfos: ILayerInfo[] = [];
 
   constructor($psdMeta: IPsdMeta) {
     this.fileName = $psdMeta.fileName;
     this.uniqueId = $psdMeta.uniqueId;
     this.rawWidth = $psdMeta.rawWidth;
     this.rawHeight = $psdMeta.rawHeight;
-    this.element = $psdMeta.element;
+    this.rawElement = $psdMeta.rawElement;
     this.layerInfos = $psdMeta.layerInfos;
   }
 

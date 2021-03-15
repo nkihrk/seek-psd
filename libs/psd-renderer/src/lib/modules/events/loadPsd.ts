@@ -60,16 +60,16 @@ export class LoadPsd extends Plugin<IUserStore> {
     const img: HTMLImageElement = createDecodedImage(
       $file,
       ($img: HTMLImageElement) => {
-        const canvas: HTMLCanvasElement = document.createElement('canvas');
-        canvas.width = $img.width;
-        canvas.height = $img.height;
-        const ctx: CanvasRenderingContext2D = canvas.getContext('2d');
-        ctx.drawImage($img, 0, 0);
+        const c: HTMLCanvasElement = document.createElement('canvas');
+        c.width = $img.width;
+        c.height = $img.height;
+        const ctx: CanvasRenderingContext2D = c.getContext('2d');
+        ctx.drawImage($img, 0, 0, c.width, c.height);
 
         const dummyPsd: IDummyPsd = {
           width: $img.width,
           height: $img.height,
-          canvas,
+          canvas: c,
           children: [],
         };
         const psdSet: IPsdSet = {
@@ -131,7 +131,7 @@ export class LoadPsd extends Plugin<IUserStore> {
 
       this.userStore.psdSets.push(psdSet);
 
-      console.log($fileName);
+      console.log($fileName, psd);
 
       this.count++;
       if (this.count === this.totalCount) this.resolve();

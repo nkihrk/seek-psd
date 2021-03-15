@@ -31,13 +31,14 @@ export class RenderCanvas extends Plugin<IUserStore> {
     for (let i = 0; i < psds.length; i++) {
       const psd: IPsd = psds[i];
       const state: IPsdState = psd.history.current;
-      const offset: ICoord = state.offset.new;
-      const width: number = state.width;
-      const height: number = state.height;
+      const offset: ICoord = { x: c.width / 2, y: c.height / 2 };
+      const scale: number = c.height / psd.rawHeight;
+      const width: number = psd.rawWidth * scale;
+      const height: number = psd.rawHeight * scale;
 
       ctx.save();
       ctx.translate(offset.x, offset.y);
-      ctx.drawImage(psd.element, -width / 2, -height / 2, width, height);
+      ctx.drawImage(state.element, -width / 2, -height / 2, width, height);
       ctx.restore();
     }
   }

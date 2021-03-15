@@ -1,13 +1,13 @@
 export function createImage(
-  $blob: Blob,
+  $blob: Blob | string,
   $callback: ($img: HTMLImageElement) => void
 ): HTMLImageElement {
   const img: HTMLImageElement = new Image();
   img.crossOrigin = 'Anonymous';
-  img.src = URL.createObjectURL($blob);
+  img.src = $blob instanceof Blob ? URL.createObjectURL($blob) : $blob;
   img.onload = () => {
     $callback(img);
-    URL.revokeObjectURL(img.src);
+    if ($blob instanceof Blob) URL.revokeObjectURL(img.src);
   };
   img.onerror = () => {
     throw new Error('Could not load an image');
@@ -17,17 +17,17 @@ export function createImage(
 }
 
 export function createDecodedImage(
-  $blob: Blob,
-  $callback: ($img: HTMLImageElement) => void
+  $blob: Blob | string,
+  $callback?: ($img: HTMLImageElement) => void
 ): HTMLImageElement {
   const img: HTMLImageElement = new Image();
   img.crossOrigin = 'Anonymous';
-  img.src = URL.createObjectURL($blob);
+  img.src = $blob instanceof Blob ? URL.createObjectURL($blob) : $blob;
   img
     .decode()
     .then(() => {
-      $callback(img);
-      URL.revokeObjectURL(img.src);
+      if ($callback) $callback(img);
+      if ($blob instanceof Blob) URL.revokeObjectURL(img.src);
     })
     .catch(() => {
       throw new Error('Could not load/decode an image.');

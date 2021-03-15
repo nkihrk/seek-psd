@@ -29,6 +29,10 @@ export class DrawPsd extends Plugin<IUserStore> {
   drawRaw(): void {}
 
   draw($psd: IPsd): void {
-    const aspectRatio: number = $psd.rawHeight / $psd.rawWidth;
+    const c: HTMLCanvasElement = $psd.history.current.element;
+    c.width = $psd.rawWidth;
+    c.height = $psd.rawHeight;
+    const ctx: CanvasRenderingContext2D = c.getContext('2d');
+    ctx.drawImage($psd.rawElement, 0, 0, c.width, c.height);
   }
 }

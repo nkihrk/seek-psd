@@ -43,23 +43,17 @@ export class ShapePsd extends Plugin<IUserStore> {
       const height: number = psdData.height;
       console.log(psdData);
 
-      if (psdData?.children) {
-        const childLayers: Layer[] = psdData.children as Layer[];
+      const childLayers: Layer[] = psdData.children as Layer[];
 
-        for (let j = childLayers.length - 1; j > -1; j--) {
-          const layerInfo = new LayerInfo(childLayers[j], {
-            current: childLayers[j].hidden,
-            prev: !childLayers[j].hidden,
-            parent: false,
-          });
-
-          layerInfos.push(layerInfo);
-          this._getChildren(childLayers[j], layerInfo);
-        }
-      } else {
-        const layerInfo = new LayerInfo(psdSets[i].psdData as Layer);
+      for (let j = childLayers.length - 1; j > -1; j--) {
+        const layerInfo = new LayerInfo(childLayers[j], {
+          current: childLayers[j].hidden,
+          prev: !childLayers[j].hidden,
+          parent: false,
+        });
 
         layerInfos.push(layerInfo);
+        this._getChildren(childLayers[j], layerInfo);
       }
 
       const psdMeta: IPsdMeta = {
@@ -67,7 +61,7 @@ export class ShapePsd extends Plugin<IUserStore> {
         uniqueId,
         rawWidth: width,
         rawHeight: height,
-        element: document.createElement('canvas'),
+        rawElement: psdData.canvas,
         layerInfos,
       };
       const psd: IPsd = new Psd(psdMeta);
