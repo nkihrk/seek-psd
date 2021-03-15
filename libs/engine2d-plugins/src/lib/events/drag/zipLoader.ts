@@ -37,11 +37,11 @@ export class ZipLoader extends Plugin<any> {
     const values: IFiles = this.store.values.drag;
 
     if (flags.isDrop) {
-      this._switchReaders(values.files);
+      this._loadZips(values.files);
     }
   }
 
-  private _switchReaders($files: File[]): void {
+  private _loadZips($files: File[]): void {
     const zips: File[] = $files.filter((f) => validateFormat(f, VALID_ZIP));
 
     console.log('Zip files : ', zips);
@@ -50,7 +50,7 @@ export class ZipLoader extends Plugin<any> {
     this.count = 0;
 
     if (zips.length === 0) {
-      console.log('There is no zip files. Skip loading files');
+      console.log('There are no zip files. Skip loading files');
 
       return this.resolve();
     }
@@ -64,12 +64,12 @@ export class ZipLoader extends Plugin<any> {
 
   private _loadZip($file: File): void {
     if (validateFormat($file, VALID_ZIP)) {
-      // remove count from totalCount for zip
+      // remove a count from totalCount for zip
       this.totalCount--;
 
       this._zipReader($file);
     } else {
-      this._storeFiles($file);
+      this._storeFile($file);
 
       this.count++;
       if (this.count === this.totalCount) {
@@ -78,8 +78,8 @@ export class ZipLoader extends Plugin<any> {
     }
   }
 
-  private _storeFiles($files: File): void {
-    this.store.values.drag.files.push($files);
+  private _storeFile($file: File): void {
+    this.store.values.drag.files.push($file);
   }
 
   private async _zipReader($file: File): Promise<void> {
