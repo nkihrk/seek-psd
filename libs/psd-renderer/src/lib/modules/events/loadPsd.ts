@@ -14,7 +14,8 @@ import {
 export const LOAD_PSD = 'loadPsd';
 
 const VALID_BLOB = '.(jpe?g|png|bmp)$';
-const VALID_FILE = '.(psd)$';
+const VALID_FILE = '.(psd|vnd.adobe.photoshop)$';
+const VALID_PSD = '.(psd|vnd.adobe.photoshop)$';
 
 export class LoadPsd extends Plugin<IUserStore> {
   private totalCount = 0;
@@ -51,7 +52,7 @@ export class LoadPsd extends Plugin<IUserStore> {
       return validateFormat(f, VALID_BLOB) || validateFormat(f, VALID_FILE);
     });
 
-    console.log('Files : ', files);
+    console.log('PSD/Image files : ', files);
 
     // initialize counts
     this.totalCount = files.length;
@@ -65,9 +66,11 @@ export class LoadPsd extends Plugin<IUserStore> {
     for (let i = 0; i < files.length; i++) {
       const file: File = files[i];
 
+      console.log(file);
+
       if (validateFormat(file, VALID_BLOB)) {
         this._blobReader(file);
-      } else if (validateFormat(file, VALID_BLOB)) {
+      } else if (validateFormat(file, VALID_FILE)) {
         this._fileReader(file);
       } else {
         console.log('Unknow file format is detected.');
@@ -115,10 +118,8 @@ export class LoadPsd extends Plugin<IUserStore> {
 
   private async _fileReader($file: File): Promise<void> {
     const arrayBuffer: ArrayBuffer = await this._readAsArrayBuffer($file);
-    const fileName: string = $file.name;
-    const fileType: string = getExtensionFromName(fileName);
 
-    this._switchSubReaders(fileType, fileName, arrayBuffer);
+    this._switchSubReaders($file, arrayBuffer);
   }
 
   private _readAsArrayBuffer($file: File): Promise<ArrayBuffer> {
@@ -132,13 +133,9 @@ export class LoadPsd extends Plugin<IUserStore> {
     });
   }
 
-  private _switchSubReaders(
-    $fileType: string,
-    $fileName: string,
-    $arrayBuffer: ArrayBuffer
-  ): void {
-    if ($fileType === 'psd') {
-      this._psdReader($fileName, $arrayBuffer);
+  private _switchSubReaders($file: File, $arrayBuffer: ArrayBuffer): void {
+    if (validateFormat($file, VALID_PSD)) {
+      this._psdReader($file.name, $arrayBuffer);
     } else {
       throw new Error('Invalid file format is detected.');
 
