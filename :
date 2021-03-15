@@ -3,15 +3,8 @@
 import type { IPluginSet } from './Global';
 import { EVENT_TYPE } from './constants';
 
-export interface IPlugins {
-  [pluginType: string]: IPluginSet<any>[];
-}
-
 export class PluginManager {
-  // any
-  private static anys: IPluginSet<any>[] = [];
-
-  // events
+  // Events
   private static clipboards: IPluginSet<any>[] = [];
   private static keyboards: IPluginSet<any>[] = [];
   private static pointers: IPluginSet<any>[] = [];
@@ -19,12 +12,12 @@ export class PluginManager {
   private static events: IPluginSet<any>[] = [];
   private static mouses: IPluginSet<any>[] = [];
   private static wheels: IPluginSet<any>[] = [];
+  private static anys: IPluginSet<any>[] = [];
 
-  // renders
+  // Renderers
   private static renders: IPluginSet<any>[] = [];
 
-  // plugins
-  private static plugins: IPlugins = {
+  private static plugins = {
     [EVENT_TYPE.ANY]: PluginManager.anys,
     [EVENT_TYPE.CLIPBOARD]: PluginManager.clipboards,
     [EVENT_TYPE.KEYBOARD]: PluginManager.keyboards,
@@ -39,7 +32,7 @@ export class PluginManager {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   static registerPlugin($pluginSet: IPluginSet<any>): void {
     const pluginType: string = $pluginSet.plugin.pluginType;
-
+    console.log(pluginType, PluginManager.plugins[pluginType]);
     if (PluginManager.plugins[pluginType]) {
       PluginManager.plugins[pluginType].push($pluginSet);
     } else {
@@ -52,10 +45,46 @@ export class PluginManager {
   searchByEventType($eventType: string): IPluginSet<any>[] {
     let pluginSets: IPluginSet<any>[] = [];
 
-    if (PluginManager.plugins[$eventType]) {
-      pluginSets = PluginManager.plugins[$eventType];
-    } else {
-      throw new Error('Invalid plugin category is detected.');
+    switch ($eventType) {
+      case EVENT_TYPE.CLIPBOARD:
+        pluginSets = PluginManager.clipboards;
+        break;
+
+      case EVENT_TYPE.KEYBOARD:
+        pluginSets = PluginManager.keyboards;
+        break;
+
+      case EVENT_TYPE.POINTER:
+        pluginSets = PluginManager.pointers;
+        break;
+
+      case EVENT_TYPE.DRAG:
+        pluginSets = PluginManager.drags;
+        break;
+
+      case EVENT_TYPE.EVENT:
+        pluginSets = PluginManager.events;
+        break;
+
+      case EVENT_TYPE.MOUSE:
+        pluginSets = PluginManager.mouses;
+        break;
+
+      case EVENT_TYPE.WHEEL:
+        pluginSets = PluginManager.wheels;
+        break;
+
+      case EVENT_TYPE.RENDER:
+        pluginSets = PluginManager.renders;
+        break;
+
+      case EVENT_TYPE.ANY:
+        pluginSets = PluginManager.anys;
+        break;
+
+      default:
+        throw new Error('Invalid plugin category is detected.');
+        break;
     }
 
     return pluginSets;

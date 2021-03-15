@@ -10,7 +10,6 @@ import {
   FILE_LOADER,
 } from '@seek-psd/engine2d-plugins';
 import { Store } from './store';
-import { LoadShaders, LOAD_SHADERS } from './modules/events/loadShaders';
 import { LoadPsd, LOAD_PSD } from './modules/events/loadPsd';
 import { ShapePsd, SHAPE_PSD } from './modules/events/shapePsd';
 import { DrawPsd, DRAW_PSD } from './modules/events/drawPsd';
@@ -35,11 +34,6 @@ export class PsdRenderer {
     {
       pluginName: STOP_PROPAGATION,
       plugin: new StopPropagation(EVENT_TYPE.DRAG),
-    },
-    // load shaders
-    {
-      pluginName: LOAD_SHADERS,
-      plugin: new LoadShaders(),
     },
     // load files
     {
