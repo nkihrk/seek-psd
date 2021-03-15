@@ -9,10 +9,9 @@ import { fromBlob, FileTypeResult } from 'file-type/browser';
 
 export const ZIP_LOADER = 'zipLoader';
 
-const VALID_FILE = '.(zip)$';
+const VALID_ZIP = '.(zip)$';
 
 export class ZipLoader extends Plugin<any> {
-  // this will be needed to exclude count for a zip file
   private totalCount = 0;
   private count = 0;
 
@@ -43,7 +42,7 @@ export class ZipLoader extends Plugin<any> {
   }
 
   private _switchReaders($files: File[]): void {
-    const zips: File[] = $files.filter((f) => validateFormat(f, VALID_FILE));
+    const zips: File[] = $files.filter((f) => validateFormat(f, VALID_ZIP));
 
     console.log('Zip files : ', zips);
 
@@ -53,9 +52,7 @@ export class ZipLoader extends Plugin<any> {
     if (zips.length === 0) {
       console.log('There is no zip files. Skip loading files');
 
-      this.resolve();
-
-      return;
+      return this.resolve();
     }
 
     for (let i = 0; i < zips.length; i++) {
@@ -66,7 +63,7 @@ export class ZipLoader extends Plugin<any> {
   }
 
   private _loadZip($file: File): void {
-    if (validateFormat($file, VALID_FILE)) {
+    if (validateFormat($file, VALID_ZIP)) {
       // remove count from totalCount for zip
       this.totalCount--;
 

@@ -1,7 +1,7 @@
 import type { IStore, IDragFlags, IFiles } from '@seek-psd/engine2d';
 import type { IPsdSet, IUserStore } from '../../store';
-import { IDummyPsd, IPsdData, PsdData } from '../../entities/psdData';
 import type { Psd } from 'ag-psd';
+import { IDummyPsd, IPsdData, PsdData } from '../../entities/psdData';
 import { EVENT_TYPE } from '@seek-psd/engine2d';
 import { readPsd } from 'ag-psd';
 import { Plugin } from '@seek-psd/engine2d';
