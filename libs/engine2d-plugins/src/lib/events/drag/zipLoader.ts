@@ -50,7 +50,7 @@ export class ZipLoader extends Plugin<any> {
     this.count = 0;
 
     if (zips.length === 0) {
-      console.log('There are no zip files. Skip loading files');
+      console.log('There are no zip files. Skip loading files.');
 
       return this.resolve();
     }
@@ -93,7 +93,7 @@ export class ZipLoader extends Plugin<any> {
       this.totalCount += Object.keys(zipData.files).length;
 
       for (const fileName in zipData.files) {
-        if (zipData.files.hasOwnProperty(fileName)) {
+        if (hasProperty(zipData.files, fileName)) {
           try {
             // skip parsing if the target is directory
             if (zipData.files[fileName].dir) {
