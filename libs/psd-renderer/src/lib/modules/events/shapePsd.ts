@@ -25,7 +25,6 @@ export class ShapePsd extends Plugin<IUserStore> {
 
     if ($store.flags.drag.isDrop) {
       this._shapePsd();
-      this._clearCaches();
     }
   }
 
@@ -85,11 +84,5 @@ export class ShapePsd extends Plugin<IUserStore> {
 
       this._getChildren($childLayer.children[i], layerInfo);
     }
-  }
-
-  private _clearCaches(): void {
-    this.store.values.drag.data = null;
-    this.store.values.drag.files = [];
-    this.userStore.psdSets = [];
   }
 }
