@@ -1,7 +1,7 @@
 import type { IStore, IFiles } from '@seek-psd/engine2d';
 import type { IUserStore, IPsdSet } from '../../store';
 import type { ILayerInfo } from '../../entities/layerInfo';
-import type { IPsdData } from '../../entities/psdData';
+import type { IDummyPsdData, IPsdData } from '../../entities/psdData';
 import type { IPsd, IPsdMeta } from '../../entities/psd';
 import type { Layer } from 'ag-psd';
 import { LayerInfo } from '../../entities/layerInfo';
@@ -37,7 +37,7 @@ export class ShapePsd extends Plugin<IUserStore> {
     for (let i = 0; i < psdSets.length; i++) {
       const layerInfos: ILayerInfo[] = [];
       const psdSet: IPsdSet = psdSets[i];
-      const psdData: IPsdData = psdSet.psdData;
+      const psdData: IPsdData | IDummyPsdData = psdSet.psdData;
       const uniqueId: string = generateUuid();
       const width: number = psdData.width;
       const height: number = psdData.height;

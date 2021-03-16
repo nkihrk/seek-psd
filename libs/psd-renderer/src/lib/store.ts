@@ -1,6 +1,6 @@
 import type { Layer } from 'ag-psd';
 import type { ILayerInfo } from './entities/layerInfo';
-import type { IPsdData } from './entities/psdData';
+import type { IPsdData, IDummyPsdData } from './entities/psdData';
 import type { IPsd } from './entities/psd';
 
 export interface IUserStore {
@@ -18,7 +18,7 @@ export interface IUserStore {
 
 export interface IPsdSet {
   fileName: string;
-  psdData: IPsdData;
+  psdData: IPsdData | IDummyPsdData;
 }
 
 export interface IRenderTargetSet {

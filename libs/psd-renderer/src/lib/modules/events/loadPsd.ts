@@ -1,7 +1,12 @@
 import type { IStore, IDragFlags, IFiles } from '@seek-psd/engine2d';
 import type { IPsdSet, IUserStore } from '../../store';
 import type { Psd } from 'ag-psd';
-import { IDummyPsd, IPsdData, PsdData } from '../../entities/psdData';
+import {
+  DummyPsdData,
+  IDummyPsd,
+  IPsdData,
+  PsdData,
+} from '../../entities/psdData';
 import { EVENT_TYPE } from '@seek-psd/engine2d';
 import { readPsd } from 'ag-psd';
 import { Plugin } from '@seek-psd/engine2d';
@@ -44,6 +49,7 @@ export class LoadPsd extends Plugin<IUserStore> {
 
     if (flags.isDrop) {
       this._loadFiles(values.files);
+      this._clearCaches();
     }
   }
 
@@ -81,49 +87,40 @@ export class LoadPsd extends Plugin<IUserStore> {
   }
 
   private _blobReader($file: File): void {
-    const image: HTMLImageElement = new Image();
-    image.crossOrigin = 'Anonymous';
-    image.src = URL.createObjectURL($file);
-    image
-      .decode()
-      .then(() => {
-        const c: HTMLCanvasElement = document.createElement('canvas');
-        c.width = image.width;
-        c.height = image.height;
-        const ctx: CanvasRenderingContext2D = c.getContext('2d');
-        ctx.drawImage(image, 0, 0, c.width, c.height);
-
-        const dummyPsd: IDummyPsd = {
-          width: image.width,
-          height: image.height,
-          canvas: c,
-          children: [],
-        };
-        const psdSet: IPsdSet = {
-          fileName: $file.name,
-          psdData: new PsdData($file.name, dummyPsd),
-        };
-
-        this.userStore.psdSets.push(psdSet);
-
-        console.log($file.name);
-
-        // free up the memory
-        URL.revokeObjectURL(image.src);
-
-        this._manageSuccess();
-      })
-      .catch(() => {
-        console.error('Could not load/decode an image.');
-
-        this._manageError();
-      });
+    const image: HTMLImageElement = createDecodedImage(
+      $file,
+      (i) => this._updatePsdSets(i, $file.name),
+      () => this._onDecodeError()
+    );
 
     image.onerror = () => {
       console.error('Error loading an image.');
 
       this._manageError();
     };
+  }
+
+  private _updatePsdSets($image: HTMLImageElement, $fileName: string): void {
+    const dummyPsd: IDummyPsd = {
+      width: $image.width,
+      height: $image.height,
+      canvas: $image,
+      children: [],
+    };
+    const psdSet: IPsdSet = {
+      fileName: $fileName,
+      psdData: new DummyPsdData($fileName, dummyPsd),
+    };
+
+    this.userStore.psdSets.push(psdSet);
+
+    console.log($fileName);
+
+    this._manageSuccess();
+  }
+
+  private _onDecodeError(): void {
+    this._manageError();
   }
 
   private async _fileReader($file: File): Promise<void> {
@@ -181,5 +178,9 @@ export class LoadPsd extends Plugin<IUserStore> {
   private _manageError(): void {
     this.totalCount--;
     if (this.count === this.totalCount) this.resolve();
+  }
+
+  private _clearCaches(): void {
+    this.store.values.drag.files = [];
   }
 }

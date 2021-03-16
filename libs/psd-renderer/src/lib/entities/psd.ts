@@ -8,7 +8,7 @@ export interface IPsdMeta {
   readonly uniqueId: string;
   readonly rawWidth: number;
   readonly rawHeight: number;
-  readonly rawElement: HTMLCanvasElement;
+  readonly rawElement: HTMLCanvasElement | HTMLImageElement;
   readonly layerInfos: ILayerInfo[];
 }
 
@@ -104,7 +104,7 @@ export class Psd implements IPsd {
   readonly uniqueId: string;
   readonly rawWidth: number;
   readonly rawHeight: number;
-  readonly rawElement: HTMLCanvasElement;
+  readonly rawElement: HTMLCanvasElement | HTMLImageElement;
   readonly layerInfos: ILayerInfo[] = [];
   history: IPsdHistory = {
     current: {
