@@ -5,6 +5,21 @@ import { EVENT_TYPE } from '@seek-psd/engine2d';
 
 export const DRAW_WEBGL = 'drawWebGl';
 
+interface IProgramInfo {
+  program: WebGLProgram;
+  attribLocations: {
+    vertexPosition: number;
+  };
+  uniformLocations: {
+    projectionMatrix: WebGLUniformLocation;
+    modelViewMatrix: WebGLUniformLocation;
+  };
+}
+
+interface IBuffers {
+  position: WebGLBuffer;
+}
+
 export class DrawWebGl extends Plugin<IUserStore> {
   private gl: WebGLRenderingContext = null;
 
@@ -19,7 +34,7 @@ export class DrawWebGl extends Plugin<IUserStore> {
 
     if ($store.flags.drag.isDrop) {
       this._createWebGlCanvas();
-      this._draw();
+      this._main();
     }
   }
 
@@ -41,7 +56,7 @@ export class DrawWebGl extends Plugin<IUserStore> {
     this.gl = gl;
   }
 
-  private _draw(): void {
+  private _main(): void {
     const c = this.userStore.webGlElement;
     const gl = this.gl;
 
@@ -52,6 +67,27 @@ export class DrawWebGl extends Plugin<IUserStore> {
       vsSource,
       fsSource
     );
+
+    const programInfo: IProgramInfo = {
+      program: shaderProgram,
+      attribLocations: {
+        vertexPosition: gl.getAttribLocation(shaderProgram, 'aVertexPosition'),
+      },
+      uniformLocations: {
+        projectionMatrix: gl.getUniformLocation(
+          shaderProgram,
+          'uProjectionMatrix'
+        ),
+        modelViewMatrix: gl.getUniformLocation(
+          shaderProgram,
+          'uModelViewMatrix'
+        ),
+      },
+    };
+
+    const buffers: IBuffers = this._initBuffers();
+
+    this._drawScene(programInfo, buffers);
   }
 
   private _initShaderProgram(
@@ -104,5 +140,28 @@ export class DrawWebGl extends Plugin<IUserStore> {
     }
 
     return shader;
+  }
+
+  private _initBuffers(): IBuffers {
+    const gl = this.gl;
+    const positionBuffer: WebGLBuffer = gl.createBuffer();
+    const positions = [1.0, 1.0, -1.0, 1.0, 1.0, -1.0, -1.0, -1.0];
+
+    gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
+
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(positions), gl.STATIC_DRAW);
+
+    return {
+      position: positionBuffer,
+    };
+  }
+
+  private _drawScene($programInfo: IProgramInfo, $buffers: IBuffers): void {
+    const gl = this.gl;
+
+    gl.clearColor(0.0, 0.0, 0.0, 1.0); // Clear to black, fully opaque
+    gl.clearDepth(1.0); // Clear everything
+    gl.enable(gl.DEPTH_TEST); // Enable depth testing
+    gl.depthFunc(gl.LEQUAL); // Near things obscure far things
   }
 }

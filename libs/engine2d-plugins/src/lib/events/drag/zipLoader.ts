@@ -71,10 +71,7 @@ export class ZipLoader extends Plugin<any> {
     } else {
       this._storeFile($file);
 
-      this.count++;
-      if (this.count === this.totalCount) {
-        this.resolve();
-      }
+      this._manageSuccess();
     }
   }
 
@@ -99,7 +96,8 @@ export class ZipLoader extends Plugin<any> {
             if (zipData.files[fileName].dir) {
               console.log('Directory is detected. Skip loading the file.');
 
-              this.totalCount--;
+              this._manageError();
+
               continue;
             }
 
@@ -112,7 +110,9 @@ export class ZipLoader extends Plugin<any> {
                 'Error loading mime type from a file. Skip loading the file.'
               );
 
-              this.totalCount--;
+              this._manageError();
+              console.log(this.totalCount, this.count);
+
               continue;
             }
 
@@ -124,16 +124,26 @@ export class ZipLoader extends Plugin<any> {
 
             this._loadZip(newFile);
           } catch (e) {
-            console.log(e);
+            console.error(e);
 
-            this.totalCount--;
+            this._manageError();
           }
         }
       }
     } catch (e) {
-      console.log(e);
+      console.error(e);
 
-      this.totalCount--;
+      this._manageError();
     }
+  }
+
+  private _manageSuccess(): void {
+    this.count++;
+    if (this.count === this.totalCount) this.resolve();
+  }
+
+  private _manageError(): void {
+    this.totalCount--;
+    if (this.count === this.totalCount) this.resolve();
   }
 }

@@ -44,7 +44,7 @@ export class PsdData implements IPsdData {
     } else {
       this.children.push({
         name: $fileName,
-        canvas: duplicateCanvasElement($psd.canvas),
+        canvas: $psd.canvas,
         blendMode: 'normal',
         hidden: false,
         opacity: 1,

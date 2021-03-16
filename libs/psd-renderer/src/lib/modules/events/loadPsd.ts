@@ -75,24 +75,27 @@ export class LoadPsd extends Plugin<IUserStore> {
       } else {
         console.log('Unknow file format is detected.');
 
-        this.totalCount--;
+        this._manageError();
       }
     }
   }
 
   private _blobReader($file: File): void {
-    const img: HTMLImageElement = createDecodedImage(
-      $file,
-      ($img: HTMLImageElement) => {
+    const image: HTMLImageElement = new Image();
+    image.crossOrigin = 'Anonymous';
+    image.src = URL.createObjectURL($file);
+    image
+      .decode()
+      .then(() => {
         const c: HTMLCanvasElement = document.createElement('canvas');
-        c.width = $img.width;
-        c.height = $img.height;
+        c.width = image.width;
+        c.height = image.height;
         const ctx: CanvasRenderingContext2D = c.getContext('2d');
-        ctx.drawImage($img, 0, 0, c.width, c.height);
+        ctx.drawImage(image, 0, 0, c.width, c.height);
 
         const dummyPsd: IDummyPsd = {
-          width: $img.width,
-          height: $img.height,
+          width: image.width,
+          height: image.height,
           canvas: c,
           children: [],
         };
@@ -105,14 +108,21 @@ export class LoadPsd extends Plugin<IUserStore> {
 
         console.log($file.name);
 
-        this.count++;
-        if (this.count === this.totalCount) this.resolve();
-      }
-    );
-    img.onerror = () => {
-      throw new Error('Error loading an image.');
+        // free up the memory
+        URL.revokeObjectURL(image.src);
 
-      this.totalCount--;
+        this._manageSuccess();
+      })
+      .catch(() => {
+        console.error('Could not load/decode an image.');
+
+        this._manageError();
+      });
+
+    image.onerror = () => {
+      console.error('Error loading an image.');
+
+      this._manageError();
     };
   }
 
@@ -137,9 +147,9 @@ export class LoadPsd extends Plugin<IUserStore> {
     if (validateFormat($file, VALID_PSD)) {
       this._psdReader($file.name, $arrayBuffer);
     } else {
-      throw new Error('Invalid file format is detected.');
+      console.error('Invalid file format is detected.');
 
-      this.totalCount--;
+      this._manageError();
     }
   }
 
@@ -155,12 +165,21 @@ export class LoadPsd extends Plugin<IUserStore> {
 
       console.log($fileName, psd);
 
-      this.count++;
-      if (this.count === this.totalCount) this.resolve();
+      this._manageSuccess();
     } catch (e) {
-      throw new Error('Error pasing a file.');
+      console.error('Error pasing a file.');
 
-      this.totalCount--;
+      this._manageError();
     }
+  }
+
+  private _manageSuccess(): void {
+    this.count++;
+    if (this.count === this.totalCount) this.resolve();
+  }
+
+  private _manageError(): void {
+    this.totalCount--;
+    if (this.count === this.totalCount) this.resolve();
   }
 }
