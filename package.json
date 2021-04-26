@@ -26,7 +26,7 @@
 		"@fortawesome/free-solid-svg-icons": "^5.15.3",
 		"@types/file-saver": "^2.0.2",
 		"ag-psd": "^11.6.2",
-		"angular-notifier": "^6.0.1",
+		"angular-notifier": "^6.0.2",
 		"file-saver": "^2.0.2",
 		"lodash": "^4.17.20",
 		"resize-observer-polyfill": "^1.5.1",
